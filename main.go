@@ -7,8 +7,8 @@ import (
 )
 
 func main() {
-	log.Println("http://localhost:8080/")
 	port := os.Getenv("PORT")
+	log.Println("http://localhost:", port)
 
 	js_files := http.StripPrefix("/js/", http.FileServer(http.Dir("./js")))
 	static_files := http.FileServer(http.Dir("./static"))

@@ -71,7 +71,7 @@ func ResuelveFlujoMaximo(grafo FlujoMaximo) string {
 		Camino string    "json:\"camino\""
 	}{
 		V:      vertices,
-		Camino: "Patrón de Flujo",
+		Camino: "Grafo Inicial",
 	})
 
 	marcados := make([]camino, 0)
@@ -115,7 +115,7 @@ func dfs(sol *RespuestaFlujoMaximo, marcado *[]camino, grafo map[string]map[stri
 
 		camino += destino
 		camino = strings.ToUpper(camino)
-		camino += " | c* = Mín{"
+		camino += "   |   c* = Mín{"
 
 		flujo = Min(marcado, grafo)
 		for _, v := range *marcado {
