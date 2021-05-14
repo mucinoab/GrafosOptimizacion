@@ -23,9 +23,9 @@ function GeneraTabla() {
     let tabla = "";
     let i = 0;
     for (; i < nvertices; i += 1) {
-        tabla += `<tr><td>${i}</td><td><input type="text" class="form-control origenes" id="Origen_${i}" required></td>`;
-        tabla += `<td><input type="text" class="form-control destinos" id="Destino_${i}" required></td>`;
-        tabla += `<td><input type="text" class="form-control pesos" id="Peso_${i}" placeholder="0.0" required></td></tr>`;
+        tabla += `<tr><td>${i}</td><td><input type="text" class="form-control origenes" required></td>`;
+        tabla += `<td><input type="text" class="form-control destinos" required></td>`;
+        tabla += `<td><input type="text" class="form-control pesos" placeholder="0.0" required></td></tr>`;
     }
     tabla += `
   <br> <label for="exampleInputEmail1" class="form-label">Nodo Origen</label>
@@ -81,8 +81,8 @@ async function postData(url, data = {}) {
 }
 function renderResponse(r) {
     let respuesta = document.getElementById("respuesta");
-    let respHTML = `<p>Flujo Máximo: ${r.Flujo}</p><br>`;
-    respHTML += `<table class="table table-hover">
+    let respHTML = `<p>Flujo Máximo: ${r.Flujo}</p><br>
+  <table class="table table-hover">
   <thead class="thead-light"><tr>
   <th scope="col">Origen</th>
   <th scope="col">Destino</th>
