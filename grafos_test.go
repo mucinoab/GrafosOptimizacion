@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestWallet(t *testing.T) {
+func TestGrafos(t *testing.T) {
 	t.Run("Flujo Máximo", func(t *testing.T) {
 		grafo := FlujoMaximo{
 			Grafo: []Vertice{
