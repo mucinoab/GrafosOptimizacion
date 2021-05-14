@@ -46,10 +46,12 @@ function flujoMaximo(tablaId) {
     const pesos = document.querySelectorAll(".pesos");
     const origen = document.getElementById("origen");
     const destino = document.getElementById("destino");
+    const dirigido = document.getElementById("GrafoDirigido");
     let payload = {
         data: [],
         origen: origen.value.trim(),
-        destino: destino.value.trim()
+        destino: destino.value.trim(),
+        dirigido: dirigido.checked
     };
     let idx = 0;
     let peso = 0;

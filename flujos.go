@@ -16,9 +16,10 @@ type Vertice struct {
 }
 
 type FlujoMaximo struct {
-	Data    []Vertice `json:"data"`
-	Origen  string    `json:"origen"`
-	Destino string    `json:"destino"`
+	Grafo    []Vertice `json:"data"`
+	Origen   string    `json:"origen"`
+	Destino  string    `json:"destino"`
+	Dirigido bool      `json:"dirigido"`
 }
 
 type RespuestaFlujoMaximo struct {
@@ -55,7 +56,7 @@ func ResuelveFlujoMaximo(grafo FlujoMaximo) string {
 	m := make(map[string]map[string]float64)
 	m_og := make(map[string]map[string]float64)
 
-	for _, a := range grafo.Data {
+	for _, a := range grafo.Grafo {
 		if _, ok := m[a.Origen]; !ok {
 			m[a.Origen] = make(map[string]float64)
 			m_og[a.Origen] = make(map[string]float64)
@@ -64,6 +65,16 @@ func ResuelveFlujoMaximo(grafo FlujoMaximo) string {
 		m[a.Origen][a.Destino] = a.Peso
 		m_og[a.Origen][a.Destino] = a.Peso
 		vertices = append(vertices, Vertice{a.Origen, a.Destino, a.Peso})
+
+		if !grafo.Dirigido {
+			if _, ok := m[a.Destino]; !ok {
+				m[a.Destino] = make(map[string]float64)
+				m_og[a.Destino] = make(map[string]float64)
+			}
+			m[a.Destino][a.Origen] = a.Peso
+			m_og[a.Destino][a.Origen] = a.Peso
+			vertices = append(vertices, Vertice{a.Destino, a.Origen, a.Peso})
+		}
 	}
 
 	sol.Data = append(sol.Data, struct {
