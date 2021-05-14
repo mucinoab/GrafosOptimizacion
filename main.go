@@ -8,8 +8,6 @@ import (
 
 func main() {
 	port := os.Getenv("PORT")
-	log.Println("http://localhost:", port)
-
 	js_files := http.StripPrefix("/js/", http.FileServer(http.Dir("./js")))
 	static_files := http.FileServer(http.Dir("./static"))
 
@@ -17,5 +15,6 @@ func main() {
 	http.Handle("/", static_files)
 	http.HandleFunc("/flujomaximo", flujoMaximo)
 
+	log.Println("http://localhost:", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
