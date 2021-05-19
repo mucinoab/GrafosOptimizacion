@@ -1,6 +1,8 @@
 package main
 
-import "math"
+import (
+	"math"
+)
 
 // custom Hash Set
 type Set struct {
@@ -59,4 +61,20 @@ func VerticesToAdjList(grafo *[]Vertice, dirigido bool) map[string]map[string]fl
 	}
 
 	return adjList
+}
+
+func AdjListToVertices(grafo map[string]map[string]float64, dirigido bool) *[]Vertice {
+	adjList := []Vertice{}
+
+	for a, row := range grafo {
+		for b, p := range row {
+			adjList = append(adjList, Vertice{a, b, p})
+
+			if !dirigido {
+				adjList = append(adjList, Vertice{b, a, p})
+			}
+		}
+	}
+
+	return &adjList
 }
