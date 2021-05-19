@@ -53,26 +53,12 @@ func ResuelveFlujoMaximo(grafo FlujoMaximo) string {
 	var sol RespuestaFlujoMaximo
 	var vertices []Vertice
 
-	m := make(map[string]map[string]float64)
-	m_og := make(map[string]map[string]float64)
+	m := VerticesToAdjList(&grafo.Grafo, grafo.Dirigido)
+	m_og := VerticesToAdjList(&grafo.Grafo, grafo.Dirigido)
 
 	for _, a := range grafo.Grafo {
-		if _, ok := m[a.Origen]; !ok {
-			m[a.Origen] = make(map[string]float64)
-			m_og[a.Origen] = make(map[string]float64)
-		}
-
-		m[a.Origen][a.Destino] = a.Peso
-		m_og[a.Origen][a.Destino] = a.Peso
 		vertices = append(vertices, Vertice{a.Origen, a.Destino, a.Peso})
-
 		if !grafo.Dirigido {
-			if _, ok := m[a.Destino]; !ok {
-				m[a.Destino] = make(map[string]float64)
-				m_og[a.Destino] = make(map[string]float64)
-			}
-			m[a.Destino][a.Origen] = a.Peso
-			m_og[a.Destino][a.Origen] = a.Peso
 			vertices = append(vertices, Vertice{a.Destino, a.Origen, a.Peso})
 		}
 	}
@@ -126,11 +112,11 @@ func dfs(sol *RespuestaFlujoMaximo, marcado *[]camino, grafo map[string]map[stri
 
 		camino += destino
 		camino = strings.ToUpper(camino)
-		camino += "   |   c* = Mín{"
+		camino += "|c* = Mín{"
 
 		flujo = Min(marcado, grafo)
 		for _, v := range *marcado {
-			camino += fmt.Sprintf("%.2f, ", grafo[v.izq][v.der])
+			camino += fmt.Sprintf("%.2f,", grafo[v.izq][v.der])
 			grafo[v.izq][v.der] -= flujo
 		}
 
@@ -158,7 +144,7 @@ func dfs(sol *RespuestaFlujoMaximo, marcado *[]camino, grafo map[string]map[stri
 	for n, p := range grafo[actual] {
 		v := camino{actual, n}
 
-		if p > 0 && !Find(marcado, v) {
+		if p > 0.0 && !Find(marcado, v) {
 			*marcado = append(*marcado, v)
 			flujo += dfs(sol, marcado, grafo, n, destino)
 			Pop(marcado)
