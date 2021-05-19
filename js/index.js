@@ -1,7 +1,7 @@
-function MostartTabla(tablaId, formId) {
+function MostartTabla(tablaId, formId, verticesId) {
     const form = document.getElementById(formId);
     if (form.checkValidity()) {
-        if (GeneraTabla()) {
+        if (GeneraTabla(tablaId, verticesId)) {
             document.getElementById(tablaId).style.setProperty("display", "block", 'important');
         }
         else {
@@ -12,65 +12,80 @@ function MostartTabla(tablaId, formId) {
         form.reportValidity();
     }
 }
-function GeneraTabla() {
-    const vertices = document.getElementById("Nvertices");
+function GeneraTabla(tablaId, verticesId) {
+    const vertices = document.getElementById(verticesId);
     const nvertices = parseInt(vertices.value, 10);
-    if (isNaN(nvertices)) {
+    if (isNaN(nvertices) || nvertices <= 0) {
         return false;
     }
-    let tabalaHtml = document.getElementById("FlujoTabla");
+    let tabalaHtml = document.getElementById(`innerTabla${tablaId}`);
     tabalaHtml.innerHTML = "";
     let tabla = "";
     let i = 0;
     for (; i < nvertices; i += 1) {
-        tabla += `<tr><td>${i}</td><td><input type="text" class="form-control origenes" required></td>`;
-        tabla += `<td><input type="text" class="form-control destinos" required></td>`;
-        tabla += `<td><input type="text" class="form-control pesos" placeholder="0.0" required></td></tr>`;
+        tabla += `<tr><td>${i}</td><td><input type="text" class="form-control origenes${tablaId}" required></td>`;
+        tabla += `<td><input type="text" class="form-control destinos${tablaId}" required></td>`;
+        tabla += `<td><input type="text" class="form-control pesos${tablaId}" placeholder="0.0" required></td></tr>`;
     }
-    tabla += `
-  <br> <label for="exampleInputEmail1" class="form-label">Nodo Origen</label>
-    <input type="text" class="form-control pesos" id="origen" required>
-  <br> <label for="exampleInputEmail1" class="form-label">Nodo Destino</label>
-    <input type="text" class="form-control pesos" id="destino" required>`;
     tabalaHtml.insertAdjacentHTML("afterbegin", tabla);
     return true;
 }
-function flujoMaximo(tablaId) {
-    const tabla = document.getElementById(tablaId);
+function flujoMaximo() {
+    const tablaId = "Flujo";
+    const tabla = document.getElementById(`Tabla${tablaId}`);
     if (!tabla.checkValidity()) {
         tabla.reportValidity();
         return;
     }
-    const origenes = document.querySelectorAll(".origenes");
-    const destinos = document.querySelectorAll(".destinos");
-    const pesos = document.querySelectorAll(".pesos");
     const origen = document.getElementById("origen");
     const destino = document.getElementById("destino");
     const dirigido = document.getElementById("GrafoDirigido");
     let payload = {
-        data: [],
+        data: grafoDeTabla(tablaId),
         origen: origen.value.trim(),
         destino: destino.value.trim(),
         dirigido: dirigido.checked
     };
+    postData('flujomaximo', payload)
+        .then(data => {
+        renderResponseFlujo(data);
+    });
+}
+function floydWarshall() {
+    const tablaId = "Floyd";
+    const tabla = document.getElementById(`Tabla${tablaId}`);
+    if (!tabla.checkValidity()) {
+        tabla.reportValidity();
+        return;
+    }
+    let payload = grafoDeTabla(tablaId);
+    console.log(payload);
+    postData('floydwarshall', payload)
+        .then(data => {
+        renderResponseFlujo(data);
+    });
+}
+function grafoDeTabla(id) {
+    const origenes = document.querySelectorAll(`.origenes${id}`);
+    const destinos = document.querySelectorAll(`.destinos${id}`);
+    const pesos = document.querySelectorAll(`.pesos${id}`);
+    console.log(origenes);
     let idx = 0;
     let peso = 0;
+    let grafo = [];
     for (; idx < origenes.length; idx += 1) {
         peso = parseFloat(pesos[idx].value.trim());
         if (isNaN(peso)) {
             alert("Por favor verifica que los pesos ingresados sean números.");
             return;
         }
-        payload.data.push({
+        grafo.push({
             origen: origenes[idx].value.trim(),
             destino: destinos[idx].value.trim(),
             peso: peso
         });
     }
-    postData('flujomaximo', payload)
-        .then(data => {
-        renderResponse(data);
-    });
+    return grafo;
 }
 async function postData(url, data = {}) {
     const response = await fetch(url, {
@@ -81,8 +96,8 @@ async function postData(url, data = {}) {
     });
     return response.json();
 }
-function renderResponse(r) {
-    let respuesta = document.getElementById("respuesta");
+function renderResponseFlujo(r) {
+    let respuesta = document.getElementById("respuestaFlujo");
     let respHTML = `<p>Flujo Máximo: ${r.Flujo}</p><br>
   <table class="table table-hover">
   <thead class="thead-light"><tr>
@@ -91,7 +106,7 @@ function renderResponse(r) {
   <th scope="col">Peso</th>
   </tr></thead><tbody>`;
     for (const [_, e] of r.Data.entries()) {
-        respHTML += `<tr class="table-primary"><td colspan="3">${e.camino}</td><tr>`;
+        respHTML += `<tr class="table-primary"><td class="success" colspan="3">${e.camino}</td><tr>`;
         for (const [_, v] of e.data.entries()) {
             respHTML += `
       <tr><td>${v.origen}</td>

@@ -1,8 +1,8 @@
-function MostartTabla(tablaId: string, formId: string) {
-  const form = <HTMLFormElement> document.getElementById(formId);
+function MostartTabla(tablaId: string, formId: string, verticesId: string) {
+  const form = <HTMLFormElement>document.getElementById(formId);
 
   if (form.checkValidity()) {
-    if (GeneraTabla()) {
+    if (GeneraTabla(tablaId, verticesId)) {
       document.getElementById(tablaId).style.setProperty("display", "block", 'important');
     } else {
       alert("Número de vértices NO valido.");
@@ -12,15 +12,15 @@ function MostartTabla(tablaId: string, formId: string) {
   }
 }
 
-function GeneraTabla(): boolean {
-  const vertices = <HTMLInputElement>document.getElementById("Nvertices");
+function GeneraTabla(tablaId: string, verticesId: string): boolean {
+  const vertices = <HTMLInputElement>document.getElementById(verticesId);
   const nvertices: number = parseInt(vertices.value, 10);
 
-  if (isNaN(nvertices)){
+  if (isNaN(nvertices) || nvertices <= 0){
     return false;
   }
 
-  let tabalaHtml = document.getElementById("FlujoTabla");
+  let tabalaHtml = document.getElementById(`innerTabla${tablaId}`);
   tabalaHtml.innerHTML = "";
 
   let tabla: string = "";
@@ -28,47 +28,69 @@ function GeneraTabla(): boolean {
 
   // #, origen, destino, peso
   for (; i < nvertices; i += 1) {
-    tabla += `<tr><td>${i}</td><td><input type="text" class="form-control origenes" required></td>`;
-    tabla += `<td><input type="text" class="form-control destinos" required></td>`;
-    tabla += `<td><input type="text" class="form-control pesos" placeholder="0.0" required></td></tr>`;
+    tabla += `<tr><td>${i}</td><td><input type="text" class="form-control origenes${tablaId}" required></td>`;
+    tabla += `<td><input type="text" class="form-control destinos${tablaId}" required></td>`;
+    tabla += `<td><input type="text" class="form-control pesos${tablaId}" placeholder="0.0" required></td></tr>`;
   }
-
-  tabla += `
-  <br> <label for="exampleInputEmail1" class="form-label">Nodo Origen</label>
-    <input type="text" class="form-control pesos" id="origen" required>
-  <br> <label for="exampleInputEmail1" class="form-label">Nodo Destino</label>
-    <input type="text" class="form-control pesos" id="destino" required>`;
-
 
   tabalaHtml.insertAdjacentHTML("afterbegin", tabla);
 
   return true;
 }
 
-function flujoMaximo(tablaId: string) {
-  const tabla = <HTMLFormElement>document.getElementById(tablaId);
+function flujoMaximo() {
+  const tablaId: string = "Flujo"
+  const tabla = <HTMLFormElement>document.getElementById(`Tabla${tablaId}`);
 
   if (!tabla.checkValidity()) {
     tabla.reportValidity();
     return;
   }
 
-  const origenes = document.querySelectorAll<HTMLInputElement>(".origenes");
-  const destinos = document.querySelectorAll<HTMLInputElement>(".destinos");
-  const pesos = document.querySelectorAll<HTMLInputElement>(".pesos");
   const origen = <HTMLInputElement>document.getElementById("origen");
   const destino = <HTMLInputElement>document.getElementById("destino");
-  const  dirigido = <HTMLInputElement>document.getElementById("GrafoDirigido");
+  const dirigido = <HTMLInputElement>document.getElementById("GrafoDirigido");
 
   let payload = {
-    data:[],
+    data: grafoDeTabla(tablaId),
     origen: origen.value.trim(),
     destino: destino.value.trim(),
     dirigido: dirigido.checked
   };
 
+  postData('flujomaximo', payload)
+  .then(data => {
+    renderResponseFlujo(data);
+  });
+}
+
+function floydWarshall() {
+  const tablaId: string = "Floyd";
+  const tabla = <HTMLFormElement>document.getElementById(`Tabla${tablaId}`);
+
+  if (!tabla.checkValidity()) {
+    tabla.reportValidity();
+    return;
+  }
+
+  let payload = grafoDeTabla(tablaId);
+  console.log(payload);
+
+  postData('floydwarshall', payload)
+  .then(data => {
+    renderResponseFlujo(data);
+  });
+}
+
+function grafoDeTabla(id: string): any {
+  const origenes = document.querySelectorAll<HTMLInputElement>(`.origenes${id}`);
+  const destinos = document.querySelectorAll<HTMLInputElement>(`.destinos${id}`);
+  const pesos = document.querySelectorAll<HTMLInputElement>(`.pesos${id}`);
+  console.log(origenes)
+
   let idx: number = 0;
   let peso: number = 0;
+  let grafo = []
 
   for (; idx < origenes.length; idx += 1) {
     peso = parseFloat(pesos[idx].value.trim());
@@ -78,17 +100,14 @@ function flujoMaximo(tablaId: string) {
       return;
     }
 
-    payload.data.push({
+    grafo.push({
       origen: origenes[idx].value.trim(),
       destino: destinos[idx].value.trim(),
       peso: peso
     });
   }
 
-  postData('flujomaximo', payload)
-  .then(data => {
-    renderResponse(data);
-  });
+  return grafo
 }
 
 // From MDN, https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch#supplying_request_options
@@ -119,8 +138,8 @@ interface Vertices {
   peso: number,
 }
 
-function renderResponse(r: RespuestaFlujoMaximo) {
-  let respuesta = document.getElementById("respuesta");
+function renderResponseFlujo(r: RespuestaFlujoMaximo) {
+  let respuesta = document.getElementById("respuestaFlujo");
   let respHTML: string = `<p>Flujo Máximo: ${r.Flujo}</p><br>
   <table class="table table-hover">
   <thead class="thead-light"><tr>
@@ -130,7 +149,7 @@ function renderResponse(r: RespuestaFlujoMaximo) {
   </tr></thead><tbody>`;
 
   for (const [_, e] of r.Data.entries()) {
-    respHTML += `<tr class="table-primary"><td colspan="3">${e.camino}</td><tr>`;
+    respHTML += `<tr class="table-primary"><td class="success" colspan="3">${e.camino}</td><tr>`;
 
     for (const [_, v] of e.data.entries()) {
       respHTML += `
