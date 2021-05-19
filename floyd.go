@@ -2,10 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"io"
 	"log"
 	"math"
-	"net/http"
 )
 
 type RespuestaFloydWarshall struct {
@@ -93,19 +91,4 @@ func ResuelveFloyWarshall(grafo []Vertice) (string, map[string]map[string]float6
 	} else {
 		return string(s), sol
 	}
-}
-
-func FloyWarshall(rw http.ResponseWriter, req *http.Request) {
-	var grafo []Vertice
-	decoder := json.NewDecoder(req.Body)
-
-	err := decoder.Decode(&grafo)
-	if err != nil {
-		log.Print(err)
-	}
-
-	answer, _ := ResuelveFloyWarshall(grafo)
-
-	io.WriteString(rw, answer)
-	log.Println("Floy Warshall")
 }

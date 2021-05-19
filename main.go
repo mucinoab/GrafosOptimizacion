@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -18,4 +20,35 @@ func main() {
 
 	log.Printf("http://localhost:%s", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
+}
+
+func flujoMaximo(rw http.ResponseWriter, req *http.Request) {
+	var grafo FlujoMaximo
+	decoder := json.NewDecoder(req.Body)
+
+	err := decoder.Decode(&grafo)
+	if err != nil {
+		log.Print(err)
+	}
+
+	answer := ResuelveFlujoMaximo(grafo)
+
+	io.WriteString(rw, answer)
+	log.Println("Flujo Máximo")
+}
+
+func FloyWarshall(rw http.ResponseWriter, req *http.Request) {
+	var grafo []Vertice
+
+	decoder := json.NewDecoder(req.Body)
+	err := decoder.Decode(&grafo)
+
+	if err != nil {
+		log.Print(err)
+	}
+
+	answer, _ := ResuelveFloyWarshall(grafo)
+
+	io.WriteString(rw, answer)
+	log.Println("Floy Warshall")
 }

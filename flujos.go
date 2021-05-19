@@ -3,9 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
-	"net/http"
 	"strings"
 )
 
@@ -32,21 +30,6 @@ type RespuestaFlujoMaximo struct {
 
 type camino struct {
 	izq, der string
-}
-
-func flujoMaximo(rw http.ResponseWriter, req *http.Request) {
-	var grafo FlujoMaximo
-	decoder := json.NewDecoder(req.Body)
-
-	err := decoder.Decode(&grafo)
-	if err != nil {
-		log.Print(err)
-	}
-
-	answer := ResuelveFlujoMaximo(grafo)
-
-	io.WriteString(rw, answer)
-	log.Println("Flujo Máximo")
 }
 
 func ResuelveFlujoMaximo(grafo FlujoMaximo) string {

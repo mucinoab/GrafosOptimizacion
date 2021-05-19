@@ -37,6 +37,7 @@
         </li>
       </ul>
       <div class="tab-content" id="myTabContent">
+        <!-- Flujo Máximo -->
         <div class="tab-pane fade show active" id="FlujoM" role="tabpanel" aria-labelledby="home-tab">
           <br>
           <form id="formulario">
@@ -61,16 +62,16 @@
 
             <br> <br>
 
-            <button type="button" class="btn btn-primary" onclick="MostartTabla('TablaIn', 'formulario')">Generar Tabla</button>
+            <button type="button" class="btn btn-primary" onclick="MostartTabla('Flujo', 'formulario', 'Nvertices')">Generar Tabla</button>
           </form>
 
           <br>
           <br>
           <br>
 
-          <div id="TablaIn" style="display: none;">
+          <div id="Flujo" style="display: none;">
             <p>Ingresa todas las conexiones del grafo y su respectivo peso.</p>
-            <form id="TablaValores">
+            <form id="TablaFlujo">
               <table class="table table-sm">
                 <thead>
                   <tr>
@@ -80,23 +81,70 @@
                     <th scope="col">Peso</th>
                   </tr>
                 </thead>
-                <tbody id="FlujoTabla">
+                <tbody id="innerTablaFlujo">
                 </tbody>
               </table>
+              <br> <label for="exampleInputEmail1" class="form-label">Nodo Origen</label>
+              <input type="text" class="form-control pesos" id="origen" required>
+              <br> <label for="exampleInputEmail1" class="form-label">Nodo Destino</label>
+              <input type="text" class="form-control pesos" id="destino" required>
               <br>
-              <button type="button" class="btn btn-primary" onclick="flujoMaximo('TablaValores')">Resolver</button>
+              <button type="button" class="btn btn-primary" onclick="flujoMaximo()">Resolver</button>
             </form>
           </div>
           <br>
           <br>
-          <div id="respuesta" style="display: none;">
+          <div id="respuestaFlujo" style="display: none;">
           </div>
-          <br>
-          <br>
-          <br>
-          <br>
+          <br> <br> <br>
         </div>
-        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">Pronto... o no.</div>
+        <!-- Floyd Warshall -->
+        <!-- TODO refactor tablas duplicadas -->
+        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+          <br>
+          <form id="formularioFloyd">
+            <div class="row g-3">
+              <div class="col-auto">
+                <label for="Nvertices" class="form-label">Número de Vértices</label>
+                <input type="tel" class="form-control" id="NverticesFloyd" maxlength="2" required>
+                <div class="form-text">(aristas, arcos)</div>
+              </div>
+            </div>
+            <br>
+            <br>
+
+            <button type="button" class="btn btn-primary" onclick="MostartTabla('Floyd', 'formularioFloyd', 'NverticesFloyd')">Generar Tabla</button>
+          </form>
+          <br>
+          <br>
+          <br>
+
+          <div id="Floyd" style="display: none;">
+            <p>Ingresa todas las conexiones del grafo y su respectivo peso.</p>
+            <form id="TablaFloyd">
+              <table class="table table-sm">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Origen</th>
+                    <th scope="col">Destino</th>
+                    <th scope="col">Peso</th>
+                  </tr>
+                </thead>
+                <tbody id="innerTablaFloyd">
+                </tbody>
+              </table>
+              <br>
+              <button type="button" class="btn btn-primary" onclick="floydWarshall()">Resolver</button>
+            </form>
+          </div>
+
+
+          <div id="respuestaFloyd" style="display: none;"></div>
+          <br> <br> <br>
+        </div>
+
+
         <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
       </div>
 
