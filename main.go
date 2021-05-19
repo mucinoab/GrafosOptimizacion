@@ -14,7 +14,8 @@ func main() {
 	http.Handle("/js/", js_files)
 	http.Handle("/", static_files)
 	http.HandleFunc("/flujomaximo", flujoMaximo)
+	http.HandleFunc("/floydwarshall", FloyWarshall)
 
-	log.Println("http://localhost:", port)
+	log.Printf("http://localhost:%s", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }

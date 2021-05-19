@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"reflect"
 	"testing"
 )
 
@@ -42,6 +43,31 @@ func TestGrafos(t *testing.T) {
 
 		if f.Flujo != 20.00 {
 			t.Errorf("Flujo máximo incorrecto, obtuve %.2f, esperaba 20.00", f.Flujo)
+		}
+	})
+
+	t.Run("Floyd-Warshall", func(t *testing.T) {
+		grafo := []Vertice{
+			{"1", "2", 700}, {"1", "3", 200},
+			{"2", "3", 300}, {"2", "4", 200},
+			{"2", "6", 400}, {"3", "4", 700},
+			{"3", "5", 600}, {"4", "6", 100},
+			{"4", "5", 300}, {"6", "5", 500},
+		}
+
+		correctSol := map[string]map[string]float64{
+			"1": {"1": 0, "2": 500, "3": 200, "4": 700, "5": 800, "6": 800},
+			"2": {"1": 500, "2": 0, "3": 300, "4": 200, "5": 500, "6": 300},
+			"3": {"1": 200, "2": 300, "3": 0, "4": 500, "5": 600, "6": 600},
+			"4": {"1": 700, "2": 200, "3": 500, "4": 0, "5": 300, "6": 100},
+			"5": {"1": 800, "2": 500, "3": 600, "4": 300, "5": 0, "6": 400},
+			"6": {"1": 800, "2": 300, "3": 600, "4": 100, "5": 400, "6": 0},
+		}
+
+		_, sol := ResuelveFloyWarshall(grafo)
+
+		if !reflect.DeepEqual(sol, correctSol) {
+			t.Error("Respuesa incorrecta", correctSol, sol)
 		}
 	})
 }
