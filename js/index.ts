@@ -1,3 +1,31 @@
+interface RespuestaFloydW {
+  cambios: Array<Cambio>
+  iteraciones: Array<Array<Vertices>>
+  nodos: Array<string>
+}
+
+interface RespuestaFlujoMaximo {
+  Flujo: number
+  Data: Array<Camino>
+}
+
+interface Camino {
+  data: Array<Vertices>,
+  camino: string,
+}
+
+interface Vertices {
+  origen: string,
+  destino: string,
+  peso: number,
+}
+
+interface Cambio {
+  iteracion: number,
+  origen: string,
+  destino: string,
+}
+
 function MostartTabla(tablaId: string, formId: string, verticesId: string) {
   const form = <HTMLFormElement>document.getElementById(formId);
 
@@ -58,6 +86,8 @@ function flujoMaximo() {
     dirigido: dirigido.checked
   };
 
+  console.log(JSON.stringify(payload));
+
   postData('flujomaximo', payload)
   .then(data => {
     renderResponseFlujo(data);
@@ -73,12 +103,9 @@ function floydWarshall() {
     return;
   }
 
-  let payload = grafoDeTabla(tablaId);
-  console.log(payload);
-
-  postData('floydwarshall', payload)
+  postData('floydwarshall', grafoDeTabla(tablaId))
   .then(data => {
-    renderResponseFlujo(data);
+    renderResponseFloyd(data);
   });
 }
 
@@ -86,7 +113,6 @@ function grafoDeTabla(id: string): any {
   const origenes = document.querySelectorAll<HTMLInputElement>(`.origenes${id}`);
   const destinos = document.querySelectorAll<HTMLInputElement>(`.destinos${id}`);
   const pesos = document.querySelectorAll<HTMLInputElement>(`.pesos${id}`);
-  console.log(origenes)
 
   let idx: number = 0;
   let peso: number = 0;
@@ -122,22 +148,6 @@ async function postData(url: string, data = {}) {
   return response.json();
 }
 
-interface RespuestaFlujoMaximo {
-  Flujo: number
-  Data: Array<Camino>
-}
-
-interface Camino {
-  data: Array<Vertices>,
-  camino: string,
-}
-
-interface Vertices {
-  origen: string,
-  destino: string,
-  peso: number,
-}
-
 function renderResponseFlujo(r: RespuestaFlujoMaximo) {
   let respuesta = document.getElementById("respuestaFlujo");
   let respHTML: string = `<p>Flujo Máximo: ${r.Flujo}</p><br>
@@ -158,8 +168,83 @@ function renderResponseFlujo(r: RespuestaFlujoMaximo) {
       <td>${v.peso}</td></tr> `;
     }
   }
+  respHTML += "</tbody></table>"
 
   respuesta.innerHTML = "";
   respuesta.insertAdjacentHTML("afterbegin", respHTML);
   respuesta.style.setProperty("display", "block", 'important');
+}
+
+function renderResponseFloyd(r: RespuestaFloydW) {
+  const cambios = new Set();
+
+  for (const cambio of r.cambios) {
+    cambios.add(JSON.stringify(cambio));
+  }
+
+  let nodesHeader: string = "";
+  for (const n of r.nodos) {
+    nodesHeader += `<td style="font-weight:bold;">${n}</td>`
+  }
+
+  let respHTML: string = '<table class="table table-hover">';
+  let idx = 0;
+
+  // TODO menos complejo, menos loops
+  for (const iteracion of r.iteraciones) {
+    respHTML += `<thead><tr><td class="table-primary">Iteración ${idx}</td>${nodesHeader}<tr></thead>`;
+
+    for (const a of r.nodos) {
+      respHTML += `<tr><td class="table_nodes"">${a}</td>`;
+
+      for (const b of r.nodos) {
+        for (const n of iteracion) {
+
+          if (n.origen == a && n.destino == b) {
+            const c = JSON.stringify({iteracion:idx, origen: a, destino: b});
+
+            if (cambios.has(c)) {
+              // es un cambio
+              respHTML += '<td style="color:red;background:#e9dbdb59;">';
+            } else {
+              respHTML += '<td>';
+            }
+
+            if (n.peso == Number.MAX_VALUE) {
+              respHTML += "∞</td>"
+            } else {
+              respHTML += `${n.peso}</td>`
+            }
+            break;
+          }
+        }
+      }
+      respHTML += "</tr>";
+    }
+    idx += 1;
+  }
+
+  respHTML = respHTML.replace("Iteración 0", "Grafo Inical");
+
+  let respuesta = document.getElementById("respuestaFloyd");
+  respuesta.innerHTML = " ";
+  respuesta.insertAdjacentHTML("afterbegin", respHTML);
+  respuesta.style.setProperty("display", "block", 'important');
+
+}
+
+function ejemploFlujo() {
+  const ejemplo =  {"data":[{"origen":"Bilbao","destino":"S1","peso":4},{"origen":"Bilbao","destino":"S2","peso":1},{"origen":"Barcelona","destino":"S1","peso":2},{"origen":"Barcelona","destino":"S2","peso":3},{"origen":"Sevilla","destino":"S1","peso":2},{"origen":"Sevilla","destino":"S2","peso":2},{"origen":"Sevilla","destino":"S3","peso":3},{"origen":"Valencia","destino":"S2","peso":2},{"origen":"Zaragoza","destino":"S2","peso":3},{"origen":"Zaragoza","destino":"S3","peso":1},{"origen":"Origen","destino":"Bilbao","peso":7},{"origen":"Origen","destino":"Barcelona","peso":5},{"origen":"Origen","destino":"Sevilla","peso":7},{"origen":"Origen","destino":"Zaragoza","peso":6},{"origen":"Origen","destino":"Valencia","peso":2},{"origen":"S1","destino":"Madrid","peso":8},{"origen":"S2","destino":"Madrid","peso":8},{"origen":"S3","destino":"Madrid","peso":8}],"origen":"Origen","destino":"Madrid","dirigido":true};
+
+  postData('flujomaximo', ejemplo).then(data => {
+    renderResponseFlujo(data);
+  });
+}
+
+function ejemploFloyd() {
+  const ejemplo = [{"origen":"1","destino":"2","peso":700}, {"origen":"1","destino":"3","peso":200},{"origen":"2","destino":"3","peso":300},{"origen":"2","destino":"4","peso":200},{"origen":"2","destino":"6","peso":400},{"origen":"3","destino":"4","peso":700},{"origen":"3","destino":"5","peso":600},{"origen":"4","destino":"6","peso":100},{"origen":"4","destino":"5","peso":300},{"origen":"6","destino":"5","peso":500}];
+
+  postData('floydwarshall', ejemplo).then(data => {
+    renderResponseFloyd(data);
+  });
 }

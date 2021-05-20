@@ -37,7 +37,7 @@ func TestGrafos(t *testing.T) {
 		sol := ResuelveFlujoMaximo(grafo)
 		var f RespuestaFlujoMaximo
 
-		if err := json.Unmarshal([]byte(sol), &f); err != nil {
+		if err := json.Unmarshal(sol, &f); err != nil {
 			t.Error("Error al deserealizar.")
 		}
 

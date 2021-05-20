@@ -32,7 +32,7 @@ type camino struct {
 	izq, der string
 }
 
-func ResuelveFlujoMaximo(grafo FlujoMaximo) string {
+func ResuelveFlujoMaximo(grafo FlujoMaximo) []byte {
 	var sol RespuestaFlujoMaximo
 	var vertices []Vertice
 
@@ -77,9 +77,9 @@ func ResuelveFlujoMaximo(grafo FlujoMaximo) string {
 
 	if err != nil {
 		log.Println(err)
-		return "Error"
+		return nil
 	} else {
-		return string(s)
+		return s
 	}
 }
 

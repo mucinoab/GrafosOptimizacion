@@ -1,7 +1,12 @@
 package main
 
 import (
+	"bytes"
+	"compress/gzip"
+	"log"
 	"math"
+	"net/http"
+	"sort"
 )
 
 // custom Hash Set
@@ -15,6 +20,18 @@ func set() *Set {
 
 func (s *Set) Add(k string) {
 	s.m[k] = struct{}{}
+}
+
+func (s *Set) toSlice() *[]string {
+	sl := make([]string, 0, len(s.m))
+
+	for node := range s.m {
+		sl = append(sl, node)
+	}
+
+	sort.Strings(sl)
+
+	return &sl
 }
 
 // various utilities
@@ -77,4 +94,20 @@ func AdjListToVertices(grafo map[string]map[string]float64, dirigido bool) *[]Ve
 	}
 
 	return &adjList
+}
+
+// Compresión con gzip
+func gzipF(a *[]byte, rw *http.ResponseWriter) []byte {
+	var b bytes.Buffer
+	gz := gzip.NewWriter(&b)
+
+	if _, err := gz.Write(*a); err != nil {
+		log.Print(err)
+	}
+	gz.Close()
+
+	(*rw).Header().Set("Content-Type", "application/json")
+	(*rw).Header().Set("Content-Encoding", "gzip")
+
+	return b.Bytes()
 }

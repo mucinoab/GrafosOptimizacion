@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"io"
 	"log"
 	"net/http"
 	"os"
@@ -33,7 +32,7 @@ func flujoMaximo(rw http.ResponseWriter, req *http.Request) {
 
 	answer := ResuelveFlujoMaximo(grafo)
 
-	io.WriteString(rw, answer)
+	rw.Write(gzipF(&answer, &rw))
 	log.Println("Flujo Máximo")
 }
 
@@ -49,6 +48,6 @@ func FloyWarshall(rw http.ResponseWriter, req *http.Request) {
 
 	answer, _ := ResuelveFloyWarshall(grafo)
 
-	io.WriteString(rw, answer)
+	rw.Write(gzipF(&answer, &rw))
 	log.Println("Floy Warshall")
 }
