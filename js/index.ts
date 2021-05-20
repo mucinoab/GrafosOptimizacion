@@ -224,7 +224,7 @@ function renderResponseFloyd(r: RespuestaFloydW) {
     idx += 1;
   }
 
-  respHTML = respHTML.replace("Iteración 0", "Grafo Inical");
+  respHTML = respHTML.replace("Iteración 0", "Grafo Inicial");
 
   let respuesta = document.getElementById("respuestaFloyd");
   respuesta.innerHTML = " ";
