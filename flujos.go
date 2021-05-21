@@ -94,7 +94,6 @@ func dfs(sol *RespuestaFlujoMaximo, marcado *[]camino, grafo map[string]map[stri
 		}
 
 		camino += destino
-		camino = strings.ToUpper(camino)
 		camino += "|c* = Mín{"
 
 		flujo = Min(marcado, grafo)

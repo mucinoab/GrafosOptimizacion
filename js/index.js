@@ -96,6 +96,7 @@ async function postData(url, data = {}) {
 }
 function renderResponseFlujo(r) {
     let respuesta = document.getElementById("respuestaFlujo");
+    const dirigido = document.getElementById("GrafoDirigido");
     let respHTML = `<p>Flujo Máximo: ${r.Flujo}</p><br>
   <table class="table table-hover">
   <thead class="thead-light"><tr>
@@ -103,14 +104,18 @@ function renderResponseFlujo(r) {
   <th scope="col">Destino</th>
   <th scope="col">Peso</th>
   </tr></thead><tbody>`;
-    for (const [_, e] of r.Data.entries()) {
-        respHTML += `<tr class="table-primary"><td class="success" colspan="3">${e.camino}</td><tr>`;
-        for (const [_, v] of e.data.entries()) {
+    let iter = 0;
+    for (const e of r.Data) {
+        respHTML += `<tr class="table-primary"><td class="success">
+    ${e.camino}</td><td colspan="2">${graphButton(`flujo_${iter}`, drawGraphLink(e.data, e.camino, dirigido.checked))}
+    </td></tr>`;
+        for (const v of e.data) {
             respHTML += `
       <tr><td>${v.origen}</td>
       <td>${v.destino}</td>
       <td>${v.peso}</td></tr> `;
         }
+        iter += 1;
     }
     respHTML += "</tbody></table>";
     respuesta.innerHTML = "";
@@ -137,17 +142,18 @@ function renderResponseFloyd(r) {
                     if (n.origen == a && n.destino == b) {
                         const c = JSON.stringify({ iteracion: idx, origen: a, destino: b });
                         if (cambios.has(c)) {
-                            respHTML += '<td style="color:red;background:#e9dbdb59;">';
+                            respHTML += '<td class="cambio">';
                         }
                         else {
                             respHTML += '<td>';
                         }
                         if (n.peso == Number.MAX_VALUE) {
-                            respHTML += "∞</td>";
+                            respHTML += '∞';
                         }
                         else {
-                            respHTML += `${n.peso}</td>`;
+                            respHTML += n.peso;
                         }
+                        respHTML += "</td>";
                         break;
                     }
                 }
@@ -162,15 +168,63 @@ function renderResponseFloyd(r) {
     respuesta.insertAdjacentHTML("afterbegin", respHTML);
     respuesta.style.setProperty("display", "block", 'important');
 }
+function drawGraphLink(nodes, camino, dirigido) {
+    let link = "https://image-charts.com/chart?chof=.svg&chs=640x640&cht=gv&chl=";
+    let sep;
+    if (dirigido) {
+        link += "digraph{rankdir=LR;";
+        sep = "-%3E";
+    }
+    else {
+        link += "graph{rankdir=LR;";
+        sep = "--";
+    }
+    const s = setOfTrajectory(camino);
+    for (const v of nodes) {
+        if (s.has(`${v.origen}${v.destino}`)) {
+            link += `${v.origen}${sep}${v.destino}[label=%22${v.peso}%22,color=red,penwidth=3.0];`;
+        }
+        else {
+            link += `${v.origen}${sep}${v.destino}[label=%22${v.peso}%22];`;
+        }
+    }
+    link += "}#";
+    return link;
+}
+function graphButton(id, link) {
+    return `<button class="btn btn-primary" type="button"
+  data-bs-toggle="collapse" data-bs-target="#${id}" aria-expanded="false"
+  aria-controls="${id}">
+  Visualizar</button>
+  <div class="collapse" id="${id}"><br><br>
+  <div class="card card-body" style="padding: 0px;">
+  <img src="${link}" width="640" height="640" class="center img-fluid" loading="lazy"></div></div>`;
+}
+function setOfTrajectory(trajectory) {
+    const t = new Set();
+    const s = find_strip(trajectory, '|').split(",");
+    if (s.length == 1) {
+        return t;
+    }
+    for (let i = 0; i < s.length - 1; i += 1) {
+        t.add(`${s[i]}${s[i + 1]}`);
+    }
+    return t;
+}
+function find_strip(str, neddle) {
+    const idx = str.indexOf(neddle);
+    if (idx === -1) {
+        return str;
+    }
+    else {
+        return str.slice(0, idx);
+    }
+}
 function ejemploFlujo() {
     const ejemplo = { "data": [{ "origen": "Bilbao", "destino": "S1", "peso": 4 }, { "origen": "Bilbao", "destino": "S2", "peso": 1 }, { "origen": "Barcelona", "destino": "S1", "peso": 2 }, { "origen": "Barcelona", "destino": "S2", "peso": 3 }, { "origen": "Sevilla", "destino": "S1", "peso": 2 }, { "origen": "Sevilla", "destino": "S2", "peso": 2 }, { "origen": "Sevilla", "destino": "S3", "peso": 3 }, { "origen": "Valencia", "destino": "S2", "peso": 2 }, { "origen": "Zaragoza", "destino": "S2", "peso": 3 }, { "origen": "Zaragoza", "destino": "S3", "peso": 1 }, { "origen": "Origen", "destino": "Bilbao", "peso": 7 }, { "origen": "Origen", "destino": "Barcelona", "peso": 5 }, { "origen": "Origen", "destino": "Sevilla", "peso": 7 }, { "origen": "Origen", "destino": "Zaragoza", "peso": 6 }, { "origen": "Origen", "destino": "Valencia", "peso": 2 }, { "origen": "S1", "destino": "Madrid", "peso": 8 }, { "origen": "S2", "destino": "Madrid", "peso": 8 }, { "origen": "S3", "destino": "Madrid", "peso": 8 }], "origen": "Origen", "destino": "Madrid", "dirigido": true };
-    postData('flujomaximo', ejemplo).then(data => {
-        renderResponseFlujo(data);
-    });
+    postData('flujomaximo', ejemplo).then(data => { renderResponseFlujo(data); });
 }
 function ejemploFloyd() {
     const ejemplo = [{ "origen": "1", "destino": "2", "peso": 700 }, { "origen": "1", "destino": "3", "peso": 200 }, { "origen": "2", "destino": "3", "peso": 300 }, { "origen": "2", "destino": "4", "peso": 200 }, { "origen": "2", "destino": "6", "peso": 400 }, { "origen": "3", "destino": "4", "peso": 700 }, { "origen": "3", "destino": "5", "peso": 600 }, { "origen": "4", "destino": "6", "peso": 100 }, { "origen": "4", "destino": "5", "peso": 300 }, { "origen": "6", "destino": "5", "peso": 500 }];
-    postData('floydwarshall', ejemplo).then(data => {
-        renderResponseFloyd(data);
-    });
+    postData('floydwarshall', ejemplo).then(data => { renderResponseFloyd(data); });
 }

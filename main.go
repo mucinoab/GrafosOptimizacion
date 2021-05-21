@@ -49,5 +49,5 @@ func FloyWarshall(rw http.ResponseWriter, req *http.Request) {
 	answer, _ := ResuelveFloyWarshall(grafo)
 
 	rw.Write(gzipF(&answer, &rw))
-	log.Println("Floy Warshall")
+	log.Println("Floy-Warshall")
 }
