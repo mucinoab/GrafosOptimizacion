@@ -203,9 +203,6 @@ function graphButton(id, link) {
 function setOfTrajectory(trajectory) {
     const t = new Set();
     const s = find_strip(trajectory, '|').split(",");
-    if (s.length == 1) {
-        return t;
-    }
     for (let i = 0; i < s.length - 1; i += 1) {
         t.add(`${s[i]}${s[i + 1]}`);
     }

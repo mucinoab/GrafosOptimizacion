@@ -283,11 +283,6 @@ function setOfTrajectory(trajectory: string): Set<string> {
   const t: Set<string>=  new Set();
   const s = find_strip(trajectory, '|').split(",");
 
-  if (s.length == 1) {
-    // Grafo inicial o patrón de flujo
-    return t;
-  }
-
   for (let i = 0; i < s.length - 1; i += 1) {
     t.add(`${s[i]}${s[i+1]}`);
   }
