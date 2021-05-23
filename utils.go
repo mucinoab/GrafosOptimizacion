@@ -34,8 +34,6 @@ func (s *Set) toSlice() *[]string {
 	return &sl
 }
 
-// various utilities
-
 func Find(slice *[]camino, val camino) bool {
 	for _, item := range *slice {
 		if item == val {

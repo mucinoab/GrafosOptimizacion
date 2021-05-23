@@ -1,7 +1,7 @@
-function MostartTabla(tablaId, formId, verticesId) {
+function showTable(tablaId, formId, verticesId) {
     const form = document.getElementById(formId);
     if (form.checkValidity()) {
-        if (GeneraTabla(tablaId, verticesId)) {
+        if (generateTable(tablaId, verticesId)) {
             document.getElementById(tablaId).style.setProperty("display", "block", 'important');
         }
         else {
@@ -12,7 +12,7 @@ function MostartTabla(tablaId, formId, verticesId) {
         form.reportValidity();
     }
 }
-function GeneraTabla(tablaId, verticesId) {
+function generateTable(tablaId, verticesId) {
     const vertices = document.getElementById(verticesId);
     const nvertices = parseInt(vertices.value, 10);
     if (isNaN(nvertices) || nvertices <= 0) {
@@ -41,12 +41,11 @@ function flujoMaximo() {
     const destino = document.getElementById("destino");
     const dirigido = document.getElementById("GrafoDirigido");
     let payload = {
-        data: grafoDeTabla(tablaId),
+        data: graphFromTable(tablaId),
         origen: origen.value.trim(),
         destino: destino.value.trim(),
         dirigido: dirigido.checked
     };
-    console.log(JSON.stringify(payload));
     postData('flujomaximo', payload)
         .then(data => {
         renderResponseFlujo(data);
@@ -59,19 +58,18 @@ function floydWarshall() {
         tabla.reportValidity();
         return;
     }
-    postData('floydwarshall', grafoDeTabla(tablaId))
+    postData('floydwarshall', graphFromTable(tablaId))
         .then(data => {
         renderResponseFloyd(data);
     });
 }
-function grafoDeTabla(id) {
+function graphFromTable(id) {
     const origenes = document.querySelectorAll(`.origenes${id}`);
     const destinos = document.querySelectorAll(`.destinos${id}`);
     const pesos = document.querySelectorAll(`.pesos${id}`);
-    let idx = 0;
     let peso = 0;
     let grafo = [];
-    for (; idx < origenes.length; idx += 1) {
+    for (let idx = 0; idx < origenes.length; idx += 1) {
         peso = parseFloat(pesos[idx].value.trim());
         if (isNaN(peso)) {
             alert("Por favor verifica que los pesos ingresados sean números.");
@@ -202,13 +200,13 @@ function graphButton(id, link) {
 }
 function setOfTrajectory(trajectory) {
     const t = new Set();
-    const s = find_strip(trajectory, '|').split(",");
+    const s = findStrip(trajectory, '|').split(",");
     for (let i = 0; i < s.length - 1; i += 1) {
         t.add(`${s[i]}${s[i + 1]}`);
     }
     return t;
 }
-function find_strip(str, neddle) {
+function findStrip(str, neddle) {
     const idx = str.indexOf(neddle);
     if (idx === -1) {
         return str;

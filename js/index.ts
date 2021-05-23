@@ -1,15 +1,15 @@
-interface RespuestaFloydW {
-  cambios: Array<Cambio>
+interface ResponseFloydW {
+  cambios: Array<Change>
   iteraciones: Array<Array<Vertices>>
   nodos: Array<string>
 }
 
-interface RespuestaFlujoMaximo {
+interface ResponseFlujoMaximo {
   Flujo: number
-  Data: Array<Camino>
+  Data: Array<Path>
 }
 
-interface Camino {
+interface Path {
   data: Array<Vertices>,
   camino: string,
 }
@@ -20,17 +20,17 @@ interface Vertices {
   peso: number,
 }
 
-interface Cambio {
+interface Change {
   iteracion: number,
   origen: string,
   destino: string,
 }
 
-function MostartTabla(tablaId: string, formId: string, verticesId: string) {
+function showTable(tablaId: string, formId: string, verticesId: string) {
   const form = <HTMLFormElement>document.getElementById(formId);
 
   if (form.checkValidity()) {
-    if (GeneraTabla(tablaId, verticesId)) {
+    if (generateTable(tablaId, verticesId)) {
       document.getElementById(tablaId).style.setProperty("display", "block", 'important');
     } else {
       alert("Número de vértices NO valido.");
@@ -40,7 +40,7 @@ function MostartTabla(tablaId: string, formId: string, verticesId: string) {
   }
 }
 
-function GeneraTabla(tablaId: string, verticesId: string): boolean {
+function generateTable(tablaId: string, verticesId: string): boolean {
   const vertices = <HTMLInputElement>document.getElementById(verticesId);
   const nvertices: number = parseInt(vertices.value, 10);
 
@@ -80,13 +80,11 @@ function flujoMaximo() {
   const dirigido = <HTMLInputElement>document.getElementById("GrafoDirigido");
 
   let payload = {
-    data: grafoDeTabla(tablaId),
+    data: graphFromTable(tablaId),
     origen: origen.value.trim(),
     destino: destino.value.trim(),
     dirigido: dirigido.checked
   };
-
-  console.log(JSON.stringify(payload));
 
   postData('flujomaximo', payload)
   .then(data => {
@@ -103,22 +101,21 @@ function floydWarshall() {
     return;
   }
 
-  postData('floydwarshall', grafoDeTabla(tablaId))
+  postData('floydwarshall', graphFromTable(tablaId))
   .then(data => {
     renderResponseFloyd(data);
   });
 }
 
-function grafoDeTabla(id: string): any {
+function graphFromTable(id: string): Array<Vertices> {
   const origenes = document.querySelectorAll<HTMLInputElement>(`.origenes${id}`);
   const destinos = document.querySelectorAll<HTMLInputElement>(`.destinos${id}`);
   const pesos = document.querySelectorAll<HTMLInputElement>(`.pesos${id}`);
 
-  let idx: number = 0;
   let peso: number = 0;
   let grafo = []
 
-  for (; idx < origenes.length; idx += 1) {
+  for (let idx = 0; idx < origenes.length; idx += 1) {
     peso = parseFloat(pesos[idx].value.trim());
 
     if (isNaN(peso)) {
@@ -148,7 +145,7 @@ async function postData(url: string, data = {}) {
   return response.json();
 }
 
-function renderResponseFlujo(r: RespuestaFlujoMaximo) {
+function renderResponseFlujo(r: ResponseFlujoMaximo) {
   let respuesta = document.getElementById("respuestaFlujo");
   const dirigido = <HTMLInputElement>document.getElementById("GrafoDirigido");
 
@@ -181,7 +178,7 @@ function renderResponseFlujo(r: RespuestaFlujoMaximo) {
   respuesta.style.setProperty("display", "block", 'important');
 }
 
-function renderResponseFloyd(r: RespuestaFloydW) {
+function renderResponseFloyd(r: ResponseFloydW) {
   const cambios = new Set();
 
   for (const cambio of r.cambios) {
@@ -281,16 +278,16 @@ function graphButton(id: string, link: string) :string {
 
 function setOfTrajectory(trajectory: string): Set<string> {
   const t: Set<string>=  new Set();
-  const s = find_strip(trajectory, '|').split(",");
+  const s = findStrip(trajectory, '|').split(",");
 
-  for (let i = 0; i < s.length - 1; i += 1) {
+  for(let i = 0; i < s.length - 1; i += 1) {
     t.add(`${s[i]}${s[i+1]}`);
   }
 
   return t;
 }
 
-function find_strip(str: string, neddle: string): string {
+function findStrip(str: string, neddle: string): string {
   //busca needle y quita todo lo que este después de este, incluyendo a este
   //si no se encuentra, regresa el str intacto
   const idx = str.indexOf(neddle);
@@ -309,4 +306,4 @@ function ejemploFlujo() {
 function ejemploFloyd() {
   const ejemplo = [{"origen":"1","destino":"2","peso":700}, {"origen":"1","destino":"3","peso":200},{"origen":"2","destino":"3","peso":300},{"origen":"2","destino":"4","peso":200},{"origen":"2","destino":"6","peso":400},{"origen":"3","destino":"4","peso":700},{"origen":"3","destino":"5","peso":600},{"origen":"4","destino":"6","peso":100},{"origen":"4","destino":"5","peso":300},{"origen":"6","destino":"5","peso":500}];
   postData('floydwarshall', ejemplo).then(data => {renderResponseFloyd(data);});
-}
+  }
