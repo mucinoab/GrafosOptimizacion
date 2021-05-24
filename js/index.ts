@@ -107,6 +107,18 @@ function floydWarshall() {
   });
 }
 
+//Critical Path Method
+function CPM() {
+  const act = graphFromTable("CPM");
+
+  if (act === undefined) return;
+
+  postData("cpm", act)
+  .then(data => {
+    console.log(data);
+  });
+}
+
 function graphFromTable(id: string): Array<Vertices> {
   const origenes = document.querySelectorAll<HTMLInputElement>(`.origenes${id}`);
   const destinos = document.querySelectorAll<HTMLInputElement>(`.destinos${id}`);

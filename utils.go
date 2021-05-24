@@ -22,6 +22,12 @@ func (s *Set) Add(k string) {
 	s.m[k] = struct{}{}
 }
 
+func (s *Set) Contains(k string) bool {
+	_, c := s.m[k]
+
+	return c
+}
+
 func (s *Set) toSlice() *[]string {
 	sl := make([]string, 0, len(s.m))
 
@@ -32,6 +38,25 @@ func (s *Set) toSlice() *[]string {
 	sort.Strings(sl)
 
 	return &sl
+}
+
+// Values that are in s or in sn but not in both
+func (s *Set) SymmetricDifference(sn *Set) *Set {
+	newS := set()
+
+	for i := range s.m {
+		if !sn.Contains(i) {
+			newS.Add(i)
+		}
+	}
+
+	for i := range sn.m {
+		if !s.Contains(i) {
+			newS.Add(i)
+		}
+	}
+
+	return newS
 }
 
 func Find(slice *[]camino, val camino) bool {

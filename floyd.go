@@ -20,12 +20,12 @@ type Cambio struct {
 }
 
 // TODO matriz de cambios rara
-func ResuelveFloyWarshall(grafo []Vertice) ([]byte, map[string]map[string]float64) {
-	sol := VerticesToAdjList(&grafo, false)
+func ResuelveFloyWarshall(grafo *[]Vertice) ([]byte, map[string]map[string]float64) {
+	sol := VerticesToAdjList(grafo, false)
 	nodos := set()
 	inf := math.Inf(0)
 
-	for _, v := range grafo {
+	for _, v := range *grafo {
 		nodos.Add(v.Origen)
 		nodos.Add(v.Destino)
 	}

@@ -63,6 +63,15 @@ function floydWarshall() {
         renderResponseFloyd(data);
     });
 }
+function CPM() {
+    const act = graphFromTable("CPM");
+    if (act === undefined)
+        return;
+    postData("cpm", act)
+        .then(data => {
+        console.log(data);
+    });
+}
 function graphFromTable(id) {
     const origenes = document.querySelectorAll(`.origenes${id}`);
     const destinos = document.querySelectorAll(`.destinos${id}`);

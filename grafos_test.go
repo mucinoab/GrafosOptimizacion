@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -64,10 +65,28 @@ func TestGrafos(t *testing.T) {
 			"6": {"1": 800, "2": 300, "3": 600, "4": 100, "5": 400, "6": 0},
 		}
 
-		_, sol := ResuelveFloyWarshall(grafo)
+		_, sol := ResuelveFloyWarshall(&grafo)
 
 		if !reflect.DeepEqual(sol, correctSol) {
 			t.Error("Respuesa incorrecta", correctSol, sol)
 		}
+	})
+
+	t.Run("Ruta Crítica", func(t *testing.T) {
+		ResuelveCPM(&[]Vertice{
+			{"A", "-", 2}, {"B", "A", 4}, {"C", "B", 1}, {"C", "H", 1},
+			{"D", "-", 6}, {"E", "G", 3}, {"F", "E", 5}, {"G", "D", 2},
+			{"H", "G", 2}, {"I", "D", 3}, {"J", "I", 4}, {"K", "D", 3},
+			{"L", "J", 5}, {"L", "K", 5}, {"M", "C", 2}, {"M", "L", 2},
+		})
+
+		fmt.Println(ResuelveCPM(&[]Vertice{
+			{"a", "-", 5}, {"b", "-", 2},
+			{"c", "a", 2}, {"d", "a", 3},
+			{"e", "b", 1}, {"f", "c", 1},
+			{"f", "d", 1}, {"g", "e", 4},
+		}))
+
+		t.Error("Sin repuesta correcta aún.")
 	})
 }

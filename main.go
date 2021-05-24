@@ -16,6 +16,7 @@ func main() {
 	http.Handle("/js/", js_files)
 	http.HandleFunc("/flujomaximo", flujoMaximo)
 	http.HandleFunc("/floydwarshall", FloyWarshall)
+	http.HandleFunc("/cpm", CPM)
 
 	log.Printf("http://localhost:%s", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
@@ -46,8 +47,24 @@ func FloyWarshall(rw http.ResponseWriter, req *http.Request) {
 		log.Print(err)
 	}
 
-	answer, _ := ResuelveFloyWarshall(grafo)
+	answer, _ := ResuelveFloyWarshall(&grafo)
 
 	rw.Write(gzipF(&answer, &rw))
 	log.Println("Floy-Warshall")
+}
+
+func CPM(rw http.ResponseWriter, req *http.Request) {
+	var actividades []Vertice
+
+	decoder := json.NewDecoder(req.Body)
+	err := decoder.Decode(&actividades)
+
+	if err != nil {
+		log.Print(err)
+	}
+
+	answer := ResuelveCPM(&actividades)
+
+	rw.Write(gzipF(&answer, &rw))
+	log.Println("CPM")
 }
