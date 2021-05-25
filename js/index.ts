@@ -1,12 +1,27 @@
 interface ResponseFloydW {
-  cambios: Array<Change>
-  iteraciones: Array<Array<Vertices>>
-  nodos: Array<string>
+  cambios: Array<Change>,
+  iteraciones: Array<Array<Vertices>>,
+  nodos: Array<string>,
 }
 
 interface ResponseFlujoMaximo {
-  Flujo: number
-  Data: Array<Path>
+  Flujo: number,
+  Data: Array<Path>,
+}
+
+interface ResponseCPM {
+  actividades: Array<Actividad>,
+  rutaCritica: Array<string>,
+  duracionTotal: number,
+}
+
+interface Actividad {
+  nombre: string,
+  duracion: number,
+  proximoL: number,
+  proximoR: number,
+  lejanoL: number,
+  lejanoR: number,
 }
 
 interface Path {
@@ -115,7 +130,7 @@ function CPM() {
 
   postData("cpm", act)
   .then(data => {
-    console.log(data);
+    console.log(JSON.stringify(data));
   });
 }
 
@@ -318,4 +333,4 @@ function ejemploFlujo() {
 function ejemploFloyd() {
   const ejemplo = [{"origen":"1","destino":"2","peso":700}, {"origen":"1","destino":"3","peso":200},{"origen":"2","destino":"3","peso":300},{"origen":"2","destino":"4","peso":200},{"origen":"2","destino":"6","peso":400},{"origen":"3","destino":"4","peso":700},{"origen":"3","destino":"5","peso":600},{"origen":"4","destino":"6","peso":100},{"origen":"4","destino":"5","peso":300},{"origen":"6","destino":"5","peso":500}];
   postData('floydwarshall', ejemplo).then(data => {renderResponseFloyd(data);});
-  }
+}

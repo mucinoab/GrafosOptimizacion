@@ -69,7 +69,7 @@ function CPM() {
         return;
     postData("cpm", act)
         .then(data => {
-        console.log(data);
+        console.log(JSON.stringify(data));
     });
 }
 function graphFromTable(id) {

@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"log"
-	"math"
 )
 
 type RespuestaFloydWarshall struct {
@@ -23,7 +22,6 @@ type Cambio struct {
 func ResuelveFloyWarshall(grafo *[]Vertice) ([]byte, map[string]map[string]float64) {
 	sol := VerticesToAdjList(grafo, false)
 	nodos := set()
-	inf := math.Inf(0)
 
 	for _, v := range *grafo {
 		nodos.Add(v.Origen)
@@ -39,10 +37,10 @@ func ResuelveFloyWarshall(grafo *[]Vertice) ([]byte, map[string]map[string]float
 			} else {
 				// Nodos sin conexión directa
 				if _, ok := sol[origen][destino]; !ok {
-					sol[origen][destino] = inf
+					sol[origen][destino] = Inf
 				}
 				if _, ok := sol[destino][origen]; !ok {
-					sol[destino][origen] = inf
+					sol[destino][origen] = Inf
 				}
 			}
 		}
@@ -78,7 +76,7 @@ func ResuelveFloyWarshall(grafo *[]Vertice) ([]byte, map[string]map[string]float
 	// representar JavaScript
 	for _, iter := range iteraciones {
 		for idx, v := range iter {
-			if v.Peso == inf {
+			if v.Peso == Inf {
 				iter[idx].Peso = 1.7976931348623157e+308
 			}
 		}

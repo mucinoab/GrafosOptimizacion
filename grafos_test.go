@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"reflect"
+	"sort"
 	"testing"
 )
 
@@ -73,20 +73,69 @@ func TestGrafos(t *testing.T) {
 	})
 
 	t.Run("Ruta Crítica", func(t *testing.T) {
-		ResuelveCPM(&[]Vertice{
+		const duracion float64 = 20.0
+		ruta := []string{"D", "I", "J", "L", "M", "-"}
+
+		_, clase := ResuelveCPM(&[]Vertice{
 			{"A", "-", 2}, {"B", "A", 4}, {"C", "B", 1}, {"C", "H", 1},
 			{"D", "-", 6}, {"E", "G", 3}, {"F", "E", 5}, {"G", "D", 2},
 			{"H", "G", 2}, {"I", "D", 3}, {"J", "I", 4}, {"K", "D", 3},
 			{"L", "J", 5}, {"L", "K", 5}, {"M", "C", 2}, {"M", "L", 2},
 		})
 
-		fmt.Println(ResuelveCPM(&[]Vertice{
+		if clase.DuracionTotal != duracion {
+			t.Error("Duración total erronea.")
+		}
+
+		sort.Strings(clase.RutaCritica)
+		sort.Strings(ruta)
+
+		if !reflect.DeepEqual(clase.RutaCritica, ruta) {
+			t.Error("Ruta Critica erronea", clase.RutaCritica, ruta)
+		}
+
+		// 7
+		ResuelveCPM(&[]Vertice{
+			{"A", "-", 10},
+			{"B", "-", 7},
+			{"C", "A", 5},
+			{"D", "C", 3},
+			{"E", "D", 2},
+			{"F", "B", 1},
+			{"F", "E", 1},
+			{"G", "E", 1},
+			{"G", "F", 14},
+		})
+
+		// 10
+		ResuelveCPM(&[]Vertice{
+			{"A", "-", 3},
+			{"B", "A", 14},
+			{"C", "A", 1},
+			{"D", "C", 3},
+			{"E", "C", 1},
+			{"F", "C", 2},
+			{"G", "D", 1},
+			{"G", "E", 1},
+			{"G", "F", 1},
+			{"H", "G", 1},
+			{"I", "H", 3},
+			{"J", "H", 2},
+			{"K", "I", 2},
+			{"K", "J", 2},
+			{"L", "K", 2},
+			{"M", "L", 4},
+			{"N", "L", 1},
+			{"O", "B", 3},
+			{"O", "M", 3},
+			{"O", "N", 3},
+		})
+
+		ResuelveCPM(&[]Vertice{
 			{"a", "-", 5}, {"b", "-", 2},
 			{"c", "a", 2}, {"d", "a", 3},
 			{"e", "b", 1}, {"f", "c", 1},
 			{"f", "d", 1}, {"g", "e", 4},
-		}))
-
-		t.Error("Sin repuesta correcta aún.")
+		})
 	})
 }

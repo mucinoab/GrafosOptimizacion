@@ -9,6 +9,9 @@ import (
 	"sort"
 )
 
+const Inf = math.MaxFloat64
+const NInf = -math.MaxFloat64
+
 // custom Hash Set
 type Set struct {
 	m map[string]struct{}
@@ -74,7 +77,7 @@ func Pop(alist *[]camino) {
 }
 
 func Min(marcado *[]camino, grafo map[string]map[string]float64) float64 {
-	mini := math.Inf(0)
+	mini := Inf
 	for _, v := range *marcado {
 		e := grafo[v.izq][v.der]
 		mini = math.Min(mini, e)

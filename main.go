@@ -63,7 +63,7 @@ func CPM(rw http.ResponseWriter, req *http.Request) {
 		log.Print(err)
 	}
 
-	answer := ResuelveCPM(&actividades)
+	answer, _ := ResuelveCPM(&actividades)
 
 	rw.Write(gzipF(&answer, &rw))
 	log.Println("CPM")

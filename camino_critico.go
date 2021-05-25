@@ -1,30 +1,45 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
+	"log"
 	"math"
 )
 
-var inf = math.Inf(0)
-var ninf = math.Inf(-1)
+type Actividad struct {
+	Nombre   string  `json:"nombre"`
+	Duracion float64 `json:"duracion"`
 
-type Nodo struct {
-	P, Lhs, Rhs float64
+	// Tiempo más próximo, izquierda | derecha
+	ProximoL float64 `json:"proximoL"`
+	ProximoR float64 `json:"proximoR"`
+
+	// Tiempo más lejano, izquierda | derecha
+	LejanoL float64 `json:"lejanoL"`
+	LejanoR float64 `json:"lejanoR"`
 }
 
-func NewNodo(p float64) *Nodo {
-	return &Nodo{p, ninf, ninf}
+func NuevaActividad(n string, p float64) *Actividad {
+	return &Actividad{n, p, NInf, NInf, Inf, Inf}
 }
 
-func ResuelveCPM(p *[]Vertice) []byte {
-	//  anterior := VerticesToAdjList(p, true)
-	actividades := make(map[string]*Nodo, len(*p))
-	actividades["-"] = &Nodo{0, 0, 0}
+type RespuestaCPM struct {
+	Actividades   []*Actividad `json:"actividades"`
+	RutaCritica   []string     `json:"rutaCritica"`
+	DuracionTotal float64      `json:"duracionTotal"`
+}
+
+func ResuelveCPM(p *[]Vertice) ([]byte, RespuestaCPM) {
+	anterior := VerticesToAdjList(p, true)
+
+	actividades := make(map[string]*Actividad, len(*p))
+	actividades["-"] = &Actividad{"-", 0, 0, 0, 0, 0} // Inicio
+
 	s := set()
 	sn := set()
 
 	for idx := 0; idx < len(*p); idx += 1 {
-		actividades[(*p)[idx].Origen] = NewNodo((*p)[idx].Peso)
+		actividades[(*p)[idx].Origen] = NuevaActividad((*p)[idx].Origen, (*p)[idx].Peso)
 
 		s.Add((*p)[idx].Origen)
 		// Invertimos porque el formato de la tabla es distinto
@@ -33,25 +48,63 @@ func ResuelveCPM(p *[]Vertice) []byte {
 		sn.Add((*p)[idx].Origen)
 	}
 
-	s.SymmetricDifference(sn)
-	siguiente := VerticesToAdjList(p, true)
-	Dfs("-", siguiente, actividades, set())
+	recorridoIda("-", VerticesToAdjList(p, true), actividades)
 
-	for n, v := range actividades {
-		fmt.Println(n, *v)
+	duracionTotal := NInf
+	for k := range s.SymmetricDifference(sn).m {
+		duracionTotal = math.Max(duracionTotal, actividades[k].ProximoR)
 	}
 
-	return make([]byte, 0)
+	// Actividades terminales
+	for t := range s.SymmetricDifference(sn).m {
+		actividades[t].LejanoR = duracionTotal
+		actividades[t].LejanoL = duracionTotal - actividades[t].Duracion
+		recorridoRegreso(t, anterior, actividades)
+	}
+
+	// Ruta crítica
+	ruta := make([]string, 0, len(actividades))
+	acti := make([]*Actividad, 0, len(actividades))
+
+	for a, v := range actividades {
+		acti = append(acti, v)
+
+		if v.ProximoR == v.LejanoR {
+			ruta = append(ruta, a)
+		}
+	}
+
+	r := RespuestaCPM{acti, ruta, duracionTotal}
+	resp, err := json.Marshal(r)
+
+	if err != nil {
+		log.Println(err)
+		return nil, r
+	} else {
+		return resp, r
+	}
 }
 
-func Dfs(anterior string, s map[string]map[string]float64, n map[string]*Nodo, v *Set) {
-	peso := n[anterior].Rhs
+func recorridoIda(anterior string, s map[string]map[string]float64, n map[string]*Actividad) {
+	duracion := n[anterior].ProximoR
 
-	for vecino := range s[anterior] {
-		if n[vecino].Lhs < peso {
-			n[vecino].Lhs = peso
-			n[vecino].Rhs = n[vecino].P + peso
-			Dfs(vecino, s, n, v)
+	for ve := range s[anterior] {
+		if n[ve].ProximoL < duracion {
+			n[ve].ProximoL = duracion
+			n[ve].ProximoR = n[ve].Duracion + duracion
+			recorridoIda(ve, s, n)
+		}
+	}
+}
+
+func recorridoRegreso(anterior string, s map[string]map[string]float64, n map[string]*Actividad) {
+	duracion := n[anterior].LejanoL
+
+	for ve := range s[anterior] {
+		if n[ve].LejanoR > duracion {
+			n[ve].LejanoR = duracion
+			n[ve].LejanoL = duracion - n[ve].Duracion
+			recorridoRegreso(ve, s, n)
 		}
 	}
 }
