@@ -370,17 +370,15 @@ function renderResponseCPM(r: ResponseCPM) {
       }
 
       function ejemploFloyd() {
-      const ejemplo = [{"origen":"1","destino":"2","peso":700}, {"origen":"1","destino":"3","peso":200},{"origen":"2","destino":"3","peso":300},{"origen":"2","destino":"4","peso":200},{"origen":"2","destino":"6","peso":400},{"origen":"3","destino":"4","peso":700},{"origen":"3","destino":"5","peso":600},{"origen":"4","destino":"6","peso":100},{"origen":"4","destino":"5","peso":300},{"origen":"6","destino":"5","peso":500}];
-      postData('floydwarshall', ejemplo).then(data => {renderResponseFloyd(data);});
-      }
+        const ejemplo = [{"origen":"1","destino":"2","peso":700}, {"origen":"1","destino":"3","peso":200},{"origen":"2","destino":"3","peso":300},{"origen":"2","destino":"4","peso":200},{"origen":"2","destino":"6","peso":400},{"origen":"3","destino":"4","peso":700},{"origen":"3","destino":"5","peso":600},{"origen":"4","destino":"6","peso":100},{"origen":"4","destino":"5","peso":300},{"origen":"6","destino":"5","peso":500}];
+        postData('floydwarshall', ejemplo).then(data => {renderResponseFloyd(data);});
+        }
 
-      function ejemploCPM() {
-      const ejemplo = [{"origen":"A","destino":"-","peso":2},{"origen":"B","destino":"A","peso":4},{"origen":"C","destino":"B","peso":1},{"origen":"C","destino":"H","peso":1},{"origen":"D","destino":"-","peso":6},{"origen":"E","destino":"G","peso":3},{"origen":"F","destino":"E","peso":5},{"origen":"G","destino":"D","peso":2},{"origen":"H","destino":"G","peso":2},{"origen":"I","destino":"D","peso":3},{"origen":"J","destino":"I","peso":4},{"origen":"K","destino":"D","peso":3},{"origen":"L","destino":"J","peso":5},{"origen":"L","destino":"K","peso":5},{"origen":"M","destino":"C","peso":2},{"origen":"M","destino":"L","peso":2}];
-      postData('cpm', ejemplo).then(data => {renderResponseCPM(data);});
-      // Tabla de valores de ejemplo
-      setTimeout(function(){
-        let respuesta = document.getElementById("respuestaCPM");
-        const t = `<table class="table table-hover table-sm"><th scope="col">Origen</th><th scope="col">Destino</th><th scope="col">Peso</th><tbody><tr><td>A</td><td>-</td><td>2</td></tr><tr><td>D</td><td>-</td><td>6<br></td></tr><tr><td>B</td><td>A</td><td>4</td></tr><tr><td>C</td><td>B</td><td>1</td></tr><tr><td>C</td><td>H</td><td>1</td></tr><tr><td>E</td><td>G</td><td>3</td></tr><tr><td>F</td><td>E</td><td>5</td></tr><tr><td>G</td><td>D</td><td>2</td></tr><tr><td>H</td><td>G</td><td>2</td></tr><tr><td>I</td><td>D</td><td>3</td></tr><tr><td>J</td><td>I</td><td>4</td></tr><tr><td>K</td><td>D</td><td>3</td></tr><tr><td>L</td><td>J</td><td>5</td></tr><tr><td>L</td><td>K<br></td><td>5</td></tr><tr><td>M</td><td>C</td><td>2<br></td></tr><tr><td>M</td><td>L</td><td>2</td></tr></tbody></table>`;
-        respuesta.insertAdjacentHTML("afterbegin", t);
-      }, 2500);
+        function ejemploCPM() {
+        const ejemplo = [{"origen":"A","destino":"-","peso":2},{"origen":"B","destino":"A","peso":4},{"origen":"C","destino":"B","peso":1},{"origen":"C","destino":"H","peso":1},{"origen":"D","destino":"-","peso":6},{"origen":"E","destino":"G","peso":3},{"origen":"F","destino":"E","peso":5},{"origen":"G","destino":"D","peso":2},{"origen":"H","destino":"G","peso":2},{"origen":"I","destino":"D","peso":3},{"origen":"J","destino":"I","peso":4},{"origen":"K","destino":"D","peso":3},{"origen":"L","destino":"J","peso":5},{"origen":"L","destino":"K","peso":5},{"origen":"M","destino":"C","peso":2},{"origen":"M","destino":"L","peso":2}];
+        postData('cpm', ejemplo).then(data => {renderResponseCPM(data);}).then( _ =>{
+          // Tabla de valores de ejemplo
+          const t = `<table class="table table-hover table-sm"><th scope="col">Origen</th><th scope="col">Destino</th><th scope="col">Peso</th><tbody><tr><td>A</td><td>-</td><td>2</td></tr><tr><td>D</td><td>-</td><td>6<br></td></tr><tr><td>B</td><td>A</td><td>4</td></tr><tr><td>C</td><td>B</td><td>1</td></tr><tr><td>C</td><td>H</td><td>1</td></tr><tr><td>E</td><td>G</td><td>3</td></tr><tr><td>F</td><td>E</td><td>5</td></tr><tr><td>G</td><td>D</td><td>2</td></tr><tr><td>H</td><td>G</td><td>2</td></tr><tr><td>I</td><td>D</td><td>3</td></tr><tr><td>J</td><td>I</td><td>4</td></tr><tr><td>K</td><td>D</td><td>3</td></tr><tr><td>L</td><td>J</td><td>5</td></tr><tr><td>L</td><td>K<br></td><td>5</td></tr><tr><td>M</td><td>C</td><td>2<br></td></tr><tr><td>M</td><td>L</td><td>2</td></tr></tbody></table>`;
+          document.getElementById("respuestaCPM").insertAdjacentHTML("afterbegin", t);
+        });
     }
