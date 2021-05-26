@@ -267,4 +267,9 @@ function ejemploFloyd() {
 function ejemploCPM() {
     const ejemplo = [{ "origen": "A", "destino": "-", "peso": 2 }, { "origen": "B", "destino": "A", "peso": 4 }, { "origen": "C", "destino": "B", "peso": 1 }, { "origen": "C", "destino": "H", "peso": 1 }, { "origen": "D", "destino": "-", "peso": 6 }, { "origen": "E", "destino": "G", "peso": 3 }, { "origen": "F", "destino": "E", "peso": 5 }, { "origen": "G", "destino": "D", "peso": 2 }, { "origen": "H", "destino": "G", "peso": 2 }, { "origen": "I", "destino": "D", "peso": 3 }, { "origen": "J", "destino": "I", "peso": 4 }, { "origen": "K", "destino": "D", "peso": 3 }, { "origen": "L", "destino": "J", "peso": 5 }, { "origen": "L", "destino": "K", "peso": 5 }, { "origen": "M", "destino": "C", "peso": 2 }, { "origen": "M", "destino": "L", "peso": 2 }];
     postData('cpm', ejemplo).then(data => { renderResponseCPM(data); });
+    setTimeout(function () {
+        let respuesta = document.getElementById("respuestaCPM");
+        const t = `<table class="table table-hover table-sm"><th scope="col">Origen</th><th scope="col">Destino</th><th scope="col">Peso</th><tbody><tr><td>A</td><td>-</td><td>2</td></tr><tr><td>D</td><td>-</td><td>6<br></td></tr><tr><td>B</td><td>A</td><td>4</td></tr><tr><td>C</td><td>B</td><td>1</td></tr><tr><td>C</td><td>H</td><td>1</td></tr><tr><td>E</td><td>G</td><td>3</td></tr><tr><td>F</td><td>E</td><td>5</td></tr><tr><td>G</td><td>D</td><td>2</td></tr><tr><td>H</td><td>G</td><td>2</td></tr><tr><td>I</td><td>D</td><td>3</td></tr><tr><td>J</td><td>I</td><td>4</td></tr><tr><td>K</td><td>D</td><td>3</td></tr><tr><td>L</td><td>J</td><td>5</td></tr><tr><td>L</td><td>K<br></td><td>5</td></tr><tr><td>M</td><td>C</td><td>2<br></td></tr><tr><td>M</td><td>L</td><td>2</td></tr></tbody></table>`;
+        respuesta.insertAdjacentHTML("afterbegin", t);
+    }, 2500);
 }

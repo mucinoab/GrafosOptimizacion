@@ -53,12 +53,14 @@ func ResuelveCPM(p *[]Vertice) ([]byte, RespuestaCPM) {
 	recorridoIda("-", siguientes, actividades)
 
 	duracionTotal := NInf
-	for k := range s.SymmetricDifference(sn).m {
+	aTerminales := s.SymmetricDifference(sn).m
+
+	for k := range aTerminales {
 		duracionTotal = math.Max(duracionTotal, actividades[k].ProximoR)
 	}
 
 	// Actividades terminales
-	for t := range s.SymmetricDifference(sn).m {
+	for t := range aTerminales {
 		actividades[t].LejanoR = duracionTotal
 		actividades[t].LejanoL = duracionTotal - actividades[t].Duracion
 		recorridoRegreso(t, anterior, actividades)
