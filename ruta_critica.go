@@ -7,8 +7,9 @@ import (
 )
 
 type Actividad struct {
-	Nombre   string  `json:"nombre"`
-	Duracion float64 `json:"duracion"`
+	Nombre    string   `json:"nombre"`
+	Duracion  float64  `json:"duracion"`
+	Sucesores []string `json:"sucesores"`
 
 	// Tiempo más próximo, izquierda | derecha
 	ProximoL float64 `json:"proximoL"`
@@ -20,7 +21,7 @@ type Actividad struct {
 }
 
 func NuevaActividad(n string, p float64) *Actividad {
-	return &Actividad{n, p, NInf, NInf, Inf, Inf}
+	return &Actividad{n, p, []string{}, NInf, NInf, Inf, Inf}
 }
 
 type RespuestaCPM struct {
@@ -33,7 +34,7 @@ func ResuelveCPM(p *[]Vertice) ([]byte, RespuestaCPM) {
 	anterior := VerticesToAdjList(p, true)
 
 	actividades := make(map[string]*Actividad, len(*p))
-	actividades["-"] = &Actividad{"-", 0, 0, 0, 0, 0} // Inicio
+	actividades["-"] = &Actividad{"-", 0, []string{}, 0, 0, 0, 0} // Inicio
 
 	s := set()
 	sn := set()
@@ -48,7 +49,8 @@ func ResuelveCPM(p *[]Vertice) ([]byte, RespuestaCPM) {
 		sn.Add((*p)[idx].Origen)
 	}
 
-	recorridoIda("-", VerticesToAdjList(p, true), actividades)
+	siguientes := VerticesToAdjList(p, true)
+	recorridoIda("-", siguientes, actividades)
 
 	duracionTotal := NInf
 	for k := range s.SymmetricDifference(sn).m {
@@ -65,14 +67,30 @@ func ResuelveCPM(p *[]Vertice) ([]byte, RespuestaCPM) {
 	// Ruta crítica
 	ruta := make([]string, 0, len(actividades))
 	acti := make([]*Actividad, 0, len(actividades))
+	idx := 0
 
 	for a, v := range actividades {
 		acti = append(acti, v)
 
+		// Holgura de cero
 		if v.ProximoR == v.LejanoR {
 			ruta = append(ruta, a)
 		}
+
+		// Los todos los sucesores de cada actividad
+		if len(siguientes[a]) == 0 {
+			acti[idx].Sucesores = append(acti[idx].Sucesores, "Fin")
+		} else {
+			for s := range siguientes[a] {
+				acti[idx].Sucesores = append(acti[idx].Sucesores, s)
+			}
+		}
+		idx += 1
 	}
+
+	// Nodo final
+	acti = append(acti, NuevaActividad("Fin", duracionTotal))
+	ruta = append(ruta, "Fin")
 
 	r := RespuestaCPM{acti, ruta, duracionTotal}
 	resp, err := json.Marshal(r)

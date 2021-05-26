@@ -191,13 +191,15 @@ img:hover {
 
             <button type="button" class="btn btn-primary" onclick="showTable('CPM', 'formularioCPM', 'NverticesCPM')">Generar Tabla</button>
             <br>
+            <br>
+            <button type="button" class="btn btn-outline-primary" onclick="ejemploCPM()">Ejemplo</button>
           </form>
 
           <br>
           <br>
 
           <div id="CPM" style="display: none;">
-            <p>Ingresa todas las actividades y sus respectivas duraciones.</p>
+            <p>Ingresa todas las actividades, sus predecesora y sus respectivas duraciones. Si una actividad no tiene predecesora, utiliza un guión medio ("-").</p>
             <form id="TablaCPM">
               <table class="table table-sm">
                 <thead>
@@ -215,6 +217,9 @@ img:hover {
             <button type="button" class="btn btn-primary" onclick="CPM()">Resolver</button>
             </form>
           </div>
+          <br> <br>
+          <div id="respuestaCPM" style="display: none;"></div>
+          <br> <br> <br>
 
         </div>
 

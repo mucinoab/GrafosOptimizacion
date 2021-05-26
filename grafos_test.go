@@ -74,7 +74,7 @@ func TestGrafos(t *testing.T) {
 
 	t.Run("Ruta Crítica", func(t *testing.T) {
 		const duracion float64 = 20.0
-		ruta := []string{"D", "I", "J", "L", "M", "-"}
+		ruta := []string{"D", "I", "J", "L", "M", "-", "Fin"}
 
 		_, clase := ResuelveCPM(&[]Vertice{
 			{"A", "-", 2}, {"B", "A", 4}, {"C", "B", 1}, {"C", "H", 1},

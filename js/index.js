@@ -69,7 +69,7 @@ function CPM() {
         return;
     postData("cpm", act)
         .then(data => {
-        console.log(JSON.stringify(data));
+        renderResponseCPM(data);
     });
 }
 function graphFromTable(id) {
@@ -101,26 +101,58 @@ async function postData(url, data = {}) {
     });
     return response.json();
 }
+function renderResponseCPM(r) {
+    const rutaCritica = new Set(r.rutaCritica);
+    let respHTML = `<br><p>Duración Total: ${r.duracionTotal}</p><br>`;
+    let link = "https://image-charts.com/chart?chof=.svg&chs=999x999&cht=gv&chl=graph{rankdir=LR;";
+    for (const a of r.actividades) {
+        if (a.nombre === "-") {
+            link += `Inicio--{`;
+        }
+        else {
+            link += `${a.nombre}--{`;
+        }
+        for (const s of a.sucesores) {
+            link += `${s} `;
+        }
+        link += "}";
+        link += `[label="${a.proximoL}, ${a.proximoR}\n${a.lejanoL}, ${a.lejanoR}"`;
+        if (rutaCritica.has(a.nombre)) {
+            link += ",color=red,penwidth=3.0]";
+        }
+        else {
+            link += "]";
+        }
+        link += ";";
+    }
+    link += "}";
+    link = encodeURI(link);
+    respHTML += `<img src="${link}" width="999" height="360" class="center img-fluid"><br><br>`;
+    let respuesta = document.getElementById("respuestaCPM");
+    respuesta.innerHTML = "";
+    respuesta.insertAdjacentHTML("afterbegin", respHTML);
+    respuesta.style.setProperty("display", "block", 'important');
+}
 function renderResponseFlujo(r) {
     let respuesta = document.getElementById("respuestaFlujo");
     const dirigido = document.getElementById("GrafoDirigido");
     let respHTML = `<p>Flujo Máximo: ${r.Flujo}</p><br>
-  <table class="table table-hover">
-  <thead class="thead-light"><tr>
-  <th scope="col">Origen</th>
-  <th scope="col">Destino</th>
-  <th scope="col">Peso</th>
-  </tr></thead><tbody>`;
+      <table class="table table-hover">
+      <thead class="thead-light"><tr>
+      <th scope="col">Origen</th>
+      <th scope="col">Destino</th>
+      <th scope="col">Peso</th>
+      </tr></thead><tbody>`;
     let iter = 0;
     for (const e of r.Data) {
         respHTML += `<tr class="table-primary"><td class="success">
-    ${e.camino}</td><td colspan="2">${graphButton(`flujo_${iter}`, drawGraphLink(e.data, e.camino, dirigido.checked))}
-    </td></tr>`;
+        ${e.camino}</td><td colspan="2">${graphButton(`flujo_${iter}`, drawGraphLink(e.data, e.camino, dirigido.checked))}
+        </td></tr>`;
         for (const v of e.data) {
             respHTML += `
-      <tr><td>${v.origen}</td>
-      <td>${v.destino}</td>
-      <td>${v.peso}</td></tr> `;
+          <tr><td>${v.origen}</td>
+          <td>${v.destino}</td>
+          <td>${v.peso}</td></tr> `;
         }
         iter += 1;
     }
@@ -195,17 +227,17 @@ function drawGraphLink(nodes, camino, dirigido) {
             link += `${v.origen}${sep}${v.destino}[label=%22${v.peso}%22];`;
         }
     }
-    link += "}#";
+    link += "}";
     return link;
 }
 function graphButton(id, link) {
     return `<button class="btn btn-primary" type="button"
-  data-bs-toggle="collapse" data-bs-target="#${id}" aria-expanded="false"
-  aria-controls="${id}">
-  Visualizar</button>
-  <div class="collapse" id="${id}"><br><br>
-  <div class="card card-body" style="padding: 0px;">
-  <img src="${link}" width="640" height="640" class="center img-fluid" loading="lazy"></div></div>`;
+      data-bs-toggle="collapse" data-bs-target="#${id}" aria-expanded="false"
+      aria-controls="${id}">
+      Visualizar</button>
+      <div class="collapse" id="${id}"><br><br>
+      <div class="card card-body" style="padding:0px;">
+      <img src="${link}" width="640" height="640" class="center img-fluid" loading="lazy"></div></div>`;
 }
 function setOfTrajectory(trajectory) {
     const t = new Set();
@@ -231,4 +263,8 @@ function ejemploFlujo() {
 function ejemploFloyd() {
     const ejemplo = [{ "origen": "1", "destino": "2", "peso": 700 }, { "origen": "1", "destino": "3", "peso": 200 }, { "origen": "2", "destino": "3", "peso": 300 }, { "origen": "2", "destino": "4", "peso": 200 }, { "origen": "2", "destino": "6", "peso": 400 }, { "origen": "3", "destino": "4", "peso": 700 }, { "origen": "3", "destino": "5", "peso": 600 }, { "origen": "4", "destino": "6", "peso": 100 }, { "origen": "4", "destino": "5", "peso": 300 }, { "origen": "6", "destino": "5", "peso": 500 }];
     postData('floydwarshall', ejemplo).then(data => { renderResponseFloyd(data); });
+}
+function ejemploCPM() {
+    const ejemplo = [{ "origen": "A", "destino": "-", "peso": 2 }, { "origen": "B", "destino": "A", "peso": 4 }, { "origen": "C", "destino": "B", "peso": 1 }, { "origen": "C", "destino": "H", "peso": 1 }, { "origen": "D", "destino": "-", "peso": 6 }, { "origen": "E", "destino": "G", "peso": 3 }, { "origen": "F", "destino": "E", "peso": 5 }, { "origen": "G", "destino": "D", "peso": 2 }, { "origen": "H", "destino": "G", "peso": 2 }, { "origen": "I", "destino": "D", "peso": 3 }, { "origen": "J", "destino": "I", "peso": 4 }, { "origen": "K", "destino": "D", "peso": 3 }, { "origen": "L", "destino": "J", "peso": 5 }, { "origen": "L", "destino": "K", "peso": 5 }, { "origen": "M", "destino": "C", "peso": 2 }, { "origen": "M", "destino": "L", "peso": 2 }];
+    postData('cpm', ejemplo).then(data => { renderResponseCPM(data); });
 }
