@@ -15,11 +15,12 @@ type VerticePert struct {
 }
 
 type RespuesaPERT struct {
-	RutaCritica  []string  `json:"rutaCritica"`
-	Estimaciones []float64 `json:"estimaciones"`
-	Varianzas    []float64 `json:"varianzas"`
-	SumaVariazas float64   `json:"sumaVariazas"`
-	Media        float64   `json:"media"`
+	RutaCritica  []string     `json:"rutaCritica"`
+	Estimaciones []float64    `json:"estimaciones"`
+	Varianzas    []float64    `json:"varianzas"`
+	SumaVariazas float64      `json:"sumaVariazas"`
+	Media        float64      `json:"media"`
+	CPM          RespuestaCPM `json:"cpm"`
 }
 
 func ResuelvePERT(a []VerticePert) ([]byte, RespuesaPERT) {
@@ -42,7 +43,7 @@ func ResuelvePERT(a []VerticePert) ([]byte, RespuesaPERT) {
 		sumaVarianza += varianza(mActividades[actividad])
 	}
 
-	r := RespuesaPERT{respuesta.RutaCritica, estimaciones, varianzas, sumaVarianza, respuesta.DuracionTotal}
+	r := RespuesaPERT{respuesta.RutaCritica, estimaciones, varianzas, sumaVarianza, respuesta.DuracionTotal, respuesta}
 
 	resp, err := json.Marshal(r)
 

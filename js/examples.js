@@ -1,5 +1,5 @@
 function fillTableEjemplo(method, ejemplo) {
-    document.getElementById("NverticesPERT").value = String(ejemplo.length);
+    document.getElementById(`Nvertices${method}`).value = String(ejemplo.length);
     showTable(method, `formulario${method}`, `Nvertices${method}`);
     if (method === "PERT") {
         fillTable(method, ejemplo, true);

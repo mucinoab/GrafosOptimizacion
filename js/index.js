@@ -236,6 +236,7 @@ function renderResponsePERT(r) {
   <input id="tiempoID" style="max-width:80px" type="text" class="form-control" placeholder="0.0">
   o menos unidades de tiempo:<b><p id="normalCDF"></p><br></b>`;
     response += `<button type="button" class="btn btn-primary" onclick="renderNormalCDF()">Calcular</button><br><br><br>`;
+    response += `<br><img src="${drawGraphLinkCritical(r.cpm)}" width="999" height="360" class="center img-fluid"><br><br>`;
     document.getElementById("respuestasPERT").innerHTML = response;
     document.getElementById("normalCDF").scrollIntoView(true);
 }
@@ -332,13 +333,22 @@ function renderNormalCDF() {
     r.innerHTML = `${(normalCDF(tiempo, media, varianza) * 100).toFixed(4)} %`;
 }
 function renderResponseCPM(r) {
-    const rutaCritica = new Set(r.rutaCritica);
-    rutaCritica.add("Inicio");
+    let respHTML = `<br><p>Duración Total: ${r.duracionTotal}</p><br>`;
+    respHTML += `<img src="${drawGraphLinkCritical(r)}" width="999" height="360" class="center img-fluid"><br><br>`;
+    let respuesta = document.getElementById("respuestaCPM");
+    respuesta.innerHTML = "";
+    respuesta.insertAdjacentHTML("afterbegin", respHTML);
+    respuesta.style.setProperty("display", "block", 'important');
+    respuesta.scrollIntoView(true);
+}
+function drawGraphLinkCritical(r) {
     for (let a of r.actividades) {
         if (a.nombre === "-") {
             a.nombre = "Inicio";
         }
     }
+    const rutaCritica = new Set(r.rutaCritica);
+    rutaCritica.add("Inicio");
     let link = "https://image-charts.com/chart?chof=.svg&chs=999x999&cht=gv&chl=digraph{rankdir=LR;";
     for (const a of r.actividades) {
         for (const s of a.sucesores) {
@@ -354,12 +364,5 @@ function renderResponseCPM(r) {
         }
     }
     link += "}";
-    link = encodeURI(link);
-    let respHTML = `<br><p>Duración Total: ${r.duracionTotal}</p><br>`;
-    respHTML += `<img src="${link}" width="999" height="360" class="center img-fluid"><br><br>`;
-    let respuesta = document.getElementById("respuestaCPM");
-    respuesta.innerHTML = "";
-    respuesta.insertAdjacentHTML("afterbegin", respHTML);
-    respuesta.style.setProperty("display", "block", 'important');
-    respuesta.scrollIntoView(true);
+    return encodeURI(link);
 }
