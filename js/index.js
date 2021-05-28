@@ -211,8 +211,8 @@ function renderResponsePERT(r) {
     let newColumns;
     let tdClass = "cambio";
     for (let row of table.rows) {
-        const activida = row.cells[1].childNodes[0].value;
-        const predecesora = row.cells[2].childNodes[0].value;
+        const activida = row.cells[1].childNodes[0].value.trim();
+        const predecesora = row.cells[2].childNodes[0].value.trim();
         if (rutaC.has(activida) && rutaC.has(predecesora)) {
             tdClass = "cambio";
         }
@@ -327,30 +327,29 @@ function renderNormalCDF() {
 }
 function renderResponseCPM(r) {
     const rutaCritica = new Set(r.rutaCritica);
-    let respHTML = `<br><p>Duración Total: ${r.duracionTotal}</p><br>`;
+    rutaCritica.add("Inicio");
+    for (let a of r.actividades) {
+        if (a.nombre === "-") {
+            a.nombre = "Inicio";
+        }
+    }
     let link = "https://image-charts.com/chart?chof=.svg&chs=999x999&cht=gv&chl=graph{rankdir=LR;";
     for (const a of r.actividades) {
-        if (a.nombre === "-") {
-            link += `Inicio--{`;
-        }
-        else {
-            link += `${a.nombre}--{`;
-        }
         for (const s of a.sucesores) {
-            link += `${s} `;
+            link += `${a.nombre}--${s}`;
+            link += "[" + `label="${a.proximoL}, ${a.proximoR}\n${a.lejanoL}, ${a.lejanoR}"`;
+            if (rutaCritica.has(a.nombre) && rutaCritica.has(s)) {
+                link += ",color=red,penwidth=3.0]";
+            }
+            else {
+                link += "]";
+            }
+            link += ";";
         }
-        link += "}";
-        link += `[label="${a.proximoL}, ${a.proximoR}\n${a.lejanoL}, ${a.lejanoR}"`;
-        if (rutaCritica.has(a.nombre)) {
-            link += ",color=red,penwidth=3.0]";
-        }
-        else {
-            link += "]";
-        }
-        link += ";";
     }
     link += "}";
     link = encodeURI(link);
+    let respHTML = `<br><p>Duración Total: ${r.duracionTotal}</p><br>`;
     respHTML += `<img src="${link}" width="999" height="360" class="center img-fluid"><br><br>`;
     let respuesta = document.getElementById("respuestaCPM");
     respuesta.innerHTML = "";
