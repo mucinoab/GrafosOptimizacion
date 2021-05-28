@@ -205,12 +205,22 @@ function findStrip(str, neddle) {
 function renderResponsePERT(r) {
     let header = document.getElementById("PERTHeader");
     header.insertAdjacentHTML("beforeend", '<th scope="col">Duración Estimada</th><th scope="col">Varianza</th>');
+    const rutaC = new Set(r.rutaCritica);
     let table = document.getElementById("innerTablaPERT");
     let idx = 0;
     let newColumns;
+    let tdClass = "cambio";
     for (let row of table.rows) {
-        newColumns = `<td>${r.estimaciones[idx].toFixed(3)}</td>
-    <td>${r.varianzas[idx].toFixed(3)}</td>`;
+        const activida = row.cells[1].childNodes[0].value;
+        const predecesora = row.cells[2].childNodes[0].value;
+        if (rutaC.has(activida) && rutaC.has(predecesora)) {
+            tdClass = "cambio";
+        }
+        else {
+            tdClass = "";
+        }
+        newColumns = `<td class="${tdClass}">${r.estimaciones[idx].toFixed(3)}</td>
+    <td class="${tdClass}">${r.varianzas[idx].toFixed(3)}</td>`;
         row.insertAdjacentHTML("beforeend", newColumns);
         idx += 1;
     }

@@ -31,7 +31,7 @@ func ResuelvePERT(a []VerticePert) ([]byte, RespuesaPERT) {
 
 	for idx, actividad := range actividades {
 		estimaciones[idx] = actividad.Peso
-		varianzas[idx] = varianza(mActividades[actividad.Destino])
+		varianzas[idx] = varianza(a[idx])
 	}
 
 	_, respuesta := ResuelveCPM(actividades)

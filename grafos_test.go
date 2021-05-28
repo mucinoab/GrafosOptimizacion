@@ -124,7 +124,7 @@ func TestGrafos(t *testing.T) {
 	})
 
 	t.Run("PERT", func(t *testing.T) {
-		_, clase := ResuelvePERT([]VerticePert{
+		ejemplo := []VerticePert{
 			{"A", "-", 1, 2, 3},
 			{"B", "A", 2, 4, 6},
 			{"C", "B", 0, 1, 2},
@@ -141,7 +141,9 @@ func TestGrafos(t *testing.T) {
 			{"L", "K", 3, 5, 7},
 			{"M", "C", 1, 2, 3},
 			{"M", "L", 1, 2, 3},
-		})
+		}
+
+		_, clase := ResuelvePERT(ejemplo)
 
 		if clase.Media != 20.0 {
 			t.Error("Media total erronea.")

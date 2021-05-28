@@ -323,17 +323,29 @@ function findStrip(str: string, neddle: string): string {
 function renderResponsePERT(r: ResponsePERT) {
   let header = <HTMLTableElement>document.getElementById("PERTHeader");
   header.insertAdjacentHTML("beforeend", '<th scope="col">Duración Estimada</th><th scope="col">Varianza</th>');
+  const rutaC = new Set(r.rutaCritica);
 
   let table = <HTMLTableElement>document.getElementById("innerTablaPERT");
   let idx = 0;
   let newColumns: string;
+  let tdClass = "cambio";
 
   // TODO
   // - limpiar tabla antes de asignar
-  // - marcar valores que pertenecen a la ruta crítica
   for (let row of table.rows) {
-    newColumns = `<td>${r.estimaciones[idx].toFixed(3)}</td>
-    <td>${r.varianzas[idx].toFixed(3)}</td>`;
+    // Segunda  y tercer columna de tabla, "Actividad" y "Predecesora"
+    const activida = (<HTMLInputElement>row.cells[1].childNodes[0]).value;
+    const predecesora = (<HTMLInputElement>row.cells[2].childNodes[0]).value;
+
+    // Checa si esta en la tura crítica
+    if (rutaC.has(activida) && rutaC.has(predecesora)){
+      tdClass = "cambio";
+    } else {
+      tdClass = "";
+    }
+
+    newColumns = `<td class="${tdClass}">${r.estimaciones[idx].toFixed(3)}</td>
+    <td class="${tdClass}">${r.varianzas[idx].toFixed(3)}</td>`;
 
     row.insertAdjacentHTML("beforeend", newColumns);
     idx += 1;
