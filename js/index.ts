@@ -231,8 +231,7 @@ function graphFromTable(id: string): Array<Vertices> {
   return grafo
 }
 
-// TODO generalizar para llenar cualquier tabla
-function fillTablePERT(id: string, d: Array<VerticePERT>) {
+function fillTable(id: string, d: Array<any>, pert: boolean) {
   let origenes = document.querySelectorAll<HTMLInputElement>(`.origenes${id}`);
   let destinos = document.querySelectorAll<HTMLInputElement>(`.destinos${id}`);
   let pesos = document.querySelectorAll<HTMLInputElement>(`.pesos${id}`);
@@ -242,9 +241,14 @@ function fillTablePERT(id: string, d: Array<VerticePERT>) {
   for (let idx = 0; idx < d.length; idx += 1) {
     origenes[idx].value = d[idx].origen;
     destinos[idx].value = d[idx].destino;
-    pesos[idx].value = String(d[idx].optimista);
-    probables[idx].value = String(d[idx].probable);
-    pesimistas[idx].value = String(d[idx].pesimista);
+
+    if (!pert) {
+      pesos[idx].value = String(d[idx].peso);
+    } else {
+      pesos[idx].value = String(d[idx].optimista);
+      probables[idx].value = String(d[idx].probable);
+      pesimistas[idx].value = String(d[idx].pesimista);
+    }
   }
 }
 
@@ -361,6 +365,7 @@ function renderResponsePERT(r: ResponsePERT) {
   response += `<button type="button" class="btn btn-primary" onclick="renderNormalCDF()">Calcular</button><br><br><br>`;
 
   document.getElementById("respuestasPERT").innerHTML = response;
+  document.getElementById("normalCDF").scrollIntoView(true);
 }
 
 function renderResponseFlujo(r: ResponseFlujoMaximo) {
@@ -513,4 +518,5 @@ function renderResponseCPM(r: ResponseCPM) {
   respuesta.innerHTML = "";
   respuesta.insertAdjacentHTML("afterbegin", respHTML);
   respuesta.style.setProperty("display", "block", 'important');
+  respuesta.scrollIntoView(true);
 }
