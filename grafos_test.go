@@ -76,7 +76,7 @@ func TestGrafos(t *testing.T) {
 		const duracion float64 = 20.0
 		ruta := []string{"D", "I", "J", "L", "M", "-", "Fin"}
 
-		_, clase := ResuelveCPM(&[]Vertice{
+		_, clase := ResuelveCPM([]Vertice{
 			{"A", "-", 2}, {"B", "A", 4}, {"C", "B", 1}, {"C", "H", 1},
 			{"D", "-", 6}, {"E", "G", 3}, {"F", "E", 5}, {"G", "D", 2},
 			{"H", "G", 2}, {"I", "D", 3}, {"J", "I", 4}, {"K", "D", 3},
@@ -95,14 +95,14 @@ func TestGrafos(t *testing.T) {
 		}
 
 		// 7
-		ResuelveCPM(&[]Vertice{
+		ResuelveCPM([]Vertice{
 			{"A", "-", 10}, {"B", "-", 7}, {"C", "A", 5},
 			{"D", "C", 3}, {"E", "D", 2}, {"F", "B", 1},
 			{"F", "E", 1}, {"G", "E", 1}, {"G", "F", 14},
 		})
 
 		// 10
-		ResuelveCPM(&[]Vertice{
+		ResuelveCPM([]Vertice{
 			{"A", "-", 3}, {"B", "A", 14},
 			{"C", "A", 1}, {"D", "C", 3},
 			{"E", "C", 1}, {"F", "C", 2},
@@ -115,11 +115,40 @@ func TestGrafos(t *testing.T) {
 			{"O", "M", 3}, {"O", "N", 3},
 		})
 
-		ResuelveCPM(&[]Vertice{
+		ResuelveCPM([]Vertice{
 			{"a", "-", 5}, {"b", "-", 2},
 			{"c", "a", 2}, {"d", "a", 3},
 			{"e", "b", 1}, {"f", "c", 1},
 			{"f", "d", 1}, {"g", "e", 4},
 		})
+	})
+
+	t.Run("PERT", func(t *testing.T) {
+		_, clase := ResuelvePERT([]VerticePert{
+			{"A", "-", 1, 2, 3},
+			{"B", "A", 2, 4, 6},
+			{"C", "B", 0, 1, 2},
+			{"C", "H", 0, 1, 2},
+			{"D", "-", 3, 6, 9},
+			{"E", "G", 2, 3, 4},
+			{"F", "E", 3, 5, 7},
+			{"G", "D", 1, 2, 3},
+			{"H", "G", 1, 2, 3},
+			{"I", "D", 1, 3, 5},
+			{"J", "I", 3, 4, 5},
+			{"K", "D", 2, 3, 4},
+			{"L", "J", 3, 5, 7},
+			{"L", "K", 3, 5, 7},
+			{"M", "C", 1, 2, 3},
+			{"M", "L", 1, 2, 3},
+		})
+
+		if clase.Media != 20.0 {
+			t.Error("Duración total erronea.")
+		}
+
+		if clase.SumaVariazas != 19.0/9.0 {
+			t.Errorf("%f != %f", clase.SumaVariazas, 19.0/9.0)
+		}
 	})
 }

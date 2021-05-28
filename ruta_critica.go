@@ -30,26 +30,26 @@ type RespuestaCPM struct {
 	DuracionTotal float64      `json:"duracionTotal"`
 }
 
-func ResuelveCPM(p *[]Vertice) ([]byte, RespuestaCPM) {
-	anterior := VerticesToAdjList(p, true)
+func ResuelveCPM(p []Vertice) ([]byte, RespuestaCPM) {
+	anterior := VerticesToAdjList(&p, true)
 
-	actividades := make(map[string]*Actividad, len(*p))
+	actividades := make(map[string]*Actividad, len(p))
 	actividades["-"] = &Actividad{"-", 0, []string{}, 0, 0, 0, 0} // Inicio
 
 	s := set()
 	sn := set()
 
-	for idx := 0; idx < len(*p); idx += 1 {
-		actividades[(*p)[idx].Origen] = NuevaActividad((*p)[idx].Origen, (*p)[idx].Peso)
+	for idx := 0; idx < len(p); idx += 1 {
+		actividades[(p)[idx].Origen] = NuevaActividad((p)[idx].Origen, (p)[idx].Peso)
 
-		s.Add((*p)[idx].Origen)
+		s.Add((p)[idx].Origen)
 		// Invertimos porque el formato de la tabla es distinto
-		(*p)[idx].Origen, (*p)[idx].Destino = (*p)[idx].Destino, (*p)[idx].Origen
-		s.Add((*p)[idx].Origen)
-		sn.Add((*p)[idx].Origen)
+		(p)[idx].Origen, (p)[idx].Destino = (p)[idx].Destino, (p)[idx].Origen
+		s.Add((p)[idx].Origen)
+		sn.Add((p)[idx].Origen)
 	}
 
-	siguientes := VerticesToAdjList(p, true)
+	siguientes := VerticesToAdjList(&p, true)
 	recorridoIda("-", siguientes, actividades)
 
 	duracionTotal := NInf

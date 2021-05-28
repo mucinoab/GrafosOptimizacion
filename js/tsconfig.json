@@ -1,6 +1,7 @@
 {
   "files": [
     "index.ts",
+    "examples.ts",
   ],
   "compilerOptions": {
     "target": "ES2020",

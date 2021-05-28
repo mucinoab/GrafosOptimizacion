@@ -57,7 +57,12 @@ img:hover {
 
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">
-            Ruta Crítica
+            Ruta Crítica (CPM)
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#rpert" type="button" role="tab" aria-controls="rpert" aria-selected="false">
+            Ruta Crítica (PERT)
           </button>
         </li>
         <li class="nav-item" role="presentation">
@@ -142,7 +147,6 @@ img:hover {
               </div>
             </div>
             <br>
-            <br>
 
             <button type="button" class="btn btn-primary" onclick="showTable('Floyd', 'formularioFloyd', 'NverticesFloyd')">Generar Tabla</button>
             <br>
@@ -187,7 +191,6 @@ img:hover {
               </div>
             </div>
             <br>
-            <br>
 
             <button type="button" class="btn btn-primary" onclick="showTable('CPM', 'formularioCPM', 'NverticesCPM')">Generar Tabla</button>
             <br>
@@ -214,7 +217,7 @@ img:hover {
                 </tbody>
               </table>
 
-            <button type="button" class="btn btn-primary" onclick="CPM()">Resolver</button>
+              <button type="button" class="btn btn-primary" onclick="CPM()">Resolver</button>
             </form>
           </div>
           <br> <br>
@@ -223,13 +226,58 @@ img:hover {
 
         </div>
 
+        <div class="tab-pane fade" id="rpert" role="tabpanel" aria-labelledby="contact-tab">
+          <br>
+          <form id="formularioPERT">
+            <div class="row g-3">
+              <div class="col-auto">
+                <label for="Nvertices" class="form-label">Número de Vértices (Actividades)</label>
+                <input type="tel" class="form-control" id="NverticesPERT" maxlength="2" required>
+                <div class="form-text">(aristas, arcos)</div>
+              </div>
+            </div>
+          </form>
+          <br>
+
+          <button type="button" class="btn btn-primary" onclick="showTable('PERT', 'formularioPERT', 'NverticesPERT')">Generar Tabla</button>
+          <br>
+          <br>
+          <button type="button" class="btn btn-outline-primary" onclick="ejemploPERT()">Ejemplo</button>
+
+          <div id="PERT" style="display: none;">
+            <p>Ingresa todas las actividades, sus predecesora y sus respectivas duraciones(optimista, más probable y pesimista). Si una actividad no tiene predecesora, utiliza un guión medio ("-").</p>
+
+            <form id="TablaPERT">
+              <table class="table table-sm">
+                <thead>
+                  <tr id="PERTHeader">
+                    <th scope="col">#</th>
+                    <th scope="col">Actividad</th>
+                    <th scope="col">Predecesora</th>
+                    <th scope="col">Optimista</th>
+                    <th scope="col">Más Probable</th>
+                    <th scope="col">Pesimista</th>
+                  </tr>
+                </thead>
+                <tbody id="innerTablaPERT">
+                </tbody>
+              </table>
+
+              <button type="button" class="btn btn-primary" onclick="PERT()">Resolver</button>
+              <br>
+              <br>
+            </form>
+          </div>
+
+        </div>
+
         <div class="tab-pane fade" id="fuente" role="tabpanel" aria-labelledby="contact-tab">
           <br>
           <a href="https://github.com/mucinoab/GrafosOptimizacion"><img src="https://opengraph.githubassets.com/763e008e80ee4ad63212e0ec3e7b57379b20f7f683111a8eb5b9570762a0c3e1/mucinoab/GrafosOptimizacion" alt="Grafos Optimización" width="720" height="360" class="center" loading="lazy"><a>
         </div>
       </div>
-
     </div>
   </body>
   <script src="/js/index.js" defer></script>
+  <script src="/js/examples.js" defer></script>
 </html>

@@ -7,12 +7,6 @@ import (
 	"strings"
 )
 
-type Vertice struct {
-	Origen  string  `json:"origen"`
-	Destino string  `json:"destino"`
-	Peso    float64 `json:"peso"`
-}
-
 type FlujoMaximo struct {
 	Grafo    []Vertice `json:"data"`
 	Origen   string    `json:"origen"`

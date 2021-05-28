@@ -12,6 +12,12 @@ import (
 const Inf = math.MaxFloat64
 const NInf = -math.MaxFloat64
 
+type Vertice struct {
+	Origen  string  `json:"origen"`
+	Destino string  `json:"destino"`
+	Peso    float64 `json:"peso"`
+}
+
 // custom Hash Set
 type Set struct {
 	m map[string]struct{}

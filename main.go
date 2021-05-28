@@ -17,6 +17,7 @@ func main() {
 	http.HandleFunc("/flujomaximo", flujoMaximo)
 	http.HandleFunc("/floydwarshall", FloyWarshall)
 	http.HandleFunc("/cpm", CPM)
+	http.HandleFunc("/pert", PERT)
 
 	log.Printf("http://localhost:%s", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
@@ -63,8 +64,24 @@ func CPM(rw http.ResponseWriter, req *http.Request) {
 		log.Print(err)
 	}
 
-	answer, _ := ResuelveCPM(&actividades)
+	answer, _ := ResuelveCPM(actividades)
 
 	rw.Write(gzipF(&answer, &rw))
 	log.Println("CPM")
+}
+
+func PERT(rw http.ResponseWriter, req *http.Request) {
+	var actividades []VerticePert
+
+	decoder := json.NewDecoder(req.Body)
+	err := decoder.Decode(&actividades)
+
+	if err != nil {
+		log.Print(err)
+	}
+
+	answer, _ := ResuelvePERT(actividades)
+
+	rw.Write(gzipF(&answer, &rw))
+	log.Println("PERT")
 }
