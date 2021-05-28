@@ -488,11 +488,11 @@ function renderResponseCPM(r: ResponseCPM) {
     }
   }
 
-  let link = "https://image-charts.com/chart?chof=.svg&chs=999x999&cht=gv&chl=graph{rankdir=LR;";
+  let link = "https://image-charts.com/chart?chof=.svg&chs=999x999&cht=gv&chl=digraph{rankdir=LR;";
 
   for (const a of r.actividades) {
     for (const s of a.sucesores){
-      link += `${a.nombre}--${s}`;
+      link += `${a.nombre}->${s}`;
       link += "[" + `label="${a.proximoL}, ${a.proximoR}\n${a.lejanoL}, ${a.lejanoR}"`;
 
       if (rutaCritica.has(a.nombre) &&  rutaCritica.has(s)) {
