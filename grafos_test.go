@@ -144,7 +144,7 @@ func TestGrafos(t *testing.T) {
 		})
 
 		if clase.Media != 20.0 {
-			t.Error("Duración total erronea.")
+			t.Error("Media total erronea.")
 		}
 
 		if clase.SumaVariazas != 19.0/9.0 {

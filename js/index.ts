@@ -58,6 +58,11 @@ interface Change {
   destino: string,
 }
 
+//TODO No globals
+// Globals
+var varianza: number = 0;
+var media: number = 0;
+
 function showTable(tablaId: string, formId: string, verticesId: string) {
   const form = <HTMLFormElement>document.getElementById(formId);
 
@@ -306,15 +311,24 @@ function renderResponsePERT(r: ResponsePERT) {
   let idx = 0;
   let newColumns: string;
 
+  // TODO limpiar tabla antes de asignar
   for (let row of table.rows) {
-    newColumns = `<td>${r.estimaciones[idx]}</td><td>${r.varianzas[idx]}</td>`;
+    newColumns = `<td>${r.estimaciones[idx].toFixed(3)}</td>
+    <td>${r.varianzas[idx].toFixed(3)}</td>`;
+
     row.insertAdjacentHTML("beforeend", newColumns);
     idx += 1;
   }
 
-  // TODO limpiar antes de asignar
-  document.getElementById("TablaPERT")
-  .insertAdjacentHTML("beforeend",`μ = ${r.media}, σ² = ${r.sumaVariazas}<br><br><br>`);
+  varianza = r.sumaVariazas;
+  media = r.media;
+
+  let response = `μ = ${r.media.toFixed(3)}, σ² = ${r.sumaVariazas.toFixed(3)}<br><br>`;
+  response += `Probabilidad de que el proyecto termine en <input id="tiempoID" style="max-width:80px" type="text" class="form-control"> o menos unidades de tiempo:
+    <b><p id="normalCDF"></p><br></b>`;
+  response += `<button type="button" class="btn btn-primary" onclick="renderNormalCDF()">Calcular</button><br><br><br>`;
+
+  document.getElementById("respuestasPERT").innerHTML = response;
 }
 
 function renderResponseFlujo(r: ResponseFlujoMaximo) {
@@ -409,6 +423,28 @@ function renderResponseFloyd(r: ResponseFloydW) {
   respuesta.style.setProperty("display", "block", 'important');
 }
 
+// By Ian H. from https://stackoverflow.com/a/59217784
+// Normal cumulative distribution function
+function normalCDF(x: number, mean: number , variance: number): number{
+  let z = (x - mean) / Math.sqrt(variance);
+  let t = 1 / (1 + .2315419 * Math.abs(z));
+  let d =.3989423 * Math.exp( -z * z / 2);
+  let prob = d * t * (.3193815 + t * ( -.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+  if( z > 0 ) prob = 1 - prob;
+  return prob;
+}
+
+function renderNormalCDF(){
+  const tiempo = parseFloat((<HTMLInputElement>document.getElementById("tiempoID")).value);
+
+  if (isNaN(tiempo)) {
+    alert("Por favor ingresa un número válido.");
+    return;
+  }
+
+  let r = document.getElementById("normalCDF");
+  r.innerHTML = `${(normalCDF(tiempo, media, varianza)*100).toFixed(4)} %`;
+}
 
 function renderResponseCPM(r: ResponseCPM) {
   const rutaCritica: Set<string> = new Set(r.rutaCritica);
