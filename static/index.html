@@ -30,6 +30,9 @@ img {
 img:hover {
   transform:scale(1.2);
 }
+html {
+  scroll-behavior: smooth;
+}
     </style>
   </head>
 
@@ -242,9 +245,10 @@ img:hover {
           <button type="button" class="btn btn-primary" onclick="showTable('PERT', 'formularioPERT', 'NverticesPERT')">Generar Tabla</button>
           <br>
           <br>
-          <button type="button" class="btn btn-outline-primary" onclick="ejemploPERT()">Ejemplo (Generar tabla con 16 actividades antes :/ )</button>
+          <button type="button" class="btn btn-outline-primary" onclick="ejemploPERT()">Ejemplo</button>
 
           <div id="PERT" style="display: none;">
+            <br>
             <p>Ingresa todas las actividades, sus predecesora y sus respectivas duraciones(optimista, más probable y pesimista). Si una actividad no tiene predecesora, utiliza un guión medio ("-").</p>
 
             <form id="TablaPERT">
@@ -267,8 +271,8 @@ img:hover {
               <br>
               <br>
             </form>
-          <div id="respuestasPERT">
-          </div>
+            <div id="respuestasPERT">
+            </div>
           </div>
 
         </div>

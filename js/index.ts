@@ -231,6 +231,23 @@ function graphFromTable(id: string): Array<Vertices> {
   return grafo
 }
 
+// TODO generalizar para llenar cualquier tabla
+function fillTablePERT(id: string, d: Array<VerticePERT>) {
+  let origenes = document.querySelectorAll<HTMLInputElement>(`.origenes${id}`);
+  let destinos = document.querySelectorAll<HTMLInputElement>(`.destinos${id}`);
+  let pesos = document.querySelectorAll<HTMLInputElement>(`.pesos${id}`);
+  let probables = document.querySelectorAll<HTMLInputElement>(`.probable${id}`);
+  let pesimistas = document.querySelectorAll<HTMLInputElement>(`.pesimista${id}`);
+
+  for (let idx = 0; idx < d.length; idx += 1) {
+    origenes[idx].value = d[idx].origen;
+    destinos[idx].value = d[idx].destino;
+    pesos[idx].value = String(d[idx].optimista);
+    probables[idx].value = String(d[idx].probable);
+    pesimistas[idx].value = String(d[idx].pesimista);
+  }
+}
+
 // From MDN, https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch#supplying_request_options
 async function postData(url: string, data = {}) {
   const response = await fetch(url, {
@@ -311,7 +328,9 @@ function renderResponsePERT(r: ResponsePERT) {
   let idx = 0;
   let newColumns: string;
 
-  // TODO limpiar tabla antes de asignar
+  // TODO
+  // - limpiar tabla antes de asignar
+  // - marcar valores que pertenecen a la ruta crítica
   for (let row of table.rows) {
     newColumns = `<td>${r.estimaciones[idx].toFixed(3)}</td>
     <td>${r.varianzas[idx].toFixed(3)}</td>`;
@@ -324,8 +343,9 @@ function renderResponsePERT(r: ResponsePERT) {
   media = r.media;
 
   let response = `μ = ${r.media.toFixed(3)}, σ² = ${r.sumaVariazas.toFixed(3)}<br><br>`;
-  response += `Probabilidad de que el proyecto termine en <input id="tiempoID" style="max-width:80px" type="text" class="form-control"> o menos unidades de tiempo:
-    <b><p id="normalCDF"></p><br></b>`;
+  response += `Probabilidad de que el proyecto termine en
+  <input id="tiempoID" style="max-width:80px" type="text" class="form-control" placeholder="0.0">
+  o menos unidades de tiempo:<b><p id="normalCDF"></p><br></b>`;
   response += `<button type="button" class="btn btn-primary" onclick="renderNormalCDF()">Calcular</button><br><br><br>`;
 
   document.getElementById("respuestasPERT").innerHTML = response;

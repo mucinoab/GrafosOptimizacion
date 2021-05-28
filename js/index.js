@@ -130,6 +130,20 @@ function graphFromTable(id) {
     }
     return grafo;
 }
+function fillTablePERT(id, d) {
+    let origenes = document.querySelectorAll(`.origenes${id}`);
+    let destinos = document.querySelectorAll(`.destinos${id}`);
+    let pesos = document.querySelectorAll(`.pesos${id}`);
+    let probables = document.querySelectorAll(`.probable${id}`);
+    let pesimistas = document.querySelectorAll(`.pesimista${id}`);
+    for (let idx = 0; idx < d.length; idx += 1) {
+        origenes[idx].value = d[idx].origen;
+        destinos[idx].value = d[idx].destino;
+        pesos[idx].value = String(d[idx].optimista);
+        probables[idx].value = String(d[idx].probable);
+        pesimistas[idx].value = String(d[idx].pesimista);
+    }
+}
 async function postData(url, data = {}) {
     const response = await fetch(url, {
         method: 'POST',
@@ -203,8 +217,9 @@ function renderResponsePERT(r) {
     varianza = r.sumaVariazas;
     media = r.media;
     let response = `μ = ${r.media.toFixed(3)}, σ² = ${r.sumaVariazas.toFixed(3)}<br><br>`;
-    response += `Probabilidad de que el proyecto termine en <input id="tiempoID" style="max-width:80px" type="text" class="form-control"> o menos unidades de tiempo:
-    <b><p id="normalCDF"></p><br></b>`;
+    response += `Probabilidad de que el proyecto termine en
+  <input id="tiempoID" style="max-width:80px" type="text" class="form-control" placeholder="0.0">
+  o menos unidades de tiempo:<b><p id="normalCDF"></p><br></b>`;
     response += `<button type="button" class="btn btn-primary" onclick="renderNormalCDF()">Calcular</button><br><br><br>`;
     document.getElementById("respuestasPERT").innerHTML = response;
 }

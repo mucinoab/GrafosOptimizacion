@@ -19,5 +19,10 @@ function ejemploCPM() {
 
 function ejemploPERT() {
   const ejemplo = [{"origen":"A","destino":"-","optimista":1,"probable":2,"pesimista":3},{"origen":"B","destino":"A","optimista":2,"probable":4,"pesimista":6},{"origen":"C","destino":"B","optimista":0,"probable":1,"pesimista":2},{"origen":"C","destino":"H","optimista":0,"probable":1,"pesimista":2},{"origen":"D","destino":"-","optimista":3,"probable":6,"pesimista":9},{"origen":"E","destino":"G","optimista":2,"probable":3,"pesimista":4},{"origen":"F","destino":"E","optimista":3,"probable":5,"pesimista":7},{"origen":"G","destino":"D","optimista":1,"probable":2,"pesimista":3},{"origen":"H","destino":"G","optimista":1,"probable":2,"pesimista":3},{"origen":"I","destino":"D","optimista":1,"probable":3,"pesimista":5},{"origen":"J","destino":"I","optimista":3,"probable":4,"pesimista":5},{"origen":"K","destino":"D","optimista":2,"probable":3,"pesimista":4},{"origen":"L","destino":"J","optimista":3,"probable":5,"pesimista":7},{"origen":"L","destino":"K","optimista":3,"probable":5,"pesimista":7},{"origen":"M","destino":"C","optimista":1,"probable":2,"pesimista":3},{"origen":"M","destino":"L","optimista":1,"probable":2,"pesimista":3}];
-  postData('pert', ejemplo).then(data => {renderResponsePERT(data);});
+  (<HTMLInputElement>document.getElementById("NverticesPERT")).value = "16";
+  showTable('PERT', 'formularioPERT', 'NverticesPERT');
+  fillTablePERT("PERT", ejemplo);
+  postData('pert', ejemplo).then(data => {renderResponsePERT(data);}).then( _ => {
+    document.getElementById("normalCDF").scrollIntoView(true);
+  });
 }
