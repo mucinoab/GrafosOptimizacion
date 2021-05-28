@@ -353,7 +353,7 @@ function drawGraphLinkCritical(r) {
     for (const a of r.actividades) {
         for (const s of a.sucesores) {
             link += `${a.nombre}->${s}`;
-            link += "[" + `label="${a.proximoL}, ${a.proximoR}\n${a.lejanoL}, ${a.lejanoR}"`;
+            link += "[" + `label="${a.proximoL.toFixed(3)}, ${a.proximoR.toFixed(3)}\n${a.lejanoL.toFixed(3)}, ${a.lejanoR.toFixed(3)}"`;
             if (rutaCritica.has(a.nombre) && rutaCritica.has(s)) {
                 link += ",color=red,penwidth=3.0]";
             }
