@@ -11,6 +11,7 @@ import (
 
 const Inf = math.MaxFloat64
 const NInf = -math.MaxFloat64
+const epsilon = 0.05
 
 type Vertice struct {
 	Origen  string  `json:"origen"`
