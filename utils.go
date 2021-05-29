@@ -1,12 +1,12 @@
 package main
 
 import (
-	"bytes"
 	"compress/gzip"
-	"log"
+	"io"
 	"math"
 	"net/http"
 	"sort"
+	"strings"
 )
 
 const Inf = math.MaxFloat64
@@ -129,18 +129,25 @@ func AdjListToVertices(grafo map[string]map[string]float64, dirigido bool) *[]Ve
 	return &adjList
 }
 
-// Compresión con gzip
-func gzipF(a *[]byte, rw *http.ResponseWriter) []byte {
-	var b bytes.Buffer
-	gz := gzip.NewWriter(&b)
+// source https://gist.github.com/the42/1956518
+type gzipResponseWriter struct {
+	io.Writer
+	http.ResponseWriter
+}
 
-	if _, err := gz.Write(*a); err != nil {
-		log.Print(err)
-	}
-	gz.Close()
+func (w gzipResponseWriter) Write(b []byte) (int, error) {
+	return w.Writer.Write(b)
+}
 
-	(*rw).Header().Set("Content-Type", "application/json")
-	(*rw).Header().Set("Content-Encoding", "gzip")
-
-	return b.Bytes()
+func gzipHandler(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
+			h.ServeHTTP(w, r)
+			return
+		}
+		w.Header().Set("Content-Encoding", "gzip")
+		gz := gzip.NewWriter(w)
+		defer gz.Close()
+		h.ServeHTTP(gzipResponseWriter{Writer: gz, ResponseWriter: w}, r)
+	})
 }

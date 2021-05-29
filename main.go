@@ -20,7 +20,7 @@ func main() {
 	http.HandleFunc("/pert", PERT)
 
 	log.Printf("http://localhost:%s", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Fatal(http.ListenAndServe(":"+port, gzipHandler(http.DefaultServeMux)))
 }
 
 func flujoMaximo(rw http.ResponseWriter, req *http.Request) {
@@ -34,7 +34,7 @@ func flujoMaximo(rw http.ResponseWriter, req *http.Request) {
 
 	answer := ResuelveFlujoMaximo(grafo)
 
-	rw.Write(gzipF(&answer, &rw))
+	rw.Write(answer)
 	log.Println("Flujo Máximo")
 }
 
@@ -50,7 +50,7 @@ func FloyWarshall(rw http.ResponseWriter, req *http.Request) {
 
 	answer, _ := ResuelveFloyWarshall(&grafo)
 
-	rw.Write(gzipF(&answer, &rw))
+	rw.Write(answer)
 	log.Println("Floy-Warshall")
 }
 
@@ -66,7 +66,7 @@ func CPM(rw http.ResponseWriter, req *http.Request) {
 
 	answer, _ := ResuelveCPM(actividades)
 
-	rw.Write(gzipF(&answer, &rw))
+	rw.Write(answer)
 	log.Println("CPM")
 }
 
@@ -82,6 +82,6 @@ func PERT(rw http.ResponseWriter, req *http.Request) {
 
 	answer, _ := ResuelvePERT(actividades)
 
-	rw.Write(gzipF(&answer, &rw))
+	rw.Write(answer)
 	log.Println("PERT")
 }
