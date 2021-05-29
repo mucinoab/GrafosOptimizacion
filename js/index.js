@@ -21,21 +21,20 @@ function generateTable(tablaId, verticesId) {
     if (isNaN(nvertices) || nvertices <= 0) {
         return false;
     }
-    let tabalaHtml = document.getElementById(`innerTabla${tablaId}`);
-    tabalaHtml.innerHTML = "";
-    let tabla = "";
-    let i = 0;
-    for (; i < nvertices; i += 1) {
-        tabla += `<tr><td>${i}</td><td><input type="text" class="form-control origenes${tablaId}" required></td>`;
-        tabla += `<td><input type="text" class="form-control destinos${tablaId}" required></td>`;
-        tabla += `<td><input type="text" class="form-control pesos${tablaId}" placeholder="0.0" required></td>`;
+    let table = document.getElementById(`innerTabla${tablaId}`);
+    let r;
+    clearElement(table);
+    for (let i = 0; i < nvertices; i += 1) {
+        r = table.insertRow();
+        r.insertCell().appendChild(document.createTextNode(String(i)));
+        r.insertCell().appendChild(newInputElement(`origenes${tablaId}`));
+        r.insertCell().appendChild(newInputElement(`destinos${tablaId}`));
+        r.insertCell().appendChild(newInputElement(`pesos${tablaId}`, "0.0"));
         if (nRows != null) {
-            tabla += `<td><input type="text" class="form-control probable${tablaId}" placeholder="0.0" required></td>`;
-            tabla += `<td><input type="text" class="form-control pesimista${tablaId}" placeholder="0.0" required></td>`;
+            r.insertCell().appendChild(newInputElement(`probable${tablaId}`, "0.0"));
+            r.insertCell().appendChild(newInputElement(`pesimista${tablaId}`, "0.0"));
         }
-        tabla += "</tr>";
     }
-    tabalaHtml.insertAdjacentHTML("afterbegin", tabla);
     return true;
 }
 function flujoMaximo() {
@@ -54,10 +53,7 @@ function flujoMaximo() {
         destino: destino.value.trim(),
         dirigido: dirigido.checked
     };
-    postData('flujomaximo', payload)
-        .then(data => {
-        renderResponseFlujo(data);
-    });
+    postData('flujomaximo', payload).then(data => { renderResponseFlujo(data); });
 }
 function floydWarshall() {
     const tablaId = "Floyd";
@@ -66,8 +62,7 @@ function floydWarshall() {
         tabla.reportValidity();
         return;
     }
-    postData('floydwarshall', graphFromTable(tablaId))
-        .then(data => {
+    postData('floydwarshall', graphFromTable(tablaId)).then(data => {
         renderResponseFloyd(data);
     });
 }
@@ -75,10 +70,7 @@ function CPM() {
     const act = graphFromTable("CPM");
     if (act === undefined)
         return;
-    postData("cpm", act)
-        .then(data => {
-        renderResponseCPM(data);
-    });
+    postData("cpm", act).then(data => { renderResponseCPM(data); });
 }
 function PERT() {
     const act = graphFromTable("PERT");
@@ -87,8 +79,7 @@ function PERT() {
     const probables = document.querySelectorAll(".probablePERT");
     const pesimistas = document.querySelectorAll(".pesimistaPERT");
     let actividaes = Array();
-    let idx = 0;
-    for (const a of act) {
+    for (const [idx, a] of act.entries()) {
         let probable = parseFloat(probables[idx].value.trim());
         let pesimista = parseFloat(pesimistas[idx].value.trim());
         if (isNaN(probable) || isNaN(probable)) {
@@ -103,12 +94,8 @@ function PERT() {
             pesimista: pesimista,
         };
         actividaes.push(activida);
-        idx += 1;
     }
-    postData("pert", actividaes)
-        .then(data => {
-        renderResponsePERT(data);
-    });
+    postData("pert", actividaes).then(data => { renderResponsePERT(data); });
 }
 function graphFromTable(id) {
     const origenes = document.querySelectorAll(`.origenes${id}`);
@@ -149,15 +136,6 @@ function fillTable(id, d, pert) {
         }
     }
 }
-async function postData(url, data = {}) {
-    const response = await fetch(url, {
-        method: 'POST',
-        cache: 'no-cache',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    });
-    return response.json();
-}
 function drawGraphLink(nodes, camino, dirigido) {
     let link = "https://image-charts.com/chart?chof=.svg&chs=640x640&cht=gv&chl=";
     let sep;
@@ -184,11 +162,12 @@ function drawGraphLink(nodes, camino, dirigido) {
 function graphButton(id, link) {
     return `<button class="btn btn-primary" type="button"
   data-bs-toggle="collapse" data-bs-target="#${id}" aria-expanded="false"
-  aria-controls="${id}">
-  Visualizar</button>
+  aria-controls="${id}">Visualizar</button>
   <div class="collapse" id="${id}"><br><br>
   <div class="card card-body" style="padding:0px;">
-  <img src="${link}" width="640" height="640" class="center img-fluid" loading="lazy"></div></div>`;
+  <img src="${link}" width="640" height="640" class="center img-fluid" loading="lazy">
+  </div>
+  </div>`;
 }
 function setOfTrajectory(trajectory) {
     const t = new Set();
@@ -198,35 +177,24 @@ function setOfTrajectory(trajectory) {
     }
     return t;
 }
-function findStrip(str, neddle) {
-    const idx = str.indexOf(neddle);
-    if (idx === -1) {
-        return str;
-    }
-    else {
-        return str.slice(0, idx);
-    }
-}
 function renderResponsePERT(r) {
-    let header = document.getElementById("PERTHeader");
-    header.insertAdjacentHTML("beforeend", '<th scope="col">Duración Estimada</th><th scope="col">Varianza</th>');
     const rutaC = new Set(r.rutaCritica);
+    let header = document.getElementById("PERTHeader");
+    if (header.cells.length === 6) {
+        header.insertAdjacentHTML("beforeend", '<th scope="col">Duración Estimada</th><th scope="col">Varianza</th>');
+    }
     let table = document.getElementById("innerTablaPERT");
     let idx = 0;
-    let newColumns;
-    let tdClass = "cambio";
     for (let row of table.rows) {
         const activida = row.cells[1].childNodes[0].value.trim();
         const predecesora = row.cells[2].childNodes[0].value.trim();
-        if (rutaC.has(activida) && rutaC.has(predecesora)) {
-            tdClass = "cambio";
+        if (row.cells.length != 6) {
+            row.removeChild(row.lastChild);
+            row.removeChild(row.lastChild);
         }
-        else {
-            tdClass = "";
-        }
-        newColumns = `<td class="${tdClass}">${r.estimaciones[idx].toFixed(3)}</td>
-    <td class="${tdClass}">${r.varianzas[idx].toFixed(3)}</td>`;
-        row.insertAdjacentHTML("beforeend", newColumns);
+        const tdClass = (rutaC.has(activida) && rutaC.has(predecesora)) ? "cambio" : "";
+        insertCell(row, r.estimaciones[idx].toFixed(3), tdClass);
+        insertCell(row, r.varianzas[idx].toFixed(3), tdClass);
         idx += 1;
     }
     varianza = r.sumaVariazas;
@@ -264,7 +232,7 @@ function renderResponseFlujo(r) {
         iter += 1;
     }
     respHTML += "</tbody></table>";
-    respuesta.innerHTML = "";
+    clearElement(respuesta);
     respuesta.insertAdjacentHTML("afterbegin", respHTML);
     respuesta.style.setProperty("display", "block", 'important');
 }
@@ -277,51 +245,33 @@ function renderResponseFloyd(r) {
     for (const n of r.nodos) {
         nodesHeader += `<td style="font-weight:bold;">${n}</td>`;
     }
-    let respHTML = '<table class="table table-hover">';
-    let idx = 0;
-    for (const iteracion of r.iteraciones) {
-        respHTML += `<thead><tr><td class="table-primary">Iteración ${idx}</td>${nodesHeader}<tr></thead>`;
+    let table = document.createElement("table");
+    table.className = "table table-hover";
+    for (const [idx, iteracion] of r.iteraciones.entries()) {
+        table.insertAdjacentHTML("beforeend", `<thead><tr><td class="table-primary">Iteración ${idx}</td>${nodesHeader}<tr></thead>`);
         for (const a of r.nodos) {
-            respHTML += `<tr><td class="table_nodes"">${a}</td>`;
+            let row = table.insertRow();
+            insertCell(row, a, "table_nodes");
             for (const b of r.nodos) {
                 for (const n of iteracion) {
                     if (n.origen == a && n.destino == b) {
-                        const c = JSON.stringify({ iteracion: idx, origen: a, destino: b });
-                        if (cambios.has(c)) {
-                            respHTML += '<td class="cambio">';
+                        const v = (n.peso == Number.MAX_VALUE) ? '∞' : String(n.peso);
+                        if (cambios.has(JSON.stringify({ iteracion: idx, origen: a, destino: b }))) {
+                            insertCell(row, v, "cambio");
                         }
                         else {
-                            respHTML += '<td>';
+                            insertCell(row, v);
                         }
-                        if (n.peso == Number.MAX_VALUE) {
-                            respHTML += '∞';
-                        }
-                        else {
-                            respHTML += n.peso;
-                        }
-                        respHTML += "</td>";
                         break;
                     }
                 }
             }
-            respHTML += "</tr>";
         }
-        idx += 1;
     }
-    respHTML = respHTML.replace("Iteración 0", "Grafo Inicial");
     let respuesta = document.getElementById("respuestaFloyd");
-    respuesta.innerHTML = " ";
-    respuesta.insertAdjacentHTML("afterbegin", respHTML);
+    clearElement(respuesta);
+    respuesta.appendChild(table);
     respuesta.style.setProperty("display", "block", 'important');
-}
-function normalCDF(x, mean, variance) {
-    let z = (x - mean) / Math.sqrt(variance);
-    let t = 1 / (1 + .2315419 * Math.abs(z));
-    let d = .3989423 * Math.exp(-z * z / 2);
-    let prob = d * t * (.3193815 + t * (-.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
-    if (z > 0)
-        prob = 1 - prob;
-    return prob;
 }
 function renderNormalCDF() {
     const tiempo = parseFloat(document.getElementById("tiempoID").value);
@@ -336,7 +286,7 @@ function renderResponseCPM(r) {
     let respHTML = `<br><p>Duración Total: ${r.duracionTotal}</p><br>`;
     respHTML += `<img src="${drawGraphLinkCritical(r)}" width="999" height="360" class="center img-fluid"><br><br>`;
     let respuesta = document.getElementById("respuestaCPM");
-    respuesta.innerHTML = "";
+    clearElement(respuesta);
     respuesta.insertAdjacentHTML("afterbegin", respHTML);
     respuesta.style.setProperty("display", "block", 'important');
     respuesta.scrollIntoView(true);

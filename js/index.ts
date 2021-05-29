@@ -87,28 +87,25 @@ function generateTable(tablaId: string, verticesId: string): boolean {
     return false;
   }
 
-  let tabalaHtml = document.getElementById(`innerTabla${tablaId}`);
-  tabalaHtml.innerHTML = "";
+  let table = <HTMLTableElement>document.getElementById(`innerTabla${tablaId}`);
+  let r: HTMLTableRowElement;
+  clearElement(table);
 
-  let tabla: string = "";
-  let i: number = 0;
+  // #, origen, destino, peso, [probable, pesimista]
+  for (let i = 0; i < nvertices; i += 1) {
+    r = table.insertRow();
 
-
-  // #, origen, destino, peso
-  for (; i < nvertices; i += 1) {
-    tabla += `<tr><td>${i}</td><td><input type="text" class="form-control origenes${tablaId}" required></td>`;
-    tabla += `<td><input type="text" class="form-control destinos${tablaId}" required></td>`;
-    tabla += `<td><input type="text" class="form-control pesos${tablaId}" placeholder="0.0" required></td>`;
+    r.insertCell().appendChild(document.createTextNode(String(i)));
+    r.insertCell().appendChild(newInputElement(`origenes${tablaId}`));
+    r.insertCell().appendChild(newInputElement(`destinos${tablaId}`));
+    r.insertCell().appendChild(newInputElement(`pesos${tablaId}`, "0.0"));
 
     if (nRows != null) {
-      // Caso especial PERT
-      tabla += `<td><input type="text" class="form-control probable${tablaId}" placeholder="0.0" required></td>`;
-      tabla += `<td><input type="text" class="form-control pesimista${tablaId}" placeholder="0.0" required></td>`;
+      // special case PERT
+      r.insertCell().appendChild(newInputElement(`probable${tablaId}`, "0.0"));
+      r.insertCell().appendChild(newInputElement(`pesimista${tablaId}`, "0.0"));
     }
-    tabla += "</tr>";
   }
-
-  tabalaHtml.insertAdjacentHTML("afterbegin", tabla);
 
   return true;
 }
@@ -133,10 +130,7 @@ function flujoMaximo() {
     dirigido: dirigido.checked
   };
 
-  postData('flujomaximo', payload)
-  .then(data => {
-    renderResponseFlujo(data);
-  });
+  postData('flujomaximo', payload).then(data => {renderResponseFlujo(data)});
 }
 
 function floydWarshall() {
@@ -148,8 +142,7 @@ function floydWarshall() {
     return;
   }
 
-  postData('floydwarshall', graphFromTable(tablaId))
-  .then(data => {
+  postData('floydwarshall', graphFromTable(tablaId)) .then(data => {
     renderResponseFloyd(data);
   });
 }
@@ -160,10 +153,7 @@ function CPM() {
 
   if (act === undefined) return;
 
-  postData("cpm", act)
-  .then(data => {
-    renderResponseCPM(data)
-  });
+  postData("cpm", act).then(data => {renderResponseCPM(data)});
 }
 
 // Critical Path, PERT
@@ -176,9 +166,8 @@ function PERT() {
   const pesimistas = document.querySelectorAll<HTMLInputElement>(".pesimistaPERT");
 
   let actividaes: Array<VerticePERT> = Array();
-  let idx = 0;
 
-  for (const a of act) {
+  for (const [idx, a] of act.entries()) {
     let probable = parseFloat(probables[idx].value.trim());
     let pesimista = parseFloat(pesimistas[idx].value.trim());
 
@@ -196,14 +185,9 @@ function PERT() {
     };
 
     actividaes.push(activida);
-
-    idx += 1;
   }
 
-  postData("pert", actividaes)
-  .then(data => {
-    renderResponsePERT(data)
-  });
+  postData("pert", actividaes).then(data => {renderResponsePERT(data)});
 }
 
 function graphFromTable(id: string): Array<Vertices> {
@@ -253,18 +237,6 @@ function fillTable(id: string, d: Array<any>, pert: boolean) {
   }
 }
 
-// From MDN, https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch#supplying_request_options
-async function postData(url: string, data = {}) {
-  const response = await fetch(url, {
-    method: 'POST',
-    cache: 'no-cache',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(data)
-  });
-
-  return response.json();
-}
-
 function drawGraphLink(nodes: Array<Vertices>, camino: string, dirigido: boolean) {
   // Documentación: https://documentation.image-charts.com/graph-viz-charts/
   let link: string = "https://image-charts.com/chart?chof=.svg&chs=640x640&cht=gv&chl=";
@@ -293,14 +265,15 @@ function drawGraphLink(nodes: Array<Vertices>, camino: string, dirigido: boolean
   return link;
 }
 
-function graphButton(id: string, link: string) :string {
+function graphButton(id: string, link: string): string {
   return `<button class="btn btn-primary" type="button"
   data-bs-toggle="collapse" data-bs-target="#${id}" aria-expanded="false"
-  aria-controls="${id}">
-  Visualizar</button>
+  aria-controls="${id}">Visualizar</button>
   <div class="collapse" id="${id}"><br><br>
   <div class="card card-body" style="padding:0px;">
-  <img src="${link}" width="640" height="640" class="center img-fluid" loading="lazy"></div></div>`;
+  <img src="${link}" width="640" height="640" class="center img-fluid" loading="lazy">
+  </div>
+  </div>`;
 }
 
 function setOfTrajectory(trajectory: string): Set<string> {
@@ -314,45 +287,31 @@ function setOfTrajectory(trajectory: string): Set<string> {
   return t;
 }
 
-function findStrip(str: string, neddle: string): string {
-  //busca needle y quita todo lo que este después de este, incluyendo a este
-  //si no se encuentra, regresa el str intacto
-  const idx = str.indexOf(neddle);
-  if (idx === -1) {
-    return str;
-  } else {
-    return str.slice(0, idx);
-  }
-}
-
 function renderResponsePERT(r: ResponsePERT) {
-  let header = <HTMLTableElement>document.getElementById("PERTHeader");
-  header.insertAdjacentHTML("beforeend", '<th scope="col">Duración Estimada</th><th scope="col">Varianza</th>');
   const rutaC = new Set(r.rutaCritica);
+
+  let header = <HTMLTableRowElement>document.getElementById("PERTHeader");
+  if (header.cells.length === 6) {
+    header.insertAdjacentHTML("beforeend", '<th scope="col">Duración Estimada</th><th scope="col">Varianza</th>');
+  }
 
   let table = <HTMLTableElement>document.getElementById("innerTablaPERT");
   let idx = 0;
-  let newColumns: string;
-  let tdClass = "cambio";
 
-  // TODO
-  // - limpiar tabla antes de asignar
   for (let row of table.rows) {
     // Segunda  y tercer columna de tabla, "Actividad" y "Predecesora"
     const activida = (<HTMLInputElement>row.cells[1].childNodes[0]).value.trim();
     const predecesora = (<HTMLInputElement>row.cells[2].childNodes[0]).value.trim();
 
-    // Checa si esta en la tura crítica
-    if (rutaC.has(activida) && rutaC.has(predecesora)){
-      tdClass = "cambio";
-    } else {
-      tdClass = "";
+    if (row.cells.length != 6) {
+      row.removeChild(row.lastChild);
+      row.removeChild(row.lastChild);
     }
 
-    newColumns = `<td class="${tdClass}">${r.estimaciones[idx].toFixed(3)}</td>
-    <td class="${tdClass}">${r.varianzas[idx].toFixed(3)}</td>`;
+    const tdClass = (rutaC.has(activida) && rutaC.has(predecesora)) ? "cambio":"";
+    insertCell(row, r.estimaciones[idx].toFixed(3), tdClass);
+    insertCell(row, r.varianzas[idx].toFixed(3), tdClass);
 
-    row.insertAdjacentHTML("beforeend", newColumns);
     idx += 1;
   }
 
@@ -398,7 +357,7 @@ function renderResponseFlujo(r: ResponseFlujoMaximo) {
   }
   respHTML += "</tbody></table>"
 
-  respuesta.innerHTML = "";
+  clearElement(respuesta);
   respuesta.insertAdjacentHTML("afterbegin", respHTML);
   respuesta.style.setProperty("display", "block", 'important');
 }
@@ -410,70 +369,47 @@ function renderResponseFloyd(r: ResponseFloydW) {
     cambios.add(JSON.stringify(cambio));
   }
 
-  let nodesHeader: string = "";
+  let nodesHeader = "";
   for (const n of r.nodos) {
-    nodesHeader += `<td style="font-weight:bold;">${n}</td>`
+    nodesHeader += `<td style="font-weight:bold;">${n}</td>`;
   }
 
-  let respHTML: string = '<table class="table table-hover">';
-  let idx = 0;
+  let table: HTMLTableElement = document.createElement("table");
+  table.className = "table table-hover";
 
-  // TODO menos complejo, menos loops
-  for (const iteracion of r.iteraciones) {
-    respHTML += `<thead><tr><td class="table-primary">Iteración ${idx}</td>${nodesHeader}<tr></thead>`;
+  for (const [idx, iteracion] of r.iteraciones.entries()) {
+    table.insertAdjacentHTML("beforeend", `<thead><tr><td class="table-primary">Iteración ${idx}</td>${nodesHeader}<tr></thead>`);
 
     for (const a of r.nodos) {
-      respHTML += `<tr><td class="table_nodes"">${a}</td>`;
+      let row = table.insertRow();
+      insertCell(row, a, "table_nodes");
 
       for (const b of r.nodos) {
         for (const n of iteracion) {
-
           if (n.origen == a && n.destino == b) {
-            const c = JSON.stringify({iteracion:idx, origen: a, destino: b});
+            const v: string = (n.peso == Number.MAX_VALUE) ? '∞' : String(n.peso);
 
-            if (cambios.has(c)) {
-              // es un cambio
-              respHTML += '<td class="cambio">';
+            if (cambios.has(JSON.stringify({iteracion:idx, origen: a, destino: b}))) {
+              // A change in value
+              insertCell(row, v, "cambio");
             } else {
-              respHTML += '<td>';
+              insertCell(row, v);
             }
-
-            if (n.peso == Number.MAX_VALUE) {
-              respHTML += '∞';
-            } else {
-              respHTML += n.peso;
-            }
-            respHTML += "</td>";
 
             break;
           }
         }
       }
-      respHTML += "</tr>";
     }
-    idx += 1;
   }
 
-  respHTML = respHTML.replace("Iteración 0", "Grafo Inicial");
-
   let respuesta = document.getElementById("respuestaFloyd");
-  respuesta.innerHTML = " ";
-  respuesta.insertAdjacentHTML("afterbegin", respHTML);
+  clearElement(respuesta);
+  respuesta.appendChild(table);
   respuesta.style.setProperty("display", "block", 'important');
 }
 
-// By Ian H. from https://stackoverflow.com/a/59217784
-// Normal cumulative distribution function
-function normalCDF(x: number, mean: number , variance: number): number{
-  let z = (x - mean) / Math.sqrt(variance);
-  let t = 1 / (1 + .2315419 * Math.abs(z));
-  let d =.3989423 * Math.exp( -z * z / 2);
-  let prob = d * t * (.3193815 + t * ( -.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
-  if( z > 0 ) prob = 1 - prob;
-  return prob;
-}
-
-function renderNormalCDF(){
+function renderNormalCDF() {
   const tiempo = parseFloat((<HTMLInputElement>document.getElementById("tiempoID")).value);
 
   if (isNaN(tiempo)) {
@@ -490,7 +426,7 @@ function renderResponseCPM(r: ResponseCPM) {
   respHTML += `<img src="${drawGraphLinkCritical(r)}" width="999" height="360" class="center img-fluid"><br><br>`;
 
   let respuesta = document.getElementById("respuestaCPM");
-  respuesta.innerHTML = "";
+  clearElement(respuesta);
   respuesta.insertAdjacentHTML("afterbegin", respHTML);
   respuesta.style.setProperty("display", "block", 'important');
   respuesta.scrollIntoView(true);
