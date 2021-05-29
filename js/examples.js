@@ -10,10 +10,14 @@ function fillTableEjemplo(method, ejemplo) {
 }
 function ejemploFlujo() {
     const ejemplo = { "data": [{ "origen": "Bilbao", "destino": "S1", "peso": 4 }, { "origen": "Bilbao", "destino": "S2", "peso": 1 }, { "origen": "Barcelona", "destino": "S1", "peso": 2 }, { "origen": "Barcelona", "destino": "S2", "peso": 3 }, { "origen": "Sevilla", "destino": "S1", "peso": 2 }, { "origen": "Sevilla", "destino": "S2", "peso": 2 }, { "origen": "Sevilla", "destino": "S3", "peso": 3 }, { "origen": "Valencia", "destino": "S2", "peso": 2 }, { "origen": "Zaragoza", "destino": "S2", "peso": 3 }, { "origen": "Zaragoza", "destino": "S3", "peso": 1 }, { "origen": "Origen", "destino": "Bilbao", "peso": 7 }, { "origen": "Origen", "destino": "Barcelona", "peso": 5 }, { "origen": "Origen", "destino": "Sevilla", "peso": 7 }, { "origen": "Origen", "destino": "Zaragoza", "peso": 6 }, { "origen": "Origen", "destino": "Valencia", "peso": 2 }, { "origen": "S1", "destino": "Madrid", "peso": 8 }, { "origen": "S2", "destino": "Madrid", "peso": 8 }, { "origen": "S3", "destino": "Madrid", "peso": 8 }], "origen": "Origen", "destino": "Madrid", "dirigido": true };
+    document.getElementById("origen").value = ejemplo.origen;
+    document.getElementById("destino").value = ejemplo.destino;
+    fillTableEjemplo("Flujo", ejemplo.data);
     postData('flujomaximo', ejemplo).then(data => { renderResponseFlujo(data); });
 }
 function ejemploFloyd() {
     const ejemplo = [{ "origen": "1", "destino": "2", "peso": 700 }, { "origen": "1", "destino": "3", "peso": 200 }, { "origen": "2", "destino": "3", "peso": 300 }, { "origen": "2", "destino": "4", "peso": 200 }, { "origen": "2", "destino": "6", "peso": 400 }, { "origen": "3", "destino": "4", "peso": 700 }, { "origen": "3", "destino": "5", "peso": 600 }, { "origen": "4", "destino": "6", "peso": 100 }, { "origen": "4", "destino": "5", "peso": 300 }, { "origen": "6", "destino": "5", "peso": 500 }];
+    fillTableEjemplo("Floyd", ejemplo);
     postData('floydwarshall', ejemplo).then(data => { renderResponseFloyd(data); });
 }
 function ejemploCPM() {

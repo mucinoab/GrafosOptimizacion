@@ -82,28 +82,28 @@ html {
         <!-- Flujo Máximo -->
         <div class="tab-pane fade show active" id="FlujoM" role="tabpanel" aria-labelledby="home-tab">
           <br>
-          <form id="formulario">
+          <form id="formularioFlujo">
             <div class="row g-3">
               <div class="col-auto">
-                <label for="exampleInputEmail1" class="form-label">Número de Vértices</label>
-                <input type="tel" class="form-control" id="Nvertices" maxlength="2" required>
+                <label class="form-label">Número de Vértices</label>
+                <input type="tel" class="form-control" id="NverticesFlujo" maxlength="2" required>
                 <div class="form-text">(aristas, arcos)</div>
               </div>
             </div>
             <br>
 
             <p>Es un grafo...</p>
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="GrafoNoDirigido" checked>
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="GrafoNoDirigido">
             <label class="form-check-label" for="flexRadioDefault2">No Dirigido</label>
 
             <br>
 
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="GrafoDirigido">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="GrafoDirigido" checked>
             <label class="form-check-label" for="flexRadioDefault1">Dirigido</label>
 
             <br> <br>
 
-            <button type="button" class="btn btn-primary" onclick="showTable('Flujo', 'formulario', 'Nvertices')">Generar Tabla</button>
+            <button type="button" class="btn btn-primary" onclick="showTable('Flujo', 'formularioFlujo', 'NverticesFlujo')">Generar Tabla</button>
             <br>
             <br>
             <button type="button" class="btn btn-outline-primary" onclick="ejemploFlujo()">Ejemplo</button>
@@ -127,9 +127,9 @@ html {
                 <tbody id="innerTablaFlujo">
                 </tbody>
               </table>
-              <br> <label for="exampleInputEmail1" class="form-label">Nodo Origen</label>
+              <br> <label class="form-label">Nodo Origen</label>
               <input type="text" class="form-control pesos" id="origen" required>
-              <br> <label for="exampleInputEmail1" class="form-label">Nodo Destino</label>
+              <br> <label class="form-label">Nodo Destino</label>
               <input type="text" class="form-control pesos" id="destino" required>
               <br>
               <button type="button" class="btn btn-primary" onclick="flujoMaximo()">Resolver</button>
