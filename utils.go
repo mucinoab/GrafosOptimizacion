@@ -2,7 +2,10 @@ package main
 
 import (
 	"compress/gzip"
+	"encoding/json"
 	"io"
+	"io/ioutil"
+	"log"
 	"math"
 	"net/http"
 	"sort"
@@ -11,6 +14,7 @@ import (
 
 const Inf = math.MaxFloat64
 const NInf = -math.MaxFloat64
+const jsMaxValue = 1.7976931348623157e+308
 const epsilon = 0.05
 
 type Vertice struct {
@@ -150,4 +154,30 @@ func gzipHandler(h http.Handler) http.Handler {
 		defer gz.Close()
 		h.ServeHTTP(gzipResponseWriter{Writer: gz, ResponseWriter: w}, r)
 	})
+}
+
+func toBytes(someStruct interface{}) []byte {
+	s, err := json.Marshal(someStruct)
+
+	// TODO proper error handling
+	if err != nil {
+		log.Println(err)
+		return make([]byte, 0)
+	} else {
+		return s
+	}
+}
+
+func deserialize(rawData io.ReadCloser, v interface{}) {
+	// TODO proper error handling
+	d, err := ioutil.ReadAll(rawData)
+	if err != nil {
+		log.Print(err)
+	}
+
+	err = json.Unmarshal(d, v)
+
+	if err != nil {
+		log.Print(err)
+	}
 }

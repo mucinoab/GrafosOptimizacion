@@ -1,9 +1,7 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"log"
 	"strings"
 )
 
@@ -26,7 +24,7 @@ type camino struct {
 	izq, der string
 }
 
-func ResuelveFlujoMaximo(grafo FlujoMaximo) []byte {
+func ResuelveFlujoMaximo(grafo FlujoMaximo) RespuestaFlujoMaximo {
 	var sol RespuestaFlujoMaximo
 	var vertices []Vertice
 
@@ -67,14 +65,7 @@ func ResuelveFlujoMaximo(grafo FlujoMaximo) []byte {
 		Camino: "Patrón de Flujo",
 	})
 
-	s, err := json.Marshal(sol)
-
-	if err != nil {
-		log.Println(err)
-		return nil
-	} else {
-		return s
-	}
+	return sol
 }
 
 func dfs(sol *RespuestaFlujoMaximo, marcado *[]camino, grafo map[string]map[string]float64, actual, destino string) float64 {

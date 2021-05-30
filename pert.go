@@ -1,10 +1,6 @@
 package main
 
-import (
-	"encoding/json"
-	"log"
-	"math"
-)
+import "math"
 
 type VerticePert struct {
 	Actividad   string  `json:"origen"`
@@ -23,7 +19,7 @@ type RespuesaPERT struct {
 	CPM          RespuestaCPM `json:"cpm"`
 }
 
-func ResuelvePERT(a []VerticePert) ([]byte, RespuesaPERT) {
+func ResuelvePERT(a []VerticePert) RespuesaPERT {
 	actividades := estimaDuraciones(a)
 	mActividades := mapActividades(a)
 
@@ -35,7 +31,7 @@ func ResuelvePERT(a []VerticePert) ([]byte, RespuesaPERT) {
 		varianzas[idx] = varianza(a[idx])
 	}
 
-	_, respuesta := ResuelveCPM(actividades)
+	respuesta := ResuelveCPM(actividades)
 
 	sumaVarianza := 0.0
 
@@ -43,16 +39,7 @@ func ResuelvePERT(a []VerticePert) ([]byte, RespuesaPERT) {
 		sumaVarianza += varianza(mActividades[actividad])
 	}
 
-	r := RespuesaPERT{respuesta.RutaCritica, estimaciones, varianzas, sumaVarianza, respuesta.DuracionTotal, respuesta}
-
-	resp, err := json.Marshal(r)
-
-	if err != nil {
-		log.Println(err)
-		return nil, r
-	} else {
-		return resp, r
-	}
+	return RespuesaPERT{respuesta.RutaCritica, estimaciones, varianzas, sumaVarianza, respuesta.DuracionTotal, respuesta}
 }
 
 func duracionEstimada(v *VerticePert) float64 {

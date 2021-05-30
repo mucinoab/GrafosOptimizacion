@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 	"os"
@@ -25,63 +24,32 @@ func main() {
 
 func flujoMaximo(rw http.ResponseWriter, req *http.Request) {
 	var grafo FlujoMaximo
-	decoder := json.NewDecoder(req.Body)
+	deserialize(req.Body, &grafo)
 
-	err := decoder.Decode(&grafo)
-	if err != nil {
-		log.Print(err)
-	}
-
-	answer := ResuelveFlujoMaximo(grafo)
-
-	rw.Write(answer)
+	rw.Write(toBytes(ResuelveFlujoMaximo(grafo)))
 	log.Println("Flujo Máximo")
 }
 
 func FloyWarshall(rw http.ResponseWriter, req *http.Request) {
 	var grafo []Vertice
+	deserialize(req.Body, &grafo)
 
-	decoder := json.NewDecoder(req.Body)
-	err := decoder.Decode(&grafo)
-
-	if err != nil {
-		log.Print(err)
-	}
-
-	answer, _ := ResuelveFloyWarshall(&grafo)
-
-	rw.Write(answer)
+	rw.Write(toBytes(ResuelveFloyWarshall(&grafo)))
 	log.Println("Floy-Warshall")
 }
 
 func CPM(rw http.ResponseWriter, req *http.Request) {
 	var actividades []Vertice
+	deserialize(req.Body, &actividades)
 
-	decoder := json.NewDecoder(req.Body)
-	err := decoder.Decode(&actividades)
-
-	if err != nil {
-		log.Print(err)
-	}
-
-	answer, _ := ResuelveCPM(actividades)
-
-	rw.Write(answer)
+	rw.Write(toBytes(ResuelveCPM(actividades)))
 	log.Println("CPM")
 }
 
 func PERT(rw http.ResponseWriter, req *http.Request) {
 	var actividades []VerticePert
+	deserialize(req.Body, &actividades)
 
-	decoder := json.NewDecoder(req.Body)
-	err := decoder.Decode(&actividades)
-
-	if err != nil {
-		log.Print(err)
-	}
-
-	answer, _ := ResuelvePERT(actividades)
-
-	rw.Write(answer)
+	rw.Write(toBytes(ResuelvePERT(actividades)))
 	log.Println("PERT")
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"reflect"
 	"sort"
 	"testing"
@@ -36,14 +35,9 @@ func TestGrafos(t *testing.T) {
 		}
 
 		sol := ResuelveFlujoMaximo(grafo)
-		var f RespuestaFlujoMaximo
 
-		if err := json.Unmarshal(sol, &f); err != nil {
-			t.Error("Error al deserealizar.")
-		}
-
-		if f.Flujo != 20.00 {
-			t.Errorf("Flujo máximo incorrecto, obtuve %.2f, esperaba 20.00", f.Flujo)
+		if sol.Flujo != 20.00 {
+			t.Errorf("Flujo máximo incorrecto, obtuve %.2f, esperaba 20.00", sol.Flujo)
 		}
 	})
 
@@ -65,7 +59,8 @@ func TestGrafos(t *testing.T) {
 			"6": {"1": 800, "2": 300, "3": 600, "4": 100, "5": 400, "6": 0},
 		}
 
-		_, sol := ResuelveFloyWarshall(&grafo)
+		solution := ResuelveFloyWarshall(&grafo)
+		sol := VerticesToAdjList(&solution.Iteraciones[len(solution.Iteraciones)-1], true)
 
 		if !reflect.DeepEqual(sol, correctSol) {
 			t.Error("Respuesa incorrecta", correctSol, sol)
@@ -76,7 +71,7 @@ func TestGrafos(t *testing.T) {
 		const duracion float64 = 20.0
 		ruta := []string{"D", "I", "J", "L", "M", "-", "Fin"}
 
-		_, clase := ResuelveCPM([]Vertice{
+		clase := ResuelveCPM([]Vertice{
 			{"A", "-", 2}, {"B", "A", 4}, {"C", "B", 1}, {"C", "H", 1},
 			{"D", "-", 6}, {"E", "G", 3}, {"F", "E", 5}, {"G", "D", 2},
 			{"H", "G", 2}, {"I", "D", 3}, {"J", "I", 4}, {"K", "D", 3},
@@ -143,7 +138,7 @@ func TestGrafos(t *testing.T) {
 			{"M", "L", 1, 2, 3},
 		}
 
-		_, clase := ResuelvePERT(ejemplo)
+		clase := ResuelvePERT(ejemplo)
 
 		if clase.Media != 20.0 {
 			t.Error("Media total erronea.")

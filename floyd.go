@@ -1,10 +1,5 @@
 package main
 
-import (
-	"encoding/json"
-	"log"
-)
-
 type RespuestaFloydWarshall struct {
 	Cambios     []Cambio    `json:"cambios"`
 	Iteraciones [][]Vertice `json:"iteraciones"`
@@ -19,7 +14,7 @@ type Cambio struct {
 }
 
 // TODO matriz de cambios rara
-func ResuelveFloyWarshall(grafo *[]Vertice) ([]byte, map[string]map[string]float64) {
+func ResuelveFloyWarshall(grafo *[]Vertice) RespuestaFloydWarshall {
 	sol := VerticesToAdjList(grafo, false)
 	nodos := set()
 
@@ -77,17 +72,10 @@ func ResuelveFloyWarshall(grafo *[]Vertice) ([]byte, map[string]map[string]float
 	for _, iter := range iteraciones {
 		for idx, v := range iter {
 			if v.Peso == Inf {
-				iter[idx].Peso = 1.7976931348623157e+308
+				iter[idx].Peso = jsMaxValue
 			}
 		}
 	}
 
-	s, err := json.Marshal(RespuestaFloydWarshall{cambios, iteraciones, *nodos.toSlice()})
-
-	if err != nil {
-		log.Println(err)
-		return nil, nil
-	} else {
-		return s, sol
-	}
+	return RespuestaFloydWarshall{cambios, iteraciones, *nodos.toSlice()}
 }

@@ -1,8 +1,6 @@
 package main
 
 import (
-	"encoding/json"
-	"log"
 	"math"
 )
 
@@ -30,7 +28,7 @@ type RespuestaCPM struct {
 	DuracionTotal float64      `json:"duracionTotal"`
 }
 
-func ResuelveCPM(p []Vertice) ([]byte, RespuestaCPM) {
+func ResuelveCPM(p []Vertice) RespuestaCPM {
 	anterior := VerticesToAdjList(&p, true)
 
 	actividades := make(map[string]*Actividad, len(p))
@@ -94,15 +92,7 @@ func ResuelveCPM(p []Vertice) ([]byte, RespuestaCPM) {
 	acti = append(acti, NuevaActividad("Fin", duracionTotal))
 	ruta = append(ruta, "Fin")
 
-	r := RespuestaCPM{acti, ruta, duracionTotal}
-	resp, err := json.Marshal(r)
-
-	if err != nil {
-		log.Println(err)
-		return nil, r
-	} else {
-		return resp, r
-	}
+	return RespuestaCPM{acti, ruta, duracionTotal}
 }
 
 func recorridoIda(anterior string, s map[string]map[string]float64, n map[string]*Actividad) {
