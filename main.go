@@ -27,7 +27,6 @@ func flujoMaximo(rw http.ResponseWriter, req *http.Request) {
 	deserialize(req.Body, &grafo)
 
 	rw.Write(toBytes(ResuelveFlujoMaximo(grafo)))
-	log.Println("Flujo Máximo")
 }
 
 func FloyWarshall(rw http.ResponseWriter, req *http.Request) {
@@ -35,7 +34,6 @@ func FloyWarshall(rw http.ResponseWriter, req *http.Request) {
 	deserialize(req.Body, &grafo)
 
 	rw.Write(toBytes(ResuelveFloyWarshall(&grafo)))
-	log.Println("Floy-Warshall")
 }
 
 func CPM(rw http.ResponseWriter, req *http.Request) {
@@ -43,7 +41,6 @@ func CPM(rw http.ResponseWriter, req *http.Request) {
 	deserialize(req.Body, &actividades)
 
 	rw.Write(toBytes(ResuelveCPM(actividades)))
-	log.Println("CPM")
 }
 
 func PERT(rw http.ResponseWriter, req *http.Request) {
@@ -51,5 +48,4 @@ func PERT(rw http.ResponseWriter, req *http.Request) {
 	deserialize(req.Body, &actividades)
 
 	rw.Write(toBytes(ResuelvePERT(actividades)))
-	log.Println("PERT")
 }

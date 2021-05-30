@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"sort"
 	"strings"
+	"time"
 )
 
 const Inf = math.MaxFloat64
@@ -145,10 +146,12 @@ func (w gzipResponseWriter) Write(b []byte) (int, error) {
 
 func gzipHandler(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		defer duration(track(r.URL.String()))
 		if !strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
 			h.ServeHTTP(w, r)
 			return
 		}
+
 		w.Header().Set("Content-Encoding", "gzip")
 		gz := gzip.NewWriter(w)
 		defer gz.Close()
@@ -180,4 +183,12 @@ func deserialize(rawData io.ReadCloser, v interface{}) {
 	if err != nil {
 		log.Print(err)
 	}
+}
+
+func track(msg string) (string, time.Time) {
+	return msg, time.Now()
+}
+
+func duration(msg string, start time.Time) {
+	log.Printf("%s %dμs", msg, time.Since(start).Microseconds())
 }
