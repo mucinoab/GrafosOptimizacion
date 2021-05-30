@@ -190,5 +190,5 @@ func track(msg string) (string, time.Time) {
 }
 
 func duration(msg string, start time.Time) {
-	log.Printf("%s %dμs", msg, time.Since(start).Microseconds())
+	log.Printf("%-15s %dμs", msg, time.Since(start).Microseconds())
 }
