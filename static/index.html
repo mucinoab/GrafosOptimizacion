@@ -288,7 +288,49 @@ html {
         <!-- Aceleración de Proyectos -->
         <div class="tab-pane fade" id="raceleracion" role="tabpanel" aria-labelledby="contact-tab">
           <br>
-          ToDo...
+          <form id="formularioCompresion">
+            <div class="row g-3">
+              <div class="col-auto">
+                <label for="Nvertices" class="form-label">Número de Vértices (Actividades)</label>
+                <input type="tel" class="form-control" id="NverticesCompresion" maxlength="2" required>
+                <div class="form-text">(aristas, arcos)</div>
+              </div>
+            </div>
+          </form>
+          <br>
+          <button type="button" class="btn btn-primary" onclick="showTable('Compresion', 'formularioCompresion', 'NverticesCompresion')">Generar Tabla</button>
+          <br>
+          <br>
+          <button type="button" class="btn btn-outline-primary" onclick="ejemploCompresion()">Ejemplo</button>
+
+          <div id="Compresion" style="display: none;">
+            <br>
+            <p> Ingresa todas las actividades, sus predecesoras, su duración y costo (normal y urgente). <br> Si una actividad no tiene predecesora, utiliza un guión medio ("-").</p>
+
+            <form id="TablaCompresion">
+              <table class="table table-sm">
+                <thead>
+                  <tr id="CompresionHeader">
+                    <th scope="col">#</th>
+                    <th scope="col">Actividad</th>
+                    <th scope="col">Predecesora</th>
+                    <th scope="col">Duración</th>
+                    <th scope="col">Costo</th>
+                    <th scope="col">Duración Compresión</th>
+                    <th scope="col">Costo Compresión</th>
+                  </tr>
+                </thead>
+                <tbody id="innerTablaCompresion">
+                </tbody>
+              </table>
+
+              <button type="button" class="btn btn-primary" onclick="Compresion()">Resolver</button>
+              <br>
+              <br>
+            </form>
+            <div id="respuestasCompresion">
+            </div>
+          </div>
           <br><br><br>
         </div>
 

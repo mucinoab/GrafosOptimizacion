@@ -7,7 +7,7 @@ type CompresionData struct {
 }
 
 type VerticeCompresion struct {
-	Actividad   string `json:"actividades"`
+	Actividad   string `json:"actividad"`
 	Predecesora string `json:"predecesora"`
 
 	PesoNormal  float64 `json:"pesoNormal"`
@@ -18,12 +18,14 @@ type VerticeCompresion struct {
 }
 
 type RespuesaCompresion struct {
-	CostoTiempo []float64      `json:"costoTiempo"`
-	CPMs        []RespuestaCPM `json:"iteraciones"`
+	CostoTiempo            []float64      `json:"costoTiempo"`
+	CPMs                   []RespuestaCPM `json:"iteraciones"`
+	ActividadesComprimidas []string       `json:"actividadesComprimidas"`
 }
 
 func ResuelveCompresion(c CompresionData) RespuesaCompresion {
 	iteracionesCPM := make([]RespuestaCPM, 0, len(c.Actividades))
+	aComprimidas := make([]string, 0, len(c.Actividades))
 	precioCosto, costoUrgente := mapCostos(c.Actividades)
 
 	actividadesComprimidas := set()
@@ -63,6 +65,8 @@ func ResuelveCompresion(c CompresionData) RespuesaCompresion {
 			// No hubo cambio o se llegó al tiempo objetivo
 			break
 		}
+		// Agrega actividad comprimida TODO
+		aComprimidas = append(aComprimidas, actMinOrigen)
 
 		actividades_cpy = Clone(actividades)
 		resultadoCpm = ResuelveCPM(actividades)
@@ -76,7 +80,7 @@ func ResuelveCompresion(c CompresionData) RespuesaCompresion {
 		costoTiempo[idx] = CalculaCostoTiempo(&a)
 	}
 
-	return RespuesaCompresion{costoTiempo, iteracionesCPM}
+	return RespuesaCompresion{costoTiempo, iteracionesCPM, aComprimidas}
 }
 
 func CalculaCostoTiempo(a *VerticeCompresion) float64 {

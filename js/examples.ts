@@ -32,4 +32,10 @@ function ejemploPERT() {
   const ejemplo = [{"origen":"A","destino":"-","optimista":1,"probable":2,"pesimista":3},{"origen":"B","destino":"A","optimista":2,"probable":4,"pesimista":6},{"origen":"C","destino":"B","optimista":0,"probable":1,"pesimista":2},{"origen":"C","destino":"H","optimista":0,"probable":1,"pesimista":2},{"origen":"D","destino":"-","optimista":3,"probable":6,"pesimista":9},{"origen":"E","destino":"G","optimista":2,"probable":3,"pesimista":4},{"origen":"F","destino":"E","optimista":3,"probable":5,"pesimista":7},{"origen":"G","destino":"D","optimista":1,"probable":2,"pesimista":3},{"origen":"H","destino":"G","optimista":1,"probable":2,"pesimista":3},{"origen":"I","destino":"D","optimista":1,"probable":3,"pesimista":5},{"origen":"J","destino":"I","optimista":3,"probable":4,"pesimista":5},{"origen":"K","destino":"D","optimista":2,"probable":3,"pesimista":4},{"origen":"L","destino":"J","optimista":3,"probable":5,"pesimista":7},{"origen":"L","destino":"K","optimista":3,"probable":5,"pesimista":7},{"origen":"M","destino":"C","optimista":1,"probable":2,"pesimista":3},{"origen":"M","destino":"L","optimista":1,"probable":2,"pesimista":3}];
   fillTableEjemplo("PERT", ejemplo);
   postData('pert', ejemplo).then(data => {renderResponsePERT(data);});
-  }
+}
+
+function ejemploCompresion() {
+  const ejemplo = {"actividades":[{"actividad":"A","predecesora":"-","pesoNormal":8,"costoNormal":100,"pesoUrgente":6,"costoUrgente":200},{"actividad":"B","predecesora":"-","pesoNormal":4,"costoNormal":150,"pesoUrgente":2,"costoUrgente":350},{"actividad":"C","predecesora":"A","pesoNormal":2,"costoNormal":50,"pesoUrgente":1,"costoUrgente":90},{"actividad":"D","predecesora":"B","pesoNormal":5,"costoNormal":100,"pesoUrgente":1,"costoUrgente":200},{"actividad":"E","predecesora":"C","pesoNormal":3,"costoNormal":80,"pesoUrgente":1,"costoUrgente":100},{"actividad":"E","predecesora":"D","pesoNormal":3,"costoNormal":80,"pesoUrgente":1,"costoUrgente":100},{"actividad":"F","predecesora":"A","pesoNormal":10,"costoNormal":100,"pesoUrgente":5,"costoUrgente":400}],"tiempoObjetivo":-10};
+  //   fillTableEjemplo("Compresion", ejemplo); // TODO
+  postData('compresion', ejemplo).then(data => {renderResponseCompresion(data);});
+}

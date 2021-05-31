@@ -3,6 +3,7 @@
     "index.ts",
     "examples.ts",
     "utils.ts",
+    "model.ts",
   ],
   "compilerOptions": {
     "target": "ES2020",

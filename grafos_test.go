@@ -150,7 +150,7 @@ func TestGrafos(t *testing.T) {
 	})
 
 	t.Run("Compresion", func(t *testing.T) {
-		ejemplo := CompresionData{10,
+		ejemplo := CompresionData{-1,
 			[]VerticeCompresion{
 				{"A", "-", 8, 100, 6, 200},
 				{"B", "-", 4, 150, 2, 350},

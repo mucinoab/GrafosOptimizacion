@@ -31,8 +31,15 @@ function generateTable(tablaId, verticesId) {
         r.insertCell().appendChild(newInputElement(`destinos${tablaId}`));
         r.insertCell().appendChild(newInputElement(`pesos${tablaId}`, "0.0"));
         if (nRows != null) {
-            r.insertCell().appendChild(newInputElement(`probable${tablaId}`, "0.0"));
-            r.insertCell().appendChild(newInputElement(`pesimista${tablaId}`, "0.0"));
+            if (tablaId === "PERT") {
+                r.insertCell().appendChild(newInputElement(`probable${tablaId}`, "0.0"));
+                r.insertCell().appendChild(newInputElement(`pesimista${tablaId}`, "0.0"));
+            }
+            else {
+                r.insertCell().appendChild(newInputElement(`costo${tablaId}`, "0.0"));
+                r.insertCell().appendChild(newInputElement(`pesosUrgente${tablaId}`, "0.0"));
+                r.insertCell().appendChild(newInputElement(`costosUrgente${tablaId}`, "0.0"));
+            }
         }
     }
     return true;
@@ -96,6 +103,38 @@ function PERT() {
         actividaes.push(activida);
     }
     postData("pert", actividaes).then(data => { renderResponsePERT(data); });
+}
+function Compresion() {
+    const act = graphFromTable("Compresion");
+    if (act === undefined)
+        return;
+    const costos = document.querySelectorAll(".costoCompresion");
+    const pesosUrgentes = document.querySelectorAll(".pesosUrgenteCompresion");
+    const costosUrgentes = document.querySelectorAll(".costosUrgenteCompresion");
+    let actividades = Array();
+    for (const [idx, a] of act.entries()) {
+        const costoN = parseFloat(costos[idx].value.trim());
+        const pUrgente = parseFloat(pesosUrgentes[idx].value.trim());
+        const cUrgente = parseFloat(costosUrgentes[idx].value.trim());
+        if (isNaN(costoN) || isNaN(pUrgente) || isNaN(cUrgente)) {
+            alert("Por favor verifica que los pesos ingresados sean números.");
+            return;
+        }
+        let activida = {
+            actividad: a.origen,
+            predecesora: a.destino,
+            pesoNormal: a.peso,
+            costoNormal: costoN,
+            pesoUrgente: pUrgente,
+            costoUrgente: cUrgente,
+        };
+        actividades.push(activida);
+    }
+    const data = {
+        actividades: actividades,
+        tiempoObjetivo: -10,
+    };
+    postData("compresion", data).then(data => { renderResponseCompresion(data); });
 }
 function graphFromTable(id) {
     const origenes = document.querySelectorAll(`.origenes${id}`);
@@ -290,6 +329,20 @@ function renderResponseCPM(r) {
     respuesta.insertAdjacentHTML("afterbegin", respHTML);
     respuesta.style.setProperty("display", "block", 'important');
     respuesta.scrollIntoView(true);
+}
+function renderResponseCompresion(r) {
+    let rHTML = `P_{ij} = [${r.costoTiempo.join(", ")}]<br><br>`;
+    for (const [idx, iter] of r.iteraciones.entries()) {
+        const act = (r.actividadesComprimidas[idx] != undefined) ? r.actividadesComprimidas[idx] : "-";
+        rHTML += `<h4>Duración: ${iter.duracionTotal}</h4><br>
+    <p>Compresión: ${act}</p><br>
+    <img src="${drawGraphLinkCritical(iter)}" width="999" height="360" class="center img-fluid">
+    <br><br>`;
+    }
+    let respuesta = document.getElementById("respuestasCompresion");
+    clearElement(respuesta);
+    respuesta.insertAdjacentHTML("afterbegin", rHTML);
+    document.getElementById("Compresion").style.setProperty("display", "block", 'important');
 }
 function drawGraphLinkCritical(r) {
     for (let a of r.actividades) {
