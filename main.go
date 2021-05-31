@@ -27,6 +27,7 @@ func flujoMaximo(rw http.ResponseWriter, req *http.Request) {
 	var grafo FlujoMaximo
 	deserialize(req.Body, &grafo)
 
+	rw.Header().Set("Content-Type", "application/json")
 	rw.Write(toBytes(ResuelveFlujoMaximo(grafo)))
 }
 
@@ -34,6 +35,7 @@ func FloyWarshall(rw http.ResponseWriter, req *http.Request) {
 	var grafo []Vertice
 	deserialize(req.Body, &grafo)
 
+	rw.Header().Set("Content-Type", "application/json")
 	rw.Write(toBytes(ResuelveFloyWarshall(&grafo)))
 }
 
@@ -41,6 +43,7 @@ func CPM(rw http.ResponseWriter, req *http.Request) {
 	var actividades []Vertice
 	deserialize(req.Body, &actividades)
 
+	rw.Header().Set("Content-Type", "application/json")
 	rw.Write(toBytes(ResuelveCPM(actividades)))
 }
 
@@ -48,6 +51,7 @@ func PERT(rw http.ResponseWriter, req *http.Request) {
 	var actividades []VerticePert
 	deserialize(req.Body, &actividades)
 
+	rw.Header().Set("Content-Type", "application/json")
 	rw.Write(toBytes(ResuelvePERT(actividades)))
 }
 
@@ -55,5 +59,6 @@ func Compresion(rw http.ResponseWriter, req *http.Request) {
 	var actividades CompresionData
 	deserialize(req.Body, &actividades)
 
+	rw.Header().Set("Content-Type", "application/json")
 	rw.Write(toBytes(ResuelveCompresion(actividades)))
 }
