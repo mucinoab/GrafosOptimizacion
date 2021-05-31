@@ -38,13 +38,13 @@ func ResuelveCPM(p []Vertice) RespuestaCPM {
 	sn := set()
 
 	for idx := 0; idx < len(p); idx += 1 {
-		actividades[(p)[idx].Origen] = NuevaActividad((p)[idx].Origen, (p)[idx].Peso)
+		actividades[p[idx].Origen] = NuevaActividad(p[idx].Origen, p[idx].Peso)
 
-		s.Add((p)[idx].Origen)
+		s.Add(p[idx].Origen)
 		// Invertimos porque el formato de la tabla es distinto
-		(p)[idx].Origen, (p)[idx].Destino = (p)[idx].Destino, (p)[idx].Origen
-		s.Add((p)[idx].Origen)
-		sn.Add((p)[idx].Origen)
+		p[idx].Origen, p[idx].Destino = p[idx].Destino, p[idx].Origen
+		s.Add(p[idx].Origen)
+		sn.Add(p[idx].Origen)
 	}
 
 	siguientes := VerticesToAdjList(&p, true)

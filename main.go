@@ -17,6 +17,7 @@ func main() {
 	http.HandleFunc("/floydwarshall", FloyWarshall)
 	http.HandleFunc("/cpm", CPM)
 	http.HandleFunc("/pert", PERT)
+	http.HandleFunc("/compresion", Compresion)
 
 	log.Printf("http://localhost:%s", port)
 	log.Fatal(http.ListenAndServe(":"+port, gzipHandler(http.DefaultServeMux)))
@@ -48,4 +49,11 @@ func PERT(rw http.ResponseWriter, req *http.Request) {
 	deserialize(req.Body, &actividades)
 
 	rw.Write(toBytes(ResuelvePERT(actividades)))
+}
+
+func Compresion(rw http.ResponseWriter, req *http.Request) {
+	var actividades CompresionData
+	deserialize(req.Body, &actividades)
+
+	rw.Write(toBytes(ResuelveCompresion(actividades)))
 }

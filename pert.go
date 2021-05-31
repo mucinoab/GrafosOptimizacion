@@ -39,7 +39,14 @@ func ResuelvePERT(a []VerticePert) RespuesaPERT {
 		sumaVarianza += varianza(mActividades[actividad])
 	}
 
-	return RespuesaPERT{respuesta.RutaCritica, estimaciones, varianzas, sumaVarianza, respuesta.DuracionTotal, respuesta}
+	return RespuesaPERT{
+		respuesta.RutaCritica,
+		estimaciones,
+		varianzas,
+		sumaVarianza,
+		respuesta.DuracionTotal,
+		respuesta,
+	}
 }
 
 func duracionEstimada(v *VerticePert) float64 {
@@ -51,11 +58,10 @@ func varianza(v VerticePert) float64 {
 }
 
 func estimaDuraciones(v []VerticePert) []Vertice {
-	actividades := make([]Vertice, 0, len(v))
+	actividades := make([]Vertice, len(v))
 
-	for _, a := range v {
-		nuevaActividad := Vertice{a.Actividad, a.Predecesora, duracionEstimada(&a)}
-		actividades = append(actividades, nuevaActividad)
+	for idx, a := range v {
+		actividades[idx] = Vertice{a.Actividad, a.Predecesora, duracionEstimada(&a)}
 	}
 
 	return actividades

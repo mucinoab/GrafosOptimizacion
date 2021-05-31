@@ -144,8 +144,27 @@ func TestGrafos(t *testing.T) {
 			t.Error("Media total erronea.")
 		}
 
-		if clase.SumaVariazas != 19.0/9.0 {
+		if clase.SumaVariazas-19.0/9.0 > epsilon {
 			t.Errorf("%f != %f", clase.SumaVariazas, 19.0/9.0)
+		}
+	})
+
+	t.Run("Compresion", func(t *testing.T) {
+		ejemplo := CompresionData{10,
+			[]VerticeCompresion{
+				{"A", "-", 8, 100, 6, 200},
+				{"B", "-", 4, 150, 2, 350},
+				{"C", "A", 2, 50, 1, 90},
+				{"D", "B", 5, 100, 1, 200},
+				{"E", "C", 3, 80, 1, 100},
+				{"E", "D", 3, 80, 1, 100},
+				{"F", "A", 10, 100, 5, 400},
+			}}
+
+		sol := ResuelveCompresion(ejemplo)
+
+		if sol.CPMs[len(sol.CPMs)-1].DuracionTotal-11.0 > epsilon {
+			t.Error("Duración total incorrecta.")
 		}
 	})
 }
