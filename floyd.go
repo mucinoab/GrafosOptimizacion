@@ -1,5 +1,4 @@
 package main
-
 type RespuestaFloydWarshall struct {
 	Cambios     []Cambio    `json:"cambios"`
 	Iteraciones [][]Vertice `json:"iteraciones"`
