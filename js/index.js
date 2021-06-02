@@ -136,6 +136,28 @@ function Compresion() {
     };
     postData("compresion", data).then(data => { renderResponseCompresion(data); });
 }
+function swapValues(data) {
+    for (let row = 0; row < data.length; row++) {
+        for (let col = row + 1; col < data[0].length; col++) {
+            let tmp = data[col][row];
+            data[col][row] = data[row][col];
+            data[row][col] = tmp;
+        }
+    }
+    return data;
+}
+function Dijkstra() {
+    const act = graphFromTable("Dijkstra");
+    var origen = document.getElementById(`OrigenDijkstra`);
+    var destino = document.getElementById(`DestinoDijkstra`);
+    if (act === undefined)
+        return;
+    postData('dijkstra', {
+        grafo: act,
+        origen: origen.value,
+        destino: destino.value
+    }).then(data => renderResponseDijkstra(data));
+}
 function graphFromTable(id) {
     const origenes = document.querySelectorAll(`.origenes${id}`);
     const destinos = document.querySelectorAll(`.destinos${id}`);
@@ -368,4 +390,47 @@ function drawGraphLinkCritical(r) {
     }
     link += "}";
     return encodeURI(link);
+}
+function renderResponseDijkstra(data) {
+    let nodesHeader = `<thead><tr><th scope="col" style="font-weight:bold;"> </th>`;
+    for (const n of data.bases) {
+        nodesHeader += `<th scope="col" style="font-weight:bold;">${n}</th>`;
+    }
+    nodesHeader += `<th scope="col" style="font-weight:bold;">Bases</th>`;
+    nodesHeader += `<th scope="col" style="font-weight:bold;">Arcos</th>`;
+    nodesHeader += "</tr></thead>";
+    let table = document.createElement("table");
+    table.className = "table table-hover";
+    table.insertAdjacentHTML("beforeend", nodesHeader);
+    let nodosBody = "<tbody>";
+    for (let idx = 0; idx < data.tabla.length; idx++) {
+        if (data.tabla[idx]) {
+            nodosBody += `<tr><th scope=\"row\">${data.bases[idx]}</th>`;
+            for (let col = 0; col < data.tabla[idx].length; col++) {
+                if (colorear(data.coords, idx, col))
+                    nodosBody += `<td><font color="red">${data.tabla[idx][col]}</font></td>`;
+                else
+                    nodosBody += `<td>${data.tabla[idx][col]}</td>`;
+            }
+        }
+        nodosBody += `</tr>`;
+    }
+    table.insertAdjacentHTML("beforeend", nodosBody);
+    console.log(data.coords);
+    let peso = ` <h3> Peso <small class="text-muted">${data.peso} </small> </h3>`;
+    let div = document.createElement("div");
+    div.insertAdjacentHTML("beforeend", peso);
+    let respuesta = document.getElementById("respuestaDijkstra");
+    clearElement(respuesta);
+    respuesta.appendChild(table);
+    respuesta.appendChild(div);
+    respuesta.style.setProperty("display", "block", 'important');
+}
+function colorear(coors, row, col) {
+    for (let idx = 0; idx < coors.length; idx++) {
+        let cord = coors[idx];
+        if (cord.row === row && cord.col === col)
+            return true;
+    }
+    return false;
 }
