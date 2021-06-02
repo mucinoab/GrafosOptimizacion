@@ -18,6 +18,7 @@ func main() {
 	http.HandleFunc("/cpm", CPM)
 	http.HandleFunc("/pert", PERT)
 	http.HandleFunc("/compresion", Compresion)
+	http.HandleFunc("/dijkstra", Dijkstra)
 
 	log.Printf("http://localhost:%s", port)
 	log.Fatal(http.ListenAndServe(":"+port, gzipHandler(http.DefaultServeMux)))
@@ -45,6 +46,14 @@ func CPM(rw http.ResponseWriter, req *http.Request) {
 
 	rw.Header().Set("Content-Type", "application/json")
 	rw.Write(toBytes(ResuelveCPM(actividades)))
+}
+func Dijkstra(rw http.ResponseWriter, req *http.Request) {
+	var actividades dijkstra
+	deserialize(req.Body, &actividades)
+
+	rw.Header().Set("Content-Type", "application/json")
+	//rw.Write(toBytes(ResuelveDijkstra(actividades)))
+	rw.Write(toBytes(ResuelveDijkstra(actividades)))
 }
 
 func PERT(rw http.ResponseWriter, req *http.Request) {
