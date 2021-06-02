@@ -416,7 +416,6 @@ function renderResponseDijkstra(data) {
         nodosBody += `</tr>`;
     }
     table.insertAdjacentHTML("beforeend", nodosBody);
-    console.log(data.coords);
     let peso = ` <h3> Peso <small class="text-muted">${data.peso} </small> </h3>`;
     let div = document.createElement("div");
     div.insertAdjacentHTML("beforeend", peso);
