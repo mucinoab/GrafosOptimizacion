@@ -53,7 +53,7 @@ func Dijkstra(rw http.ResponseWriter, req *http.Request) {
 
 	rw.Header().Set("Content-Type", "application/json")
 	//rw.Write(toBytes(ResuelveDijkstra(actividades)))
-    rw.Write(toBytes(ResuelveDijkstra(actividades)))
+	rw.Write(toBytes(ResuelveDijkstra(actividades)))
 }
 
 func PERT(rw http.ResponseWriter, req *http.Request) {

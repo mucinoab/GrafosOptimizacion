@@ -25,6 +25,7 @@ type Vertice struct {
 }
 
 type adjlist map[string]map[string]float64
+
 // custom Hash Set
 type Set struct {
 	m map[string]struct{}
@@ -33,8 +34,8 @@ type Set struct {
 func set() *Set {
 	return &Set{make(map[string]struct{})}
 }
-func (s *Set) Len( ) int{
-    return len(s.m)
+func (s *Set) Len() int {
+	return len(s.m)
 }
 func (s *Set) Add(k string) {
 	s.m[k] = struct{}{}
@@ -99,21 +100,20 @@ func Min(marcado *[]camino, grafo map[string]map[string]float64) float64 {
 	}
 	return mini
 }
+
 // TODO
 // hacer parametros variables para tener una sola funcion Min
-func Min_child(arr map[string]float64 ) string {
+func Min_child(arr map[string]float64) string {
 	mini := Inf
-    nodo := ""
-    for child, v := range arr {
-         if mini > v {
-            mini = v
-            nodo = child
-         }
-    }
-    return nodo
+	nodo := ""
+	for child, v := range arr {
+		if mini > v {
+			mini = v
+			nodo = child
+		}
+	}
+	return nodo
 }
-
-
 
 func VerticesToAdjList(grafo *[]Vertice, dirigido bool) map[string]map[string]float64 {
 	adjList := make(map[string]map[string]float64)
