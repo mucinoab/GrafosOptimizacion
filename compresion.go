@@ -21,12 +21,22 @@ type RespuesaCompresion struct {
 	CostoTiempo            []float64      `json:"costoTiempo"`
 	CPMs                   []RespuestaCPM `json:"iteraciones"`
 	ActividadesComprimidas []string       `json:"actividadesComprimidas"`
+	CostoActual            []float64      `json:"costoActual"`
+}
+
+type Costos struct {
+	PesoNormal   float64
+	CostoNormal  float64
+	PesoUrgente  float64
+	CostoUrgente float64
+	CostoTiempo  float64
 }
 
 func ResuelveCompresion(c CompresionData) RespuesaCompresion {
 	iteracionesCPM := make([]RespuestaCPM, 0, len(c.Actividades))
 	aComprimidas := make([]string, 0, len(c.Actividades))
-	precioCosto, costoUrgente := mapCostos(c.Actividades)
+	costoActual := make([]float64, 0, len(c.Actividades))
+	costos := mapCostos(c.Actividades)
 
 	actividadesComprimidas := set()
 	actividadesComprimidas.Add("-") // Inicio
@@ -37,6 +47,7 @@ func ResuelveCompresion(c CompresionData) RespuesaCompresion {
 
 	resultadoCpm := ResuelveCPM(actividades)
 	iteracionesCPM = append(iteracionesCPM, resultadoCpm)
+	costoActual = append(costoActual, calculaCostoRuta(costos, actividades_cpy, actividadesComprimidas))
 
 	for {
 		actMin := Inf
@@ -44,8 +55,8 @@ func ResuelveCompresion(c CompresionData) RespuesaCompresion {
 
 		for _, a := range resultadoCpm.RutaCritica {
 			if !actividadesComprimidas.Contains(a) {
-				if precioCosto[a] < actMin {
-					actMin = precioCosto[a]
+				if costos[a].CostoTiempo < actMin {
+					actMin = costos[a].CostoTiempo
 					actMinOrigen = a
 				}
 			}
@@ -56,7 +67,7 @@ func ResuelveCompresion(c CompresionData) RespuesaCompresion {
 		for idx, a := range actividades {
 			if a.Origen == actMinOrigen {
 				// Cambiar peso normal por peso de compresión
-				actividades[idx].Peso = costoUrgente[actMinOrigen]
+				actividades[idx].Peso = costos[actMinOrigen].PesoUrgente
 				actividadesComprimidas.Add(actMinOrigen)
 			}
 		}
@@ -65,39 +76,47 @@ func ResuelveCompresion(c CompresionData) RespuesaCompresion {
 			// No hubo cambio o se llegó al tiempo objetivo
 			break
 		}
+
 		// Agrega actividad comprimida TODO
 		aComprimidas = append(aComprimidas, actMinOrigen)
 
 		actividades_cpy = Clone(actividades)
 		resultadoCpm = ResuelveCPM(actividades)
 		iteracionesCPM = append(iteracionesCPM, resultadoCpm)
+
+		costoActual = append(costoActual, calculaCostoRuta(costos, actividades_cpy, actividadesComprimidas))
 	}
 
 	costoTiempo := make([]float64, len(c.Actividades))
 
-	for idx, a := range c.Actividades {
-		// TODO calculamos esto dos veces
-		costoTiempo[idx] = CalculaCostoTiempo(&a)
+	for idx, a := range c.Actividades[:] {
+		costoTiempo[idx] = costos[a.Actividad].CostoTiempo
 	}
 
-	return RespuesaCompresion{costoTiempo, iteracionesCPM, aComprimidas}
+	return RespuesaCompresion{costoTiempo, iteracionesCPM, aComprimidas, costoActual}
 }
 
 func CalculaCostoTiempo(a *VerticeCompresion) float64 {
 	return (a.CostoUrgente - a.CostoNormal) / (a.PesoNormal - a.PesoUrgente)
 }
 
-func mapCostos(actividades []VerticeCompresion) (map[string]float64, map[string]float64) {
+func mapCostos(actividades []VerticeCompresion) map[string]Costos {
 	// Mapea tiempo de compresión y calculo de costo tiempo
-	ct := make(map[string]float64, len(actividades))
-	m := make(map[string]float64, len(actividades))
+	costos := make(map[string]Costos, len(actividades))
 
-	for _, a := range actividades {
-		ct[a.Actividad] = CalculaCostoTiempo(&a)
-		m[a.Actividad] = a.PesoUrgente
+	for _, a := range actividades[:] {
+		costos[a.Actividad] = Costos{
+			a.PesoNormal,
+			a.CostoNormal,
+
+			a.PesoUrgente,
+			a.CostoUrgente,
+
+			CalculaCostoTiempo(&a),
+		}
 	}
 
-	return ct, m
+	return costos
 }
 
 // Transforma un vértice de compresión a un vértice regular
@@ -116,4 +135,23 @@ func Clone(arre []Vertice) []Vertice {
 	copy(cpy, arre)
 
 	return cpy
+}
+
+func calculaCostoRuta(c map[string]Costos, act []Vertice, comprimidos *Set) float64 {
+	vistos := set()
+	costo := 0.0
+
+	for _, a := range act[:] {
+		// We use a set to avoid adding the same cost more than once
+		if !vistos.Contains(a.Origen) {
+			if comprimidos.Contains(a.Origen) {
+				costo += c[a.Origen].CostoUrgente
+			} else {
+				costo += c[a.Origen].CostoNormal
+			}
+			vistos.Add(a.Origen)
+		}
+	}
+
+	return costo
 }

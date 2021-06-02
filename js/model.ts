@@ -60,7 +60,7 @@ interface Change {
 }
 
 interface VerticeCompresion{
-  actividad:   string ,
+  actividad:   string,
   predecesora: string,
 
   pesoNormal: number,
@@ -79,4 +79,5 @@ interface ResponseCompresion {
   costoTiempo: Array<number>,
   iteraciones: Array<ResponseCPM>,
   actividadesComprimidas: Array<string>,
+  costoActual: Array<number>,
 }

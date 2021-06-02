@@ -1,5 +1,5 @@
 // Removes all the inner HTML of an element
-function clearElement(e: HTMLElement){
+function clearElement(e: HTMLElement) {
   while(e.firstChild && e.removeChild(e.firstChild));
 }
 
@@ -11,6 +11,23 @@ function newInputElement(className: string, placeholder: string = ""): HTMLInput
   input.className = `form-control ${className}`;
 
   return input
+}
+
+function newTextElement(value: string, tagType: string = "p"): HTMLElement {
+  let txt = document.createElement(tagType);
+  txt.innerText = value;
+
+  return txt
+}
+
+function newImageElement(src: string, w: number, h: number): HTMLElement {
+  let img = document.createElement("img");
+  img.className ="center img-fluid";
+  img.src = src;
+  img.width = w;
+  img.height = h;
+
+  return img;
 }
 
 function insertCell(r: HTMLTableRowElement, value: string, className: string = "", pos: number = -1) {

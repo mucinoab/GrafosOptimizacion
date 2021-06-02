@@ -1,12 +1,7 @@
 function fillTableEjemplo(method, ejemplo) {
     document.getElementById(`Nvertices${method}`).value = String(ejemplo.length);
     showTable(method, `formulario${method}`, `Nvertices${method}`);
-    if (method === "PERT") {
-        fillTable(method, ejemplo, true);
-    }
-    else {
-        fillTable(method, ejemplo, false);
-    }
+    fillTable(method, ejemplo);
 }
 function ejemploFlujo() {
     const ejemplo = { "data": [{ "origen": "Bilbao", "destino": "S1", "peso": 4 }, { "origen": "Bilbao", "destino": "S2", "peso": 1 }, { "origen": "Barcelona", "destino": "S1", "peso": 2 }, { "origen": "Barcelona", "destino": "S2", "peso": 3 }, { "origen": "Sevilla", "destino": "S1", "peso": 2 }, { "origen": "Sevilla", "destino": "S2", "peso": 2 }, { "origen": "Sevilla", "destino": "S3", "peso": 3 }, { "origen": "Valencia", "destino": "S2", "peso": 2 }, { "origen": "Zaragoza", "destino": "S2", "peso": 3 }, { "origen": "Zaragoza", "destino": "S3", "peso": 1 }, { "origen": "Origen", "destino": "Bilbao", "peso": 7 }, { "origen": "Origen", "destino": "Barcelona", "peso": 5 }, { "origen": "Origen", "destino": "Sevilla", "peso": 7 }, { "origen": "Origen", "destino": "Zaragoza", "peso": 6 }, { "origen": "Origen", "destino": "Valencia", "peso": 2 }, { "origen": "S1", "destino": "Madrid", "peso": 8 }, { "origen": "S2", "destino": "Madrid", "peso": 8 }, { "origen": "S3", "destino": "Madrid", "peso": 8 }], "origen": "Origen", "destino": "Madrid", "dirigido": true };
@@ -32,5 +27,6 @@ function ejemploPERT() {
 }
 function ejemploCompresion() {
     const ejemplo = { "actividades": [{ "actividad": "A", "predecesora": "-", "pesoNormal": 8, "costoNormal": 100, "pesoUrgente": 6, "costoUrgente": 200 }, { "actividad": "B", "predecesora": "-", "pesoNormal": 4, "costoNormal": 150, "pesoUrgente": 2, "costoUrgente": 350 }, { "actividad": "C", "predecesora": "A", "pesoNormal": 2, "costoNormal": 50, "pesoUrgente": 1, "costoUrgente": 90 }, { "actividad": "D", "predecesora": "B", "pesoNormal": 5, "costoNormal": 100, "pesoUrgente": 1, "costoUrgente": 200 }, { "actividad": "E", "predecesora": "C", "pesoNormal": 3, "costoNormal": 80, "pesoUrgente": 1, "costoUrgente": 100 }, { "actividad": "E", "predecesora": "D", "pesoNormal": 3, "costoNormal": 80, "pesoUrgente": 1, "costoUrgente": 100 }, { "actividad": "F", "predecesora": "A", "pesoNormal": 10, "costoNormal": 100, "pesoUrgente": 5, "costoUrgente": 400 }], "tiempoObjetivo": -10 };
+    fillTableEjemplo("Compresion", ejemplo.actividades);
     postData('compresion', ejemplo).then(data => { renderResponseCompresion(data); });
 }

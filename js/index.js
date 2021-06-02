@@ -130,9 +130,18 @@ function Compresion() {
         };
         actividades.push(activida);
     }
+    const duracionObjetivo = document.getElementById("duracionObjetivo").value.trim();
+    let duracion = 0;
+    if (duracionObjetivo.length != 0) {
+        duracion = parseFloat(duracionObjetivo);
+        if (isNaN(duracion)) {
+            alert("Por favor verifica que la duración objetivo sea un número válido.");
+            return;
+        }
+    }
     const data = {
         actividades: actividades,
-        tiempoObjetivo: -10,
+        tiempoObjetivo: duracion,
     };
     postData("compresion", data).then(data => { renderResponseCompresion(data); });
 }
@@ -156,22 +165,33 @@ function graphFromTable(id) {
     }
     return grafo;
 }
-function fillTable(id, d, pert) {
+function fillTable(id, d) {
     let origenes = document.querySelectorAll(`.origenes${id}`);
     let destinos = document.querySelectorAll(`.destinos${id}`);
     let pesos = document.querySelectorAll(`.pesos${id}`);
     let probables = document.querySelectorAll(`.probable${id}`);
     let pesimistas = document.querySelectorAll(`.pesimista${id}`);
+    let costos = document.querySelectorAll(`.costo${id}`);
+    let pesosU = document.querySelectorAll(`.pesosUrgente${id}`);
+    let costosU = document.querySelectorAll(`.costosUrgente${id}`);
     for (let idx = 0; idx < d.length; idx += 1) {
         origenes[idx].value = d[idx].origen;
         destinos[idx].value = d[idx].destino;
-        if (!pert) {
-            pesos[idx].value = String(d[idx].peso);
+        if (id === "Compresion") {
+            origenes[idx].value = d[idx].actividad;
+            destinos[idx].value = d[idx].predecesora;
+            pesos[idx].value = String(d[idx].pesoNormal);
+            costos[idx].value = String(d[idx].costoNormal);
+            pesosU[idx].value = String(d[idx].pesoUrgente);
+            costosU[idx].value = String(d[idx].costoUrgente);
         }
-        else {
+        else if (id === "PERT") {
             pesos[idx].value = String(d[idx].optimista);
             probables[idx].value = String(d[idx].probable);
             pesimistas[idx].value = String(d[idx].pesimista);
+        }
+        else {
+            pesos[idx].value = String(d[idx].peso);
         }
     }
 }
@@ -331,17 +351,35 @@ function renderResponseCPM(r) {
     respuesta.scrollIntoView(true);
 }
 function renderResponseCompresion(r) {
-    let rHTML = `P_{ij} = [${r.costoTiempo.join(", ")}]<br><br>`;
+    let tableHeader = document.getElementById("CompresionHeader");
+    if (tableHeader.cells.length === 7) {
+        tableHeader.insertAdjacentHTML("beforeend", '<th scope="col">P<sub>ij</sub></th>');
+    }
+    let table = document.getElementById("innerTablaCompresion");
+    let idx = 0;
+    for (let row of table.rows) {
+        if (row.cells.length != 7) {
+            row.removeChild(row.lastChild);
+        }
+        insertCell(row, r.costoTiempo[idx].toFixed(3));
+        idx += 1;
+    }
+    let rh = document.createElement("div");
+    const newLine = document.createElement("br");
     for (const [idx, iter] of r.iteraciones.entries()) {
         const act = (r.actividadesComprimidas[idx] != undefined) ? r.actividadesComprimidas[idx] : "-";
-        rHTML += `<h4>Duración: ${iter.duracionTotal}</h4><br>
-    <p>Compresión: ${act}</p><br>
-    <img src="${drawGraphLinkCritical(iter)}" width="999" height="360" class="center img-fluid">
-    <br><br>`;
+        rh.appendChild(newTextElement(`Duración: ${iter.duracionTotal}`, "h4"));
+        rh.appendChild(newTextElement(`Costo: $${r.costoActual[idx].toFixed(2)}`, "h4"));
+        rh.appendChild(newLine.cloneNode());
+        rh.appendChild(newImageElement(drawGraphLinkCritical(iter), 999, 360));
+        rh.appendChild(newLine.cloneNode());
+        rh.appendChild(newTextElement(`Compresión: ${act}`));
+        rh.appendChild(newLine.cloneNode());
+        rh.appendChild(newLine.cloneNode());
     }
     let respuesta = document.getElementById("respuestasCompresion");
     clearElement(respuesta);
-    respuesta.insertAdjacentHTML("afterbegin", rHTML);
+    respuesta.appendChild(rh);
     document.getElementById("Compresion").style.setProperty("display", "block", 'important');
 }
 function drawGraphLinkCritical(r) {

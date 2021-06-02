@@ -85,7 +85,7 @@ func Find(slice *[]camino, val camino) bool {
 
 func Pop(alist *[]camino) {
 	f := len(*alist)
-	*alist = append((*alist)[:f-1])
+	*alist = (*alist)[:f-1]
 }
 
 func Min(marcado *[]camino, grafo map[string]map[string]float64) float64 {

@@ -10,6 +10,19 @@ function newInputElement(className, placeholder = "") {
     input.className = `form-control ${className}`;
     return input;
 }
+function newTextElement(value, tagType = "p") {
+    let txt = document.createElement(tagType);
+    txt.innerText = value;
+    return txt;
+}
+function newImageElement(src, w, h) {
+    let img = document.createElement("img");
+    img.className = "center img-fluid";
+    img.src = src;
+    img.width = w;
+    img.height = h;
+    return img;
+}
 function insertCell(r, value, className = "", pos = -1) {
     let c = r.insertCell(pos);
     c.innerHTML = value;

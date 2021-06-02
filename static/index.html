@@ -305,7 +305,7 @@ html {
 
           <div id="Compresion" style="display: none;">
             <br>
-            <p> Ingresa todas las actividades, sus predecesoras, su duración y costo (normal y urgente). <br> Si una actividad no tiene predecesora, utiliza un guión medio ("-").</p>
+            <p> Ingresa todas las actividades, sus predecesoras, duración y costo (normal y urgente). <br> Si una actividad no tiene predecesora, utiliza un guión medio ("-").</p>
 
             <form id="TablaCompresion">
               <table class="table table-sm">
@@ -323,6 +323,10 @@ html {
                 <tbody id="innerTablaCompresion">
                 </tbody>
               </table>
+
+              <br> <label class="form-label">Duración objetivo:</label>
+              <input id="duracionObjetivo" style="max-width:120px" type="text" class="form-control" placeholder="Opcional">
+              <br>
 
               <button type="button" class="btn btn-primary" onclick="Compresion()">Resolver</button>
               <br>
