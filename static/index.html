@@ -350,10 +350,8 @@ html {
                 <div class="form-text">(aristas, arcos)</div>
                 <label for="Nvertices" class="form-label">Origen</label>
                 <input type="tel" class="form-control" id="OrigenDijkstra" maxlength="2" required>
-                <div class="form-text">(aristas, arcos)</div>
                 <label for="Nvertices" class="form-label">Destino</label>
                 <input type="tel" class="form-control" id="DestinoDijkstra" maxlength="2" required>
-                <div class="form-text">(aristas, arcos)</div>
               </div>
             </div>
           </form>
@@ -362,19 +360,17 @@ html {
           <button type="button" class="btn btn-primary" onclick="showTable('Dijkstra', 'formularioDijkstra', 'NverticesDijkstra')">Generar Tabla</button>
           <br>
           <br>
-          <button type="button" class="btn btn-outline-primary" onclick="ejemploPERT()">Ejemplo</button>
-
           <div id="Dijkstra" style="display: none;">
             <br>
-            <p>Ingresa todas las actividades, sus predecesora y sus respectivas duraciones(optimista, más probable y pesimista). Si una actividad no tiene predecesora, utiliza un guión medio ("-").</p>
+            <p>Ingresa todos los origenes, sus destinos y sus respectivos pesos</p>
 
             <form id="TablaDijkstra">
               <table class="table table-sm">
                 <thead>
                 <tr >
                     <th scope="col">#</th>
-                    <th scope="col">Predecesora</th>
                     <th scope="col">Origen</th>
+                    <th scope="col">Destino</th>
                     <th scope="col">Peso</th>
                   </tr>
                 </thead>
@@ -386,6 +382,12 @@ html {
               <br>
               <br>
             </form>
+                <label for="Nvertices" class="form-label">Nodo Origen</label>
+                <input type="tel" class="form-control" id="OrigenDijkstra" maxlength="2" required>
+                <label for="Nvertices" class="form-label">Nodo Destino</label>
+                <input type="tel" class="form-control" id="DestinoDijkstra" maxlength="2" required>
+                <br>
+                <br>
             <div id="respuestaDijkstra">
             </div>
           </div>
