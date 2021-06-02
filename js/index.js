@@ -367,13 +367,14 @@ function renderResponseCompresion(r) {
     let rh = document.createElement("div");
     const newLine = document.createElement("br");
     for (const [idx, iter] of r.iteraciones.entries()) {
-        const act = (r.actividadesComprimidas[idx] != undefined) ? r.actividadesComprimidas[idx] : "-";
         rh.appendChild(newTextElement(`Duración: ${iter.duracionTotal}`, "h4"));
         rh.appendChild(newTextElement(`Costo: $${r.costoActual[idx].toFixed(2)}`, "h4"));
         rh.appendChild(newLine.cloneNode());
         rh.appendChild(newImageElement(drawGraphLinkCritical(iter), 999, 360));
         rh.appendChild(newLine.cloneNode());
-        rh.appendChild(newTextElement(`Compresión: ${act}`));
+        if (r.actividadesComprimidas[idx] != undefined) {
+            rh.appendChild(newTextElement(`Compresión: ${r.actividadesComprimidas[idx]}`));
+        }
         rh.appendChild(newLine.cloneNode());
         rh.appendChild(newLine.cloneNode());
     }
