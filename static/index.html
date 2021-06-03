@@ -6,7 +6,7 @@
     <meta name="description" content="Algoritmos de Grafos, flujo mínimo, Floyd-Warshall, Ruta Crítica(CPM, PERT), acelaración de proyectos">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
     <title>Grafos</title>
-    <style>
+<style>
 .table_nodes {
   text-align:right;
   font-weight:bold;
@@ -52,39 +52,39 @@ html {
       <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
           <button class="nav-link active" id="flujo-tab" data-bs-toggle="tab" data-bs-target="#FlujoM" type="button" role="tab" aria-controls="FlujoM" aria-selected="true">
-            Flujo Máximo
+          Flujo Máximo
           </button>
         </li>
 
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="floyd-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">
-            Floyd-Warshall
+          Floyd-Warshall
           </button>
         </li>
 
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="cpm-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">
-            Ruta Crítica (CPM)
+          Ruta Crítica (CPM)
           </button>
         </li>
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="pert-tab" data-bs-toggle="tab" data-bs-target="#rpert" type="button" role="tab" aria-controls="rpert" aria-selected="false">
-            Ruta Crítica (PERT)
+          Ruta Crítica (PERT)
           </button>
         </li>
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="acelaracion-tab" data-bs-toggle="tab" data-bs-target="#raceleracion" type="button" role="tab" aria-controls="rpert" aria-selected="false">
-            Aceleración de Proyectos
+          Aceleración de Proyectos
           </button>
         </li>
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="dijkstra-tab" data-bs-toggle="tab" data-bs-target="#rdijkstra" type="button" role="tab" aria-controls="rpert" aria-selected="false">
-              Dijkstra
+          Dijkstra
           </button>
         </li>
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="codigo-tab" data-bs-toggle="tab" data-bs-target="#fuente" type="button" role="tab" aria-controls="fuente" aria-selected="false">
-            Código Fuente
+          Código Fuente
           </button>
         </li>
       </ul>
@@ -348,26 +348,25 @@ html {
                 <label for="Nvertices" class="form-label">Número de Vértices (Actividades)</label>
                 <input type="tel" class="form-control" id="NverticesDijkstra" maxlength="2" required>
                 <div class="form-text">(aristas, arcos)</div>
-                <label for="Nvertices" class="form-label">Origen</label>
-                <input type="tel" class="form-control" id="OrigenDijkstra" maxlength="2" required>
-                <label for="Nvertices" class="form-label">Destino</label>
-                <input type="tel" class="form-control" id="DestinoDijkstra" maxlength="2" required>
               </div>
             </div>
           </form>
           <br>
 
           <button type="button" class="btn btn-primary" onclick="showTable('Dijkstra', 'formularioDijkstra', 'NverticesDijkstra')">Generar Tabla</button>
+          <br><br>
+          <button type="button" class="btn btn-outline-primary" onclick="ejemploDijkstra()">Ejemplo</button>
           <br>
           <br>
+
           <div id="Dijkstra" style="display: none;">
             <br>
-            <p>Ingresa todos los origenes, sus destinos y sus respectivos pesos</p>
+            <p>Ingresa todos los orígenes, sus destinos y sus respectivos pesos.</p>
 
             <form id="TablaDijkstra">
               <table class="table table-sm">
                 <thead>
-                <tr >
+                  <tr>
                     <th scope="col">#</th>
                     <th scope="col">Origen</th>
                     <th scope="col">Destino</th>
@@ -377,19 +376,21 @@ html {
                 <tbody id="innerTablaDijkstra">
                 </tbody>
               </table>
+              <br>
+              <label for="OrigenDijkstra" class="form-label">Origen</label>
+              <input type="tel" class="form-control" id="OrigenDijkstra" required>
+              <br>
+              <label for="DestinoDijkstra" class="form-label">Destino</label>
+              <input type="tel" class="form-control" id="DestinoDijkstra" required>
+              <br>
 
               <button type="button" class="btn btn-primary" onclick="Dijkstra()">Resolver</button>
-              <br>
-              <br>
+              <br><br><br>
             </form>
-                <label for="Nvertices" class="form-label">Nodo Origen</label>
-                <input type="tel" class="form-control" id="OrigenDijkstra" maxlength="2" required>
-                <label for="Nvertices" class="form-label">Nodo Destino</label>
-                <input type="tel" class="form-control" id="DestinoDijkstra" maxlength="2" required>
-                <br>
-                <br>
+
             <div id="respuestaDijkstra">
             </div>
+            <br><br><br>
           </div>
         </div>
 
