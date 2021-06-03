@@ -168,23 +168,32 @@ func TestGrafos(t *testing.T) {
 		}
 	})
 
-    t.Run("Dijkstra", func(t *testing.T) {
+	t.Run("Dijkstra", func(t *testing.T) {
+		ejemplo := dijkstra{
+			Grafo: []Vertice{
+				{"1", "2", 3},
+				{"2", "3", 5},
+				{"1", "5", 1},
+				{"5", "7", 1},
+				{"7", "8", 1},
+				{"8", "3", 1},
+			},
+			Origen:  "1",
+			Destino: "3",
+		}
 
-        ejemplo := dijkstra {
-            Grafo: []Vertice{
-                {"1","2",3},
-                {"2","3",5},
-                {"1","5",1},
-                {"5","7",1},
-                {"7","8",1},
-                {"8","3",1},
-            },
-            Origen : "1",
-            Destino : "3",
-        }
-        sol := ResuelveDijkstra(ejemplo)
-        if sol.Peso != 4 {
-            t.Error("Peso incorrecto, deberia ser 4")
-        }
-    })
+		sol := ResuelveDijkstra(ejemplo)
+
+		if sol.Peso != 4 {
+			t.Error("Peso incorrecto, debería ser 4")
+		}
+
+		if len(sol.Coords) != 5 {
+			t.Error()
+		}
+
+		if len(sol.Bases) != 6 {
+			t.Error()
+		}
+	})
 }

@@ -52,7 +52,6 @@ func Dijkstra(rw http.ResponseWriter, req *http.Request) {
 	deserialize(req.Body, &actividades)
 
 	rw.Header().Set("Content-Type", "application/json")
-	//rw.Write(toBytes(ResuelveDijkstra(actividades)))
 	rw.Write(toBytes(ResuelveDijkstra(actividades)))
 }
 
