@@ -79,6 +79,7 @@ func ResuelveDijkstra(g dijkstra) dijkstraRespuesta {
 
 			if !marcado {
 				if Tabla[i][j] == Inf {
+
 					TablaString[i][j] = "∞"
 				} else {
 					TablaString[i][j] = fmt.Sprintf("%.2f", Tabla[i][j])
@@ -106,7 +107,7 @@ func ResuelveDijkstra(g dijkstra) dijkstraRespuesta {
 		Bases = append(Bases, base)
 		CoordBases = append(CoordBases, coor{i, Mapeo[base]})
 
-		TablaString[i][numeroNodos+1] = Arcos(Tabla, Mapeo[base], i, min, Mapeo2)
+		TablaString[i][numeroNodos+1] = Arcos(Tabla,i, Mapeo[base], min, Mapeo2,TablaString, numeroNodos)
 		TablaString[i][numeroNodos] = base
 	}
 
@@ -115,7 +116,7 @@ func ResuelveDijkstra(g dijkstra) dijkstraRespuesta {
 		Destino: g.Destino,
 		Origen:  g.Origen,
 		Peso:    pesoAns,
-		Bases:   Bases,
+		Bases:   lista,
 		Coords:  CoordBases,
 	}
 }
@@ -142,14 +143,13 @@ func BFS(adj adjlist, origen string) []string {
 	return lista
 }
 
-func Arcos(Tabla [][]float64, col int, row int, val float64, Mapeo map[int]string) string {
-	aux := row
+func Arcos(Tabla [][]float64, row int, col int, val float64, Mapeo map[int]string,TablaString [][]string, numeroNodos int) string {
+	for row >= 0 {
+		if Tabla[row][col] != val {
+			return fmt.Sprintf("{ %s, %s }", TablaString[row][numeroNodos], Mapeo[col])
 
-	for aux >= 0 {
-		if Tabla[aux][col] != val {
-			return fmt.Sprintf("{ %s, %s }", Mapeo[aux], Mapeo[row])
 		}
-		aux -= 1
+		row -= 1
 	}
 
 	return "-"
