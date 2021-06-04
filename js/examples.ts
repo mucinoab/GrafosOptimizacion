@@ -37,7 +37,7 @@ function ejemploCompresion() {
 }
 
 function ejemploDijkstra() {
-  const ejemplo = {"origen":"1","destino":"3","grafo":[{"origen":"1","destino":"2","peso":3},{"origen":"2","destino":"3","peso":5},{"origen":"1","destino":"5","peso":1},{"origen":"5","destino":"7","peso":1},{"origen":"7","destino":"8","peso":1},{"origen":"8","destino":"3","peso":1}]};
+  const ejemplo ={"origen":"O","destino":"T","grafo":[{"origen":"O","destino":"A","peso":4},{"origen":"O","destino":"B","peso":3},{"origen":"O","destino":"C","peso":6},{"origen":"A","destino":"D","peso":3},{"origen":"A","destino":"C","peso":5},{"origen":"B","destino":"C","peso":4},{"origen":"B","destino":"E","peso":6},{"origen":"C","destino":"D","peso":2},{"origen":"C","destino":"F","peso":2},{"origen":"C","destino":"E","peso":5},{"origen":"D","destino":"G","peso":4},{"origen":"D","destino":"F","peso":2},{"origen":"E","destino":"F","peso":1},{"origen":"F","destino":"G","peso":2},{"origen":"F","destino":"H","peso":5},{"origen":"E","destino":"H","peso":2},{"origen":"E","destino":"I","peso":5},{"origen":"I","destino":"H","peso":3},{"origen":"G","destino":"H","peso":2},{"origen":"G","destino":"T","peso":7},{"origen":"H","destino":"T","peso":8},{"origen":"I","destino":"T","peso":4}]};
   (<HTMLInputElement>document.getElementById("OrigenDijkstra")).value = ejemplo.origen;
   (<HTMLInputElement>document.getElementById("DestinoDijkstra")).value = ejemplo.destino;
   fillTableEjemplo("Dijkstra", ejemplo.grafo);

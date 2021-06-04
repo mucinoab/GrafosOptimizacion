@@ -171,28 +171,44 @@ func TestGrafos(t *testing.T) {
 	t.Run("Dijkstra", func(t *testing.T) {
 		ejemplo := dijkstra{
 			Grafo: []Vertice{
-				{"1", "2", 3},
-				{"2", "3", 5},
-				{"1", "5", 1},
-				{"5", "7", 1},
-				{"7", "8", 1},
-				{"8", "3", 1},
+				{"O", "A", 4},
+				{"O", "B", 3},
+				{"O", "C", 6},
+				{"A", "D", 3},
+				{"A", "C", 5},
+				{"B", "C", 4},
+				{"B", "E", 6},
+				{"C", "D", 2},
+				{"C", "F", 2},
+				{"C", "E", 5},
+				{"D", "G", 4},
+				{"D", "F", 2},
+				{"E", "F", 1},
+				{"F", "G", 2},
+				{"F", "H", 5},
+				{"E", "H", 2},
+				{"E", "I", 5},
+				{"I", "H", 3},
+				{"G", "H", 2},
+				{"G", "T", 7},
+				{"H", "T", 8},
+				{"I", "T", 4},
 			},
-			Origen:  "1",
-			Destino: "3",
+			Origen:  "O",
+			Destino: "T",
 		}
 
 		sol := ResuelveDijkstra(ejemplo)
 
-		if sol.Peso != 4 {
-			t.Error("Peso incorrecto, debería ser 4")
+		if sol.Peso-17 > epsilon {
+			t.Errorf("Peso incorrecto, debería ser 17, se obtuvo %f", sol.Peso)
 		}
 
-		if len(sol.Coords) != 5 {
+		if len(sol.Coords) != 10 {
 			t.Error()
 		}
 
-		if len(sol.Bases) != 6 {
+		if len(sol.Bases) != 11 {
 			t.Error()
 		}
 	})

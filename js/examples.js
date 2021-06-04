@@ -30,3 +30,10 @@ function ejemploCompresion() {
     fillTableEjemplo("Compresion", ejemplo.actividades);
     postData('compresion', ejemplo).then(data => { renderResponseCompresion(data); });
 }
+function ejemploDijkstra() {
+    const ejemplo = { "origen": "O", "destino": "T", "grafo": [{ "origen": "O", "destino": "A", "peso": 4 }, { "origen": "O", "destino": "B", "peso": 3 }, { "origen": "O", "destino": "C", "peso": 6 }, { "origen": "A", "destino": "D", "peso": 3 }, { "origen": "A", "destino": "C", "peso": 5 }, { "origen": "B", "destino": "C", "peso": 4 }, { "origen": "B", "destino": "E", "peso": 6 }, { "origen": "C", "destino": "D", "peso": 2 }, { "origen": "C", "destino": "F", "peso": 2 }, { "origen": "C", "destino": "E", "peso": 5 }, { "origen": "D", "destino": "G", "peso": 4 }, { "origen": "D", "destino": "F", "peso": 2 }, { "origen": "E", "destino": "F", "peso": 1 }, { "origen": "F", "destino": "G", "peso": 2 }, { "origen": "F", "destino": "H", "peso": 5 }, { "origen": "E", "destino": "H", "peso": 2 }, { "origen": "E", "destino": "I", "peso": 5 }, { "origen": "I", "destino": "H", "peso": 3 }, { "origen": "G", "destino": "H", "peso": 2 }, { "origen": "G", "destino": "T", "peso": 7 }, { "origen": "H", "destino": "T", "peso": 8 }, { "origen": "I", "destino": "T", "peso": 4 }] };
+    document.getElementById("OrigenDijkstra").value = ejemplo.origen;
+    document.getElementById("DestinoDijkstra").value = ejemplo.destino;
+    fillTableEjemplo("Dijkstra", ejemplo.grafo);
+    postData('dijkstra', ejemplo).then(data => renderResponseDijkstra(data));
+}

@@ -44,7 +44,7 @@ func ResuelveDijkstra(g dijkstra) dijkstraRespuesta {
 
 		for idx := range Tabla[i][:] {
 			Tabla[i][idx] = Inf
-			TablaString[i][idx] = "M"
+			TablaString[i][idx] = "∞"
 		}
 	}
 
@@ -79,7 +79,7 @@ func ResuelveDijkstra(g dijkstra) dijkstraRespuesta {
 
 			if !marcado {
 				if Tabla[i][j] == Inf {
-					TablaString[i][j] = "M"
+					TablaString[i][j] = "∞"
 				} else {
 					TablaString[i][j] = fmt.Sprintf("%.2f", Tabla[i][j])
 				}

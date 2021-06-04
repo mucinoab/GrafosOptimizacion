@@ -14,18 +14,21 @@ interface ResponseCPM {
   rutaCritica: Array<string>,
   duracionTotal: number,
 }
+
 interface coor {
-    row : number,
-    col : number,
+  row : number,
+  col : number,
 }
+
 interface ResponseDijkstra {
-    bases : Array<string>,
-    destino: string,
-    origen: string,
-    peso : number,
-    tabla: Array<Array<string>>,
-    coords: Array<coor>,
+  bases : Array<string>,
+  destino: string,
+  origen: string,
+  peso : number,
+  tabla: Array<Array<string>>,
+  coords: Array<coor>,
 }
+
 interface ResponsePERT {
   rutaCritica: Array<string>,
   estimaciones: Array<number>,

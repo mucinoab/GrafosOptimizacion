@@ -1,4 +1,4 @@
-//TODO No globals
+// TODO No globals
 // Globals
 var varianza: number = 0;
 var media: number = 0;
@@ -186,27 +186,37 @@ function Compresion() {
 
   postData("compresion", data).then(data => {renderResponseCompresion(data)});
 }
-function swapValues(data :string[][] ): string[][] {
-   for(let row = 0 ; row < data.length ;row ++ ) {
-        for(let col = row  + 1; col < data[0].length;col++) {
-            let tmp = data[col][row]
-            data[col][row] =  data[row][col]
-            data[row][col] = tmp
-        }
-   }
-    return data
+
+function swapValues(data: string[][]): string[][] {
+  for(let row = 0 ; row < data.length ;row ++ ) {
+    for(let col = row  + 1; col < data[0].length;col++) {
+      let tmp = data[col][row];
+      data[col][row] =  data[row][col];
+      data[row][col] = tmp;
+    }
+  }
+
+  return data;
 }
+
 function Dijkstra() {
-    const act = graphFromTable("Dijkstra")
-    var origen = <HTMLInputElement>document.getElementById(`OrigenDijkstra`)
-    var destino = <HTMLInputElement>document.getElementById(`DestinoDijkstra`)
-    if( act === undefined)return 
-    postData('dijkstra',{
-        grafo : act,
-        origen : origen.value,
-        destino : destino.value
-    }).then(data => renderResponseDijkstra(data));
+  const form = <HTMLFormElement>document.getElementById("TablaDijkstra");
+
+  if (!form.checkValidity()) {
+    form.reportValidity();
+    return;
+  }
+  const act = graphFromTable("Dijkstra");
+  const origen = <HTMLInputElement>document.getElementById(`OrigenDijkstra`);
+  const destino = <HTMLInputElement>document.getElementById(`DestinoDijkstra`);
+
+  postData('dijkstra', {
+    grafo: act,
+    origen: origen.value.trim(),
+    destino: destino.value.trim(),
+  }).then(data => renderResponseDijkstra(data));
 }
+
 function graphFromTable(id: string): Array<Vertices> {
   const origenes = document.querySelectorAll<HTMLInputElement>(`.origenes${id}`);
   const destinos = document.querySelectorAll<HTMLInputElement>(`.destinos${id}`);
@@ -295,13 +305,13 @@ function drawGraphLink(nodes: Array<Vertices>, camino: string, dirigido: boolean
 
 function graphButton(id: string, link: string): string {
   return `<button class="btn btn-primary" type="button"
-  data-bs-toggle="collapse" data-bs-target="#${id}" aria-expanded="false"
-  aria-controls="${id}">Visualizar</button>
-  <div class="collapse" id="${id}"><br><br>
-  <div class="card card-body" style="padding:0px;">
-  <img src="${link}" width="640" height="640" class="center img-fluid" loading="lazy">
-  </div>
-  </div>`;
+    data-bs-toggle="collapse" data-bs-target="#${id}" aria-expanded="false"
+    aria-controls="${id}">Visualizar</button>
+    <div class="collapse" id="${id}"><br><br>
+    <div class="card card-body" style="padding:0px;">
+    <img src="${link}" width="640" height="640" class="center img-fluid" loading="lazy">
+    </div>
+    </div>`;
 }
 
 function setOfTrajectory(trajectory: string): Set<string> {
@@ -350,8 +360,8 @@ function renderResponsePERT(r: ResponsePERT) {
   // this can go directly in the html
   let response = `μ = ${r.media.toFixed(3)}, σ² = ${r.sumaVariazas.toFixed(3)}<br><br>`;
   response += `Probabilidad de que el proyecto termine en
-  <input id="tiempoID" style="max-width:80px" type="text" class="form-control" placeholder="0.0">
-  o menos unidades de tiempo:<b><p id="normalCDF"></p><br></b>`;
+    <input id="tiempoID" style="max-width:80px" type="text" class="form-control" placeholder="0.0">
+    o menos unidades de tiempo:<b><p id="normalCDF"></p><br></b>`;
   response += `<button type="button" class="btn btn-primary" onclick="renderNormalCDF()">Calcular</button><br><br><br>`;
   response +=`<br><img src="${drawGraphLinkCritical(r.cpm)}" width="999" height="360" class="center img-fluid"><br><br>`;
 
@@ -364,24 +374,24 @@ function renderResponseFlujo(r: ResponseFlujoMaximo) {
   const dirigido = <HTMLInputElement>document.getElementById("GrafoDirigido");
 
   let respHTML: string = `<p>Flujo Máximo: ${r.Flujo}</p><br>
-  <table class="table table-hover">
-  <thead class="thead-light"><tr>
-  <th scope="col">Origen</th>
-  <th scope="col">Destino</th>
-  <th scope="col">Peso</th>
+    <table class="table table-hover">
+    <thead class="thead-light"><tr>
+    <th scope="col">Origen</th>
+    <th scope="col">Destino</th>
+    <th scope="col">Peso</th>
   </tr></thead><tbody>`;
 
   let iter = 0;
   for (const e of r.Data) {
     respHTML += `<tr class="table-primary"><td class="success">
-    ${e.camino}</td><td colspan="2">${graphButton(`flujo_${iter}`, drawGraphLink(e.data, e.camino, dirigido.checked))}
-    </td></tr>`;
+      ${e.camino}</td><td colspan="2">${graphButton(`flujo_${iter}`, drawGraphLink(e.data, e.camino, dirigido.checked))}
+      </td></tr>`;
 
     for (const v of e.data) {
       respHTML += `
-      <tr><td>${v.origen}</td>
-      <td>${v.destino}</td>
-      <td>${v.peso}</td></tr> `;
+        <tr><td>${v.origen}</td>
+        <td>${v.destino}</td>
+        <td>${v.peso}</td></tr> `;
     }
     iter += 1;
   }
@@ -530,53 +540,53 @@ function drawGraphLinkCritical(r: ResponseCPM): string {
     }
   }
   link += "}";
+
   return encodeURI(link);
 }
 
-function renderResponseDijkstra (data:ResponseDijkstra ) {
-  let nodesHeader = `<thead><tr><th scope="col" style="font-weight:bold;"> </th>`
-  for (const n of data.bases) {
-    nodesHeader += `<th scope="col" style="font-weight:bold;">${n}</th>`;
+function renderResponseDijkstra(data: ResponseDijkstra) {
+  let nodesHeader = `<thead><tr><th scope="col" style="font-weight:bold;"></th>`;
+  for (const b of data.bases) {
+    nodesHeader += `<th scope="col" style="font-weight:bold;">${b}</th>`;
   }
-  nodesHeader += `<th scope="col" style="font-weight:bold;">Bases</th>`  
-  nodesHeader += `<th scope="col" style="font-weight:bold;">Arcos</th>`  
-  nodesHeader += "</tr></thead>"
-
+  nodesHeader += `<th scope="col" style="font-weight:bold;">Bases</th>`;
+  nodesHeader += `<th scope="col" style="font-weight:bold;">Arcos</th>`;
+  nodesHeader += "</tr></thead>";
 
   let table: HTMLTableElement = document.createElement("table");
   table.className = "table table-hover";
+  table.insertAdjacentHTML("beforeend", nodesHeader);
 
-    table.insertAdjacentHTML("beforeend", nodesHeader);
-    let nodosBody :string= "<tbody>"
-    for (let idx = 0 ; idx < data.tabla.length;idx++)  {
-        if( data.tabla[idx] ){
-            nodosBody += `<tr><th scope=\"row\">${data.bases[idx]}</th>`
-            for(let col = 0 ; col < data.tabla[idx].length ;col++){
-                if(colorear(data.coords,idx, col) )
-                    nodosBody += `<td><font color="red">${data.tabla[idx][col]}</font></td>`
-                else
-                    nodosBody += `<td>${data.tabla[idx][col]}</td>`
-            }
+  let nodosBody: string= "<tbody>";
+
+  for (let idx = 0 ; idx < data.tabla.length;idx++) {
+    if(data.tabla[idx]) {
+      nodosBody += `<tr><th scope=\"row\">${data.bases[idx]}</th>`
+
+      for(let col=0; col < data.tabla[idx].length; col++) {
+        if(colorear(data.coords, idx, col)) {
+          nodosBody += `<td class="cambio">${data.tabla[idx][col]}</td>`;
+        } else {
+          nodosBody += `<td>${data.tabla[idx][col]}</td>`;
         }
-        nodosBody += `</tr>`
+      }
     }
-    table.insertAdjacentHTML("beforeend", nodosBody);
-    let peso = ` <h3> Peso <small class="text-muted">${data.peso} </small> </h3>`
+    nodosBody += `</tr>`;
+  }
+  table.insertAdjacentHTML("beforeend", nodosBody);
 
-    let div: HTMLDivElement = document.createElement("div");
-    div.insertAdjacentHTML("beforeend",peso)
-
-    let respuesta = document.getElementById("respuestaDijkstra");
-    clearElement(respuesta);
-    respuesta.appendChild(table);
-    respuesta.appendChild(div);
-    respuesta.style.setProperty("display", "block", 'important');
+  let respuesta = document.getElementById("respuestaDijkstra");
+  clearElement(respuesta);
+  respuesta.appendChild(newTextElement(`Peso: ${data.peso}`, "h4"));
+  respuesta.appendChild(document.createElement("br"));
+  respuesta.appendChild(table);
+  respuesta.style.setProperty("display", "block", 'important');
 }
-function colorear(coors :coor[], row :number, col :number): boolean {
-    for (let idx = 0 ; idx < coors.length;idx++) {
-        let cord = coors[idx]
-        if (cord.row === row && cord.col === col)
-            return true
-    }
-    return false
+
+function colorear(coors: Array<coor>, row: number, col: number): boolean {
+  for (const cord of coors) {
+    if (cord.row === row && cord.col === col) return true;
+  }
+
+  return false
 }
