@@ -3,6 +3,7 @@
     "index.ts",
     "examples.ts",
     "utils.ts",
+    "renders.ts",
     "model.ts",
   ],
   "compilerOptions": {

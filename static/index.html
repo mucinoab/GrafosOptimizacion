@@ -6,36 +6,9 @@
     <meta name="description" content="Algoritmos de Grafos, flujo mínimo, Floyd-Warshall, Ruta Crítica(CPM, PERT), acelaración de proyectos">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
     <title>Grafos</title>
-<style>
-.table_nodes {
-  text-align:right;
-  font-weight:bold;
-  border-right: 1px solid black;
-}
-.center {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  height: auto;
-  max-width: 100%;
-  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
-}
-.cambio {
-  color:red;
-  background-color:#e9dbdb59 !important;
-}
-img {
-  transition:transform 0.25s ease;
-}
-img:hover {
-  transform:scale(1.2);
-}
-html {
-  scroll-behavior: smooth;
-}
-    </style>
-
+    <link rel="stylesheet" href="style.css">
     <script src="/js/utils.js" defer></script>
+    <script src="/js/renders.js" defer></script>
     <script src="/js/index.js" defer></script>
     <script src="/js/examples.js" defer></script>
   </head>
@@ -80,6 +53,11 @@ html {
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="dijkstra-tab" data-bs-toggle="tab" data-bs-target="#rdijkstra" type="button" role="tab" aria-controls="rpert" aria-selected="false">
           Dijkstra
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="kruskal-tab" data-bs-toggle="tab" data-bs-target="#rkruskal" type="button" role="tab" aria-controls="rpert" aria-selected="false">
+          Kruskal
           </button>
         </li>
         <li class="nav-item" role="presentation">
@@ -389,6 +367,54 @@ html {
             </form>
 
             <div id="respuestaDijkstra">
+            </div>
+            <br><br><br>
+          </div>
+        </div>
+        <!-- Kruskal -->
+        <div class="tab-pane fade" id="rkruskal" role="tabpanel" aria-labelledby="contact-tab">
+          <br>
+          <form id="formularioKruskal">
+            <div class="row g-3">
+              <div class="col-auto">
+                <label for="Nvertices" class="form-label">Número de Vértices (Actividades)</label>
+                <input type="tel" class="form-control" id="NverticesKruskal" maxlength="2" required>
+                <div class="form-text">(aristas, arcos)</div>
+              </div>
+            </div>
+          </form>
+          <br>
+
+          <button type="button" class="btn btn-primary" onclick="showTable('Kruskal', 'formularioKruskal', 'NverticesKruskal')">Generar Tabla</button>
+          <br><br>
+          <button type="button" class="btn btn-outline-primary" onclick="ejemploKruskal()">Ejemplo</button>
+          <br>
+          <br>
+
+          <div id="Kruskal" style="display: none;">
+            <br>
+            <p>Ingresa todos los orígenes, sus destinos y sus respectivos pesos.</p>
+
+            <form id="TablaKruskal">
+              <table class="table table-sm">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Origen</th>
+                    <th scope="col">Destino</th>
+                    <th scope="col">Peso</th>
+                  </tr>
+                </thead>
+                <tbody id="innerTablaKruskal">
+                </tbody>
+              </table>
+              <br>
+
+              <button type="button" class="btn btn-primary" onclick="Kruskal()">Resolver</button>
+              <br><br><br>
+            </form>
+
+            <div id="respuestaKruskal">
             </div>
             <br><br><br>
           </div>

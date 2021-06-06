@@ -1,0 +1,32 @@
+.table_nodes {
+  text-align:right;
+  font-weight:bold;
+  border-right: 1px solid black;
+}
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  height: auto;
+  max-width: 100%;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+}
+
+.cambio {
+  color:red;
+  background-color:#e9dbdb59 !important;
+}
+
+img {
+  transition:transform 0.25s ease;
+  vertical-align: middle;
+}
+
+img:hover {
+  transform:scale(1.2);
+}
+
+html {
+  scroll-behavior: smooth;
+}

@@ -53,6 +53,7 @@ interface Path {
   camino: string,
 }
 
+// TODO  Vertices -> Vertice
 interface Vertices {
   origen: string,
   destino: string,
@@ -96,3 +97,9 @@ interface ResponseCompresion {
   costoActual: Array<number>,
 }
 
+interface ResponseKruskal {
+  grafo: Array<Vertices>,
+  arbol: Array<number>,
+  peso: number,
+  slides: string,
+}

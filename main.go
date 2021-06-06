@@ -19,6 +19,7 @@ func main() {
 	http.HandleFunc("/pert", PERT)
 	http.HandleFunc("/compresion", Compresion)
 	http.HandleFunc("/dijkstra", Dijkstra)
+	http.HandleFunc("/kruskal", Kruskal)
 
 	log.Printf("http://localhost:%s", port)
 	log.Fatal(http.ListenAndServe(":"+port, gzipHandler(http.DefaultServeMux)))
@@ -69,4 +70,12 @@ func Compresion(rw http.ResponseWriter, req *http.Request) {
 
 	rw.Header().Set("Content-Type", "application/json")
 	rw.Write(toBytes(ResuelveCompresion(actividades)))
+}
+
+func Kruskal(rw http.ResponseWriter, req *http.Request) {
+	var grafo []Vertice
+	deserialize(req.Body, &grafo)
+
+	rw.Header().Set("Content-Type", "application/json")
+	rw.Write(toBytes(ResuelveKruskal(grafo)))
 }

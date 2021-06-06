@@ -37,3 +37,8 @@ function ejemploDijkstra() {
     fillTableEjemplo("Dijkstra", ejemplo.grafo);
     postData('dijkstra', ejemplo).then(data => renderResponseDijkstra(data));
 }
+function ejemploKruskal() {
+    const ejemplo = [{ "origen": "C", "destino": "B", "peso": 4 }, { "origen": "A", "destino": "C", "peso": 3 }, { "origen": "A", "destino": "B", "peso": 6 }, { "origen": "B", "destino": "D", "peso": 2 }, { "origen": "C", "destino": "D", "peso": 3 }, { "origen": "S", "destino": "A", "peso": 7 }, { "origen": "B", "destino": "T", "peso": 5 }, { "origen": "D", "destino": "T", "peso": 2 }, { "origen": "S", "destino": "C", "peso": 8 }];
+    fillTableEjemplo("Kruskal", ejemplo);
+    Kruskal();
+}

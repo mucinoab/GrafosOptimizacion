@@ -42,7 +42,11 @@ func ResuelveKruskal(grafo []Vertice) RespuestaKruskal {
 		links = append(links, GraphLink(grafo, camino, ciclo, false))
 	}
 
-	links = append(links, GraphLink(grafo, camino, "", false))
+	// This is to show the final graph more time.
+	finalGraph := GraphLink(grafo, camino, "", false)
+	for i := 0; i < 5; i += 1 {
+		links = append(links, finalGraph)
+	}
 
 	return RespuestaKruskal{grafo, arbol, peso, SlideShow(links)}
 }
@@ -87,9 +91,9 @@ func GraphLink(nodos []Vertice, camino, ciclo string, dirigido bool) string {
 
 func SlideShow(links []string) string {
 	tpl := `
-  <div class="slideshow-container">
+  <div>
   {{range . }}
-  <div class="mySlides fade">
+  <div class="slides center">
   <img src="{{.}}" style="width:100%">
   </div>
   {{end}}
