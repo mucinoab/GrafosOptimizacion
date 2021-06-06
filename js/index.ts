@@ -275,7 +275,7 @@ function fillTable(id: string, d: Array<any>) {
   }
 }
 
-function drawGraphLink(nodes: Array<Vertices>, camino: string, dirigido: boolean) {
+function drawGraphLink(nodes: Array<Vertices>, camino: string, dirigido: boolean): string{
   // Documentación: https://documentation.image-charts.com/graph-viz-charts/
   let link: string = "https://image-charts.com/chart?chof=.svg&chs=640x640&cht=gv&chl=";
   let sep: string;

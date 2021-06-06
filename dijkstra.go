@@ -107,7 +107,7 @@ func ResuelveDijkstra(g dijkstra) dijkstraRespuesta {
 		Bases = append(Bases, base)
 		CoordBases = append(CoordBases, coor{i, Mapeo[base]})
 
-		TablaString[i][numeroNodos+1] = Arcos(Tabla,i, Mapeo[base], min, Mapeo2,TablaString, numeroNodos)
+		TablaString[i][numeroNodos+1] = Arcos(Tabla, i, Mapeo[base], min, Mapeo2, TablaString, numeroNodos)
 		TablaString[i][numeroNodos] = base
 	}
 
@@ -143,7 +143,7 @@ func BFS(adj adjlist, origen string) []string {
 	return lista
 }
 
-func Arcos(Tabla [][]float64, row int, col int, val float64, Mapeo map[int]string,TablaString [][]string, numeroNodos int) string {
+func Arcos(Tabla [][]float64, row int, col int, val float64, Mapeo map[int]string, TablaString [][]string, numeroNodos int) string {
 	for row >= 0 {
 		if Tabla[row][col] != val {
 			return fmt.Sprintf("{ %s, %s }", TablaString[row][numeroNodos], Mapeo[col])

@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"math"
+	"math/rand"
 	"net/http"
 	"sort"
 	"strings"
@@ -26,7 +27,7 @@ type Vertice struct {
 
 type adjlist map[string]map[string]float64
 
-// custom Hash Set
+// Custom Hash Set
 type Set struct {
 	m map[string]struct{}
 }
@@ -77,6 +78,50 @@ func (s *Set) SymmetricDifference(sn *Set) *Set {
 
 	return newS
 }
+
+// Union find utilities
+
+type UnionFind map[string]string
+
+func NewUnionFind(g []Vertice) *UnionFind {
+	uf := make(UnionFind, len(g)*2)
+
+	for _, v := range g[:] {
+		uf[v.Origen] = v.Origen
+		uf[v.Destino] = v.Destino
+	}
+
+	return &uf
+}
+
+func (u UnionFind) Parent(nodo string) string {
+	if u[nodo] != nodo {
+		u[nodo] = u.Parent(u[nodo])
+	}
+	return u[nodo]
+}
+
+func (u UnionFind) Cycle(a, b string) bool {
+	a = u.Parent(a)
+	b = u.Parent(b)
+
+	return a == b
+}
+
+func (u UnionFind) Union(a, b string) {
+	a = u.Parent(a)
+	b = u.Parent(b)
+
+	if a != b {
+		if rand.Float64() > 0.5 {
+			u[a] = b
+		} else {
+			u[b] = a
+		}
+	}
+}
+
+// Misc utilities
 
 func Find(slice *[]camino, val camino) bool {
 	for _, item := range *slice {
@@ -152,6 +197,8 @@ func AdjListToVertices(grafo map[string]map[string]float64, dirigido bool) *[]Ve
 	return &adjList
 }
 
+// Compression stuff
+
 // source https://gist.github.com/the42/1956518
 type gzipResponseWriter struct {
 	io.Writer
@@ -176,6 +223,8 @@ func gzipHandler(h http.Handler) http.Handler {
 		h.ServeHTTP(gzipResponseWriter{Writer: gz, ResponseWriter: w}, r)
 	})
 }
+
+// Serialize
 
 func toBytes(someStruct interface{}) []byte {
 	s, err := json.Marshal(someStruct)
@@ -202,6 +251,8 @@ func deserialize(rawData io.ReadCloser, v interface{}) {
 		log.Print(err)
 	}
 }
+
+// Log Time
 
 func track(msg string) (string, time.Time) {
 	return msg, time.Now()

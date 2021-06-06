@@ -212,4 +212,28 @@ func TestGrafos(t *testing.T) {
 			t.Error()
 		}
 	})
+
+	t.Run("Kruskal", func(t *testing.T) {
+		ejemplo := []Vertice{
+			{"C", "B", 4},
+			{"A", "C", 3},
+			{"A", "B", 6},
+			{"B", "D", 2},
+			{"C", "D", 3},
+			{"S", "A", 7},
+			{"B", "T", 5},
+			{"D", "T", 2},
+			{"S", "C", 8},
+		}
+
+		sol := ResuelveKruskal(ejemplo)
+
+		if len(sol.Arbol) != 5 {
+			t.Error()
+		}
+
+		if sol.Peso-17.0 > epsilon {
+			t.Error()
+		}
+	})
 }
