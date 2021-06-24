@@ -1,5 +1,9 @@
 package main
 
+import (
+	"math"
+)
+
 // TODO nombre
 type CompresionData struct {
 	TiempoObjetivo float64             `json:"tiempoObjetivo"`
@@ -93,10 +97,22 @@ func ResuelveCompresion(c CompresionData) RespuesaCompresion {
 		costoTiempo[idx] = costos[a.Actividad].CostoTiempo
 	}
 
+	for idx, a := range costoTiempo {
+		// TODO ver función CalculaCostoTiempo
+		if math.IsNaN(a) {
+			costoTiempo[idx] = 0.0
+		} else if math.IsInf(a, 1) {
+			costoTiempo[idx] = jsMaxValue
+		} else if math.IsInf(a, -1) {
+			costoTiempo[idx] = -jsMaxValue
+		}
+	}
+
 	return RespuesaCompresion{costoTiempo, iteracionesCPM, aComprimidas, costoActual}
 }
 
 func CalculaCostoTiempo(a *VerticeCompresion) float64 {
+	// TODO casos en los que la división de valores excepcionales (+-Inf, Nan)
 	return (a.CostoUrgente - a.CostoNormal) / (a.PesoNormal - a.PesoUrgente)
 }
 

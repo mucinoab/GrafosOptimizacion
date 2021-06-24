@@ -132,7 +132,7 @@ function Compresion() {
         };
         actividades.push(activida);
     }
-    const duracionObjetivo = document.getElementById("duracionObjetivo").value.trim();
+    const duracionObjetivo = "-100";
     let duracion = 0;
     if (duracionObjetivo.length != 0) {
         duracion = parseFloat(duracionObjetivo);

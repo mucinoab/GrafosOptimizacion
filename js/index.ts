@@ -1,4 +1,5 @@
-// TODO No globals
+// TODO Use https://github.com/magjac/d3-graphviz
+// TODO
 // Globals
 var varianza: number = 0;
 var media: number = 0;
@@ -172,7 +173,7 @@ function Compresion() {
     actividades.push(activida);
   }
 
-  const duracionObjetivo = (<HTMLInputElement>document.getElementById("duracionObjetivo")).value.trim();
+  const duracionObjetivo = "-100";
   let duracion = 0;
   if (duracionObjetivo.length != 0) {
     duracion = parseFloat(duracionObjetivo);
