@@ -4,16 +4,23 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Algoritmos de Grafos, flujo mínimo, Floyd-Warshall, Ruta Crítica(CPM, PERT), acelaración de proyectos, Kruskal, Dijkstra">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
     <title>Grafos</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
+      rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+
     <link rel="stylesheet" href="style.css">
     <script src="/js/utils.js" defer></script>
     <script src="/js/renders.js" defer></script>
     <script src="/js/index.js" defer></script>
     <script src="/js/examples.js" defer></script>
-  </head>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.min.js" integrity="sha384-lpyLfhYuitXl2zRZ5Bn2fqnhNAKOAaM/0Kr9laMspuaMiZfGmfwRNFh8HlMy49eQ" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@hpcc-js/wasm/dist/index.min.js" defer></script>
+    <script src="https://unpkg.com/d3-graphviz@4.0.0/build/d3-graphviz.min.js" defer></script>
+  </head>
 
   <body>
     <ul class="nav bg-dark">
@@ -68,7 +75,7 @@
       </ul>
       <div class="tab-content" id="myTabContent">
         <!-- Flujo Máximo -->
-        <div class="tab-pane fade show active" id="FlujoM" role="tabpanel" aria-labelledby="home-tab">
+        <div class="tab-pane fade show active" id="FlujoM" role="tabpanel">
           <br>
           <form id="formularioFlujo">
             <div class="row g-3">
@@ -82,12 +89,12 @@
 
             <p>Es un grafo...</p>
             <input class="form-check-input" type="radio" name="flexRadioDefault" id="GrafoNoDirigido">
-            <label class="form-check-label" for="flexRadioDefault2">No Dirigido</label>
+            <label class="form-check-label">No Dirigido</label>
 
             <br>
 
             <input class="form-check-input" type="radio" name="flexRadioDefault" id="GrafoDirigido" checked>
-            <label class="form-check-label" for="flexRadioDefault1">Dirigido</label>
+            <label class="form-check-label">Dirigido</label>
 
             <br> <br>
 
@@ -131,12 +138,12 @@
         </div>
         <!-- Floyd Warshall -->
         <!-- TODO refactor tablas duplicadas -->
-        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+        <div class="tab-pane fade" id="profile" role="tabpanel">
           <br>
           <form id="formularioFloyd">
             <div class="row g-3">
               <div class="col-auto">
-                <label for="Nvertices" class="form-label">Número de Vértices</label>
+                <label for="NverticesFloyd" class="form-label">Número de Vértices</label>
                 <input type="tel" class="form-control" id="NverticesFloyd" maxlength="2" required>
                 <div class="form-text">(aristas, arcos)</div>
               </div>
@@ -175,12 +182,12 @@
           <br> <br> <br>
         </div>
         <!-- CPM -->
-        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+        <div class="tab-pane fade" id="contact" role="tabpanel">
           <br>
           <form id="formularioCPM">
             <div class="row g-3">
               <div class="col-auto">
-                <label for="Nvertices" class="form-label">Número de Vértices (Actividades)</label>
+                <label for="NverticesCPM" class="form-label">Número de Vértices (Actividades)</label>
                 <input type="tel" class="form-control" id="NverticesCPM" maxlength="2" required>
                 <div class="form-text">(aristas, arcos)</div>
               </div>
@@ -221,12 +228,12 @@
         </div>
 
         <!-- PERT -->
-        <div class="tab-pane fade" id="rpert" role="tabpanel" aria-labelledby="contact-tab">
+        <div class="tab-pane fade" id="rpert" role="tabpanel">
           <br>
           <form id="formularioPERT">
             <div class="row g-3">
               <div class="col-auto">
-                <label for="Nvertices" class="form-label">Número de Vértices (Actividades)</label>
+                <label for="NverticesPERT" class="form-label">Número de Vértices (Actividades)</label>
                 <input type="tel" class="form-control" id="NverticesPERT" maxlength="2" required>
                 <div class="form-text">(aristas, arcos)</div>
               </div>
@@ -264,22 +271,23 @@
               <br>
             </form>
             <div id="respuestasPERT"></div><br>
-            Probabilidad de que el proyecto termine en
+              Probabilidad de que el proyecto termine en
             <input id="tiempoID" style="max-width:5em" type="text" class="form-control" placeholder="0.0">
-            o menos unidades de tiempo:<b><p id="normalCDF"></p><br></b>
+              o menos unidades de tiempo:<p id="normalCDF"></p><br>
             <button type="button" class="btn btn-primary" onclick="renderNormalCDF()">Calcular</button>
             <br><br><br><br>
-            <img id="imagenPERT" src="" width="999" height="360" class="center img-fluid"><br><br>
+            <div id="imagenPERT" style="text-align: center;" class="center img-fluid">
+            </div><br><br><br><br>
           </div>
         </div>
 
         <!-- Aceleración de Proyectos -->
-        <div class="tab-pane fade" id="raceleracion" role="tabpanel" aria-labelledby="contact-tab">
+        <div class="tab-pane fade" id="raceleracion" role="tabpanel">
           <br>
           <form id="formularioCompresion">
             <div class="row g-3">
               <div class="col-auto">
-                <label for="Nvertices" class="form-label">Número de Vértices (Actividades)</label>
+                <label for="NverticesCompresion" class="form-label">Número de Vértices (Actividades)</label>
                 <input type="tel" class="form-control" id="NverticesCompresion" maxlength="2" required>
                 <div class="form-text">(aristas, arcos)</div>
               </div>
@@ -323,12 +331,12 @@
         </div>
 
         <!-- Dijkstra -->
-        <div class="tab-pane fade" id="rdijkstra" role="tabpanel" aria-labelledby="contact-tab">
+        <div class="tab-pane fade" id="rdijkstra" role="tabpanel">
           <br>
           <form id="formularioDijkstra">
             <div class="row g-3">
               <div class="col-auto">
-                <label for="Nvertices" class="form-label">Número de Vértices (Actividades)</label>
+                <label for="NverticesDijkstra" class="form-label">Número de Vértices (Actividades)</label>
                 <input type="tel" class="form-control" id="NverticesDijkstra" maxlength="2" required>
                 <div class="form-text">(aristas, arcos)</div>
               </div>
@@ -377,12 +385,12 @@
           </div>
         </div>
         <!-- Kruskal -->
-        <div class="tab-pane fade" id="rkruskal" role="tabpanel" aria-labelledby="contact-tab">
+        <div class="tab-pane fade" id="rkruskal" role="tabpanel">
           <br>
           <form id="formularioKruskal">
             <div class="row g-3">
               <div class="col-auto">
-                <label for="Nvertices" class="form-label">Número de Vértices (Actividades)</label>
+                <label for="NverticesKruskal" class="form-label">Número de Vértices (Actividades)</label>
                 <input type="tel" class="form-control" id="NverticesKruskal" maxlength="2" required>
                 <div class="form-text">(aristas, arcos)</div>
               </div>
@@ -426,9 +434,9 @@
         </div>
 
         <!-- Código fuente -->
-        <div class="tab-pane fade" id="fuente" role="tabpanel" aria-labelledby="contact-tab">
+        <div class="tab-pane fade" id="fuente" role="tabpanel">
           <br>
-          <a href="https://github.com/mucinoab/GrafosOptimizacion"><img src="https://opengraph.githubassets.com/763e008e80ee4ad63212e0ec3e7b57379b20f7f683111a8eb5b9570762a0c3e1/mucinoab/GrafosOptimizacion" alt="Grafos Optimización" width="720" height="360" class="center" loading="lazy"><a>
+          <a href="https://github.com/mucinoab/GrafosOptimizacion"><img src="https://opengraph.githubassets.com/763e008e80ee4ad63212e0ec3e7b57379b20f7f683111a8eb5b9570762a0c3e1/mucinoab/GrafosOptimizacion" alt="Grafos Optimización" width="720" height="360" class="center" loading="lazy"></a>
         </div>
       </div>
     </div>
