@@ -20,14 +20,9 @@ function renderResponsePERT(r) {
     }
     varianza = r.sumaVariazas;
     media = r.media;
-    let response = `μ = ${r.media.toFixed(3)}, σ² = ${r.sumaVariazas.toFixed(3)}<br><br>`;
-    response += `Probabilidad de que el proyecto termine en
-    <input id="tiempoID" style="max-width:80px" type="text" class="form-control" placeholder="0.0">
-    o menos unidades de tiempo:<b><p id="normalCDF"></p><br></b>`;
-    response += `<button type="button" class="btn btn-primary" onclick="renderNormalCDF()">Calcular</button><br><br><br>`;
-    response += `<br><img src="${drawGraphLinkCritical(r.cpm)}" width="999" height="360" class="center img-fluid"><br><br>`;
+    let response = `μ = ${r.media.toFixed(3)}, σ² = ${r.sumaVariazas.toFixed(3)}`;
+    document.getElementById("imagenPERT").src = `${drawGraphLinkCritical(r.cpm)}`;
     document.getElementById("respuestasPERT").innerHTML = response;
-    document.getElementById("normalCDF").scrollIntoView(true);
 }
 function renderResponseFlujo(r) {
     let respuesta = document.getElementById("respuestaFlujo");
@@ -188,10 +183,9 @@ function renderResponseKruskal(data) {
     kruskalInterval = window.setInterval(showSlides, 300);
 }
 function showSlides() {
-    let i;
     let slides = document.getElementsByClassName("slides");
-    for (i = 0; i < slides.length; i++) {
-        slides[i].style.display = "none";
+    for (const slide of slides) {
+        slide.style.display = "none";
     }
     slideIndex += 1;
     if (slideIndex > slides.length) {
