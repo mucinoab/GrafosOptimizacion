@@ -8,435 +8,425 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
       rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
 
-    <link rel="stylesheet" href="style.css">
     <script src="/js/utils.js" defer></script>
     <script src="/js/renders.js" defer></script>
     <script src="/js/index.js" defer></script>
     <script src="/js/examples.js" defer></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/d3@7" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.0.1/dist/d3.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/@hpcc-js/wasm/dist/index.min.js" defer></script>
     <script src="https://unpkg.com/d3-graphviz@4.0.0/build/d3-graphviz.min.js" defer></script>
   </head>
 
   <body>
-    <ul class="nav bg-dark">
-      <li class="nav-item"><h1 class="nav-link disabled">Grafos</h1></li>
-    </ul>
+    <div>
+      <div class="d-flex align-items-start">
 
-    <div class="container">
-      <br>
-      <ul class="nav nav-tabs" id="myTab" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="flujo-tab" data-bs-toggle="tab" data-bs-target="#FlujoM" type="button" role="tab" aria-controls="FlujoM" aria-selected="true">
-            Flujo Máximo
-          </button>
-        </li>
+        <div class="d-flex flex-column flex-shrink-0 p-4" style="width: 230px">
 
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="floyd-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">
-            Floyd-Warshall
-          </button>
-        </li>
+          <div class="d-flex align-items-center mb-3 mb-md-0 me-md-auto">
+            <svg class="bi me-2" width="40" height="32"></svg>
+            <span class="fs-4">Grafos</span>
+          </div>
+          <hr>
 
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="cpm-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">
-            Ruta Crítica (CPM)
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="pert-tab" data-bs-toggle="tab" data-bs-target="#rpert" type="button" role="tab" aria-controls="rpert" aria-selected="false">
-            Ruta Crítica (PERT)
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="acelaracion-tab" data-bs-toggle="tab" data-bs-target="#raceleracion" type="button" role="tab" aria-controls="rpert" aria-selected="false">
-            Aceleración de Proyectos
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="dijkstra-tab" data-bs-toggle="tab" data-bs-target="#rdijkstra" type="button" role="tab" aria-controls="rpert" aria-selected="false">
-            Dijkstra
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="kruskal-tab" data-bs-toggle="tab" data-bs-target="#rkruskal" type="button" role="tab" aria-controls="rpert" aria-selected="false">
-            Kruskal
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="codigo-tab" data-bs-toggle="tab" data-bs-target="#fuente" type="button" role="tab" aria-controls="fuente" aria-selected="false">
-            Código Fuente
-          </button>
-        </li>
-      </ul>
-      <div class="tab-content" id="myTabContent">
-        <!-- Flujo Máximo -->
-        <div class="tab-pane fade show active" id="FlujoM" role="tabpanel">
-          <br>
-          <form id="formularioFlujo">
-            <div class="row g-3">
-              <div class="col-auto">
-                <label class="form-label">Número de Vértices</label>
-                <input type="tel" class="form-control" id="NverticesFlujo" maxlength="2" required>
-                <div class="form-text">(aristas, arcos)</div>
+          <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+            <button class="active nav-link" data-bs-toggle="pill" type="button" role="tab" aria-selected="true"  id="flujo-tab"       data-bs-target="#FlujoM"       aria-controls="FlujoM">    Flujo Máximo</button>
+            <button class="nav-link" data-bs-toggle="pill" type="button" role="tab" aria-selected="false" id="floyd-tab"       data-bs-target="#FloydW"       aria-controls="FloydW">       Floyd-Warshall          </button>
+            <button class="nav-link" data-bs-toggle="pill" type="button" role="tab" aria-selected="false" id="cpm-tab"         data-bs-target="#contCPM"      aria-controls="contCPM">      Ruta Crítica (CPM)      </button>
+            <button class="nav-link" data-bs-toggle="pill" type="button" role="tab" aria-selected="false" id="pert-tab"        data-bs-target="#rpert"        aria-controls="rpert">        Ruta Crítica (PERT)     </button>
+            <button class="nav-link" data-bs-toggle="pill" type="button" role="tab" aria-selected="false" id="acelaracion-tab" data-bs-target="#raceleracion" aria-controls="raceleracion"> Aceleración de Proyectos</button>
+            <button class="nav-link" data-bs-toggle="pill" type="button" role="tab" aria-selected="false" id="dijkstra-tab"    data-bs-target="#rdijkstra"    aria-controls="rdijkstra">    Dijkstra                </button>
+            <button class="nav-link" data-bs-toggle="pill" type="button" role="tab" aria-selected="false" id="kruskal-tab"     data-bs-target="#rkruskal"     aria-controls="rkruskal">     Kruskal                 </button>
+            <hr>
+            <button class="nav-link" data-bs-toggle="pill" type="button" role="tab" aria-selected="false" id="codigo-tab"      data-bs-target="#fuente"       aria-controls="fuente">       Código Fuente           </button>
+          </div>
+
+        </div>
+
+        <div class="tab-content" id="v-pills-tabContent" style="padding-left: 30px;">
+          <br><br>
+
+            <!-- Flujo Máximo -->
+          <div class="tab-pane fade show active" id="FlujoM" role="tabpanel" aria-labelledby="flujo-tab">
+            <br>
+            <form id="formularioFlujo">
+              <div class="row g-3">
+                <div class="col-auto">
+                  <label class="form-label">Número de Vértices</label>
+                  <input type="tel" class="form-control" id="NverticesFlujo" maxlength="2" required>
+                  <div class="form-text">(aristas, arcos)</div>
+                </div>
               </div>
+              <br>
+
+              <p>Es un grafo...</p>
+              <input class="form-check-input" type="radio" name="flexRadioDefault" id="GrafoNoDirigido">
+              <label class="form-check-label">No Dirigido</label>
+
+              <br>
+
+              <input class="form-check-input" type="radio" name="flexRadioDefault" id="GrafoDirigido" checked>
+              <label class="form-check-label">Dirigido</label>
+
+              <br> <br>
+
+              <button type="button" class="btn btn-primary" onclick="showTable('Flujo', 'formularioFlujo', 'NverticesFlujo')">Generar Tabla</button>
+              <br>
+              <br>
+              <button type="button" class="btn btn-outline-primary" onclick="ejemploFlujo()">Ejemplo</button>
+            </form>
+
+            <br>
+            <br>
+
+            <div id="Flujo" style="display: none;">
+              <p>Ingresa todas las conexiones del grafo y su respectivo peso.</p>
+              <form id="TablaFlujo">
+                <table class="table table-sm">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Origen</th>
+                      <th scope="col">Destino</th>
+                      <th scope="col">Peso</th>
+                    </tr>
+                  </thead>
+                  <tbody id="innerTablaFlujo">
+                  </tbody>
+                </table>
+                <br> <label class="form-label">Nodo Origen</label>
+                <input type="text" class="form-control pesos" id="origen" required>
+                <br> <label class="form-label">Nodo Destino</label>
+                <input type="text" class="form-control pesos" id="destino" required>
+                <br>
+                <button type="button" class="btn btn-primary" onclick="flujoMaximo()">Resolver</button>
+              </form>
             </div>
             <br>
+            <br>
+            <div id="respuestaFlujo" style="display: none;">
+            </div>
+            <br> <br> <br>
+          </div>
 
-            <p>Es un grafo...</p>
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="GrafoNoDirigido">
-            <label class="form-check-label">No Dirigido</label>
 
+          <!-- Floyd Warshall -->
+          <!-- TODO refactor tablas duplicadas -->
+
+          <div class="tab-pane fade" id="FloydW" role="tabpanel" aria-labelledby="floyd-tab">
+            <br>
+            <form id="formularioFloyd">
+              <div class="row g-3">
+                <div class="col-auto">
+                  <label for="NverticesFloyd" class="form-label">Número de Vértices</label>
+                  <input type="tel" class="form-control" id="NverticesFloyd" maxlength="2" required>
+                  <div class="form-text">(aristas, arcos)</div>
+                </div>
+              </div>
+              <br>
+
+              <button type="button" class="btn btn-primary" onclick="showTable('Floyd', 'formularioFloyd', 'NverticesFloyd')">Generar Tabla</button>
+              <br>
+              <br>
+              <button type="button" class="btn btn-outline-primary" onclick="ejemploFloyd()">Ejemplo</button>
+            </form>
+            <br>
             <br>
 
-            <input class="form-check-input" type="radio" name="flexRadioDefault" id="GrafoDirigido" checked>
-            <label class="form-check-label">Dirigido</label>
-
+            <div id="Floyd" style="display: none;">
+              <p>Ingresa todas las conexiones del grafo y su respectivo peso.</p>
+              <form id="TablaFloyd">
+                <table class="table table-sm">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Origen</th>
+                      <th scope="col">Destino</th>
+                      <th scope="col">Peso</th>
+                    </tr>
+                  </thead>
+                  <tbody id="innerTablaFloyd">
+                  </tbody>
+                </table>
+                <br>
+                <button type="button" class="btn btn-primary" onclick="floydWarshall()">Resolver</button>
+              </form>
+            </div>
             <br> <br>
-
-            <button type="button" class="btn btn-primary" onclick="showTable('Flujo', 'formularioFlujo', 'NverticesFlujo')">Generar Tabla</button>
-            <br>
-            <br>
-            <button type="button" class="btn btn-outline-primary" onclick="ejemploFlujo()">Ejemplo</button>
-          </form>
-
-          <br>
-          <br>
-
-          <div id="Flujo" style="display: none;">
-            <p>Ingresa todas las conexiones del grafo y su respectivo peso.</p>
-            <form id="TablaFlujo">
-              <table class="table table-sm">
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Origen</th>
-                    <th scope="col">Destino</th>
-                    <th scope="col">Peso</th>
-                  </tr>
-                </thead>
-                <tbody id="innerTablaFlujo">
-                </tbody>
-              </table>
-              <br> <label class="form-label">Nodo Origen</label>
-              <input type="text" class="form-control pesos" id="origen" required>
-              <br> <label class="form-label">Nodo Destino</label>
-              <input type="text" class="form-control pesos" id="destino" required>
-              <br>
-              <button type="button" class="btn btn-primary" onclick="flujoMaximo()">Resolver</button>
-            </form>
+            <div id="respuestaFloyd" style="display: none;"></div>
+            <br> <br> <br>
           </div>
-          <br>
-          <br>
-          <div id="respuestaFlujo" style="display: none;">
-          </div>
-          <br> <br> <br>
-        </div>
-        <!-- Floyd Warshall -->
-        <!-- TODO refactor tablas duplicadas -->
-        <div class="tab-pane fade" id="profile" role="tabpanel">
-          <br>
-          <form id="formularioFloyd">
-            <div class="row g-3">
-              <div class="col-auto">
-                <label for="NverticesFloyd" class="form-label">Número de Vértices</label>
-                <input type="tel" class="form-control" id="NverticesFloyd" maxlength="2" required>
-                <div class="form-text">(aristas, arcos)</div>
+
+
+          <!-- CPM -->
+
+          <div class="tab-pane fade" id="contCPM" role="tabpanel" aria-labelledby="cpm-tab">
+            <br>
+            <form id="formularioCPM">
+              <div class="row g-3">
+                <div class="col-auto">
+                  <label for="NverticesCPM" class="form-label">Número de Vértices (Actividades)</label>
+                  <input type="tel" class="form-control" id="NverticesCPM" maxlength="2" required>
+                  <div class="form-text">(aristas, arcos)</div>
+                </div>
               </div>
-            </div>
-            <br>
-
-            <button type="button" class="btn btn-primary" onclick="showTable('Floyd', 'formularioFloyd', 'NverticesFloyd')">Generar Tabla</button>
-            <br>
-            <br>
-            <button type="button" class="btn btn-outline-primary" onclick="ejemploFloyd()">Ejemplo</button>
-          </form>
-          <br>
-          <br>
-
-          <div id="Floyd" style="display: none;">
-            <p>Ingresa todas las conexiones del grafo y su respectivo peso.</p>
-            <form id="TablaFloyd">
-              <table class="table table-sm">
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Origen</th>
-                    <th scope="col">Destino</th>
-                    <th scope="col">Peso</th>
-                  </tr>
-                </thead>
-                <tbody id="innerTablaFloyd">
-                </tbody>
-              </table>
               <br>
-              <button type="button" class="btn btn-primary" onclick="floydWarshall()">Resolver</button>
+
+              <button type="button" class="btn btn-primary" onclick="showTable('CPM', 'formularioCPM', 'NverticesCPM')">Generar Tabla</button>
+              <br>
+              <br>
+              <button type="button" class="btn btn-outline-primary" onclick="ejemploCPM()">Ejemplo</button>
             </form>
-          </div>
-          <br> <br>
-          <div id="respuestaFloyd" style="display: none;"></div>
-          <br> <br> <br>
-        </div>
-        <!-- CPM -->
-        <div class="tab-pane fade" id="contact" role="tabpanel">
-          <br>
-          <form id="formularioCPM">
-            <div class="row g-3">
-              <div class="col-auto">
-                <label for="NverticesCPM" class="form-label">Número de Vértices (Actividades)</label>
-                <input type="tel" class="form-control" id="NverticesCPM" maxlength="2" required>
-                <div class="form-text">(aristas, arcos)</div>
+
+            <br>
+            <br>
+
+            <div id="CPM" style="display: none;">
+              <p>Ingresa todas las actividades, sus predecesora y sus respectivas duraciones. Si una actividad no tiene predecesora, utiliza un guión medio ("-").</p>
+              <form id="TablaCPM">
+                <table class="table table-sm">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Actividad</th>
+                      <th scope="col">Predecesora</th>
+                      <th scope="col">Duración</th>
+                    </tr>
+                  </thead>
+                  <tbody id="innerTablaCPM">
+                  </tbody>
+                </table>
+
+                <button type="button" class="btn btn-primary" onclick="CPM()">Resolver</button>
+              </form>
+              <br> <br>
+              <div id="respuestaCPM"></div>
+              <div id="imagenCPM" style="text-align: center;" class="center img-fluid">
               </div>
-            </div>
-            <br>
-
-            <button type="button" class="btn btn-primary" onclick="showTable('CPM', 'formularioCPM', 'NverticesCPM')">Generar Tabla</button>
-            <br>
-            <br>
-            <button type="button" class="btn btn-outline-primary" onclick="ejemploCPM()">Ejemplo</button>
-          </form>
-
-          <br>
-          <br>
-
-          <div id="CPM" style="display: none;">
-            <p>Ingresa todas las actividades, sus predecesora y sus respectivas duraciones. Si una actividad no tiene predecesora, utiliza un guión medio ("-").</p>
-            <form id="TablaCPM">
-              <table class="table table-sm">
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Actividad</th>
-                    <th scope="col">Predecesora</th>
-                    <th scope="col">Duración</th>
-                  </tr>
-                </thead>
-                <tbody id="innerTablaCPM">
-                </tbody>
-              </table>
-
-              <button type="button" class="btn btn-primary" onclick="CPM()">Resolver</button>
-            </form>
-          </div>
-          <br> <br>
-          <div id="respuestaCPM" style="display: none;"></div>
-          <br> <br> <br>
-        </div>
-
-        <!-- PERT -->
-        <div class="tab-pane fade" id="rpert" role="tabpanel">
-          <br>
-          <form id="formularioPERT">
-            <div class="row g-3">
-              <div class="col-auto">
-                <label for="NverticesPERT" class="form-label">Número de Vértices (Actividades)</label>
-                <input type="tel" class="form-control" id="NverticesPERT" maxlength="2" required>
-                <div class="form-text">(aristas, arcos)</div>
-              </div>
-            </div>
-          </form>
-          <br>
-
-          <button type="button" class="btn btn-primary" onclick="showTable('PERT', 'formularioPERT', 'NverticesPERT')">Generar Tabla</button>
-          <br>
-          <br>
-          <button type="button" class="btn btn-outline-primary" onclick="ejemploPERT()">Ejemplo</button>
-
-          <div id="PERT" style="display: none;">
-            <br>
-            <p>Ingresa todas las actividades, sus predecesora y sus respectivas duraciones(optimista, más probable y pesimista). Si una actividad no tiene predecesora, utiliza un guión medio ("-").</p>
-
-            <form id="TablaPERT">
-              <table class="table table-sm">
-                <thead>
-                  <tr id="PERTHeader">
-                    <th scope="col">#</th>
-                    <th scope="col">Actividad</th>
-                    <th scope="col">Predecesora</th>
-                    <th scope="col">Optimista</th>
-                    <th scope="col">Más Probable</th>
-                    <th scope="col">Pesimista</th>
-                  </tr>
-                </thead>
-                <tbody id="innerTablaPERT">
-                </tbody>
-              </table>
-
-              <button type="button" class="btn btn-primary" onclick="PERT()">Resolver</button>
-              <br>
-              <br>
-            </form>
-            <div id="respuestasPERT"></div><br>
-              Probabilidad de que el proyecto termine en
-            <input id="tiempoID" style="max-width:5em" type="text" class="form-control" placeholder="0.0">
-              o menos unidades de tiempo:<p id="normalCDF"></p><br>
-            <button type="button" class="btn btn-primary" onclick="renderNormalCDF()">Calcular</button>
-            <br><br><br><br>
-            <div id="imagenPERT" style="text-align: center;" class="center img-fluid">
-            </div><br><br><br><br>
-          </div>
-        </div>
-
-        <!-- Aceleración de Proyectos -->
-        <div class="tab-pane fade" id="raceleracion" role="tabpanel">
-          <br>
-          <form id="formularioCompresion">
-            <div class="row g-3">
-              <div class="col-auto">
-                <label for="NverticesCompresion" class="form-label">Número de Vértices (Actividades)</label>
-                <input type="tel" class="form-control" id="NverticesCompresion" maxlength="2" required>
-                <div class="form-text">(aristas, arcos)</div>
-              </div>
-            </div>
-          </form>
-          <br>
-          <button type="button" class="btn btn-primary" onclick="showTable('Compresion', 'formularioCompresion', 'NverticesCompresion')">Generar Tabla</button>
-          <br>
-          <br>
-          <button type="button" class="btn btn-outline-primary" onclick="ejemploCompresion()">Ejemplo</button>
-
-          <div id="Compresion" style="display: none;">
-            <br>
-            <p> Ingresa todas las actividades, sus predecesoras, su duración y costo (normal y urgente). <br> Si una actividad no tiene predecesora, utiliza un guión medio ("-").</p>
-
-            <form id="TablaCompresion">
-              <table class="table table-sm">
-                <thead>
-                  <tr id="CompresionHeader">
-                    <th scope="col">#</th>
-                    <th scope="col">Actividad</th>
-                    <th scope="col">Predecesora</th>
-                    <th scope="col">Duración</th>
-                    <th scope="col">Costo</th>
-                    <th scope="col">Duración Compresión</th>
-                    <th scope="col">Costo Compresión</th>
-                  </tr>
-                </thead>
-                <tbody id="innerTablaCompresion">
-                </tbody>
-              </table>
-
-              <button type="button" class="btn btn-primary" onclick="Compresion()">Resolver</button>
-              <br>
-              <br>
-            </form>
-            <div id="respuestasCompresion">
+              <br> <br> <br>
             </div>
           </div>
-          <br><br><br>
-        </div>
 
-        <!-- Dijkstra -->
-        <div class="tab-pane fade" id="rdijkstra" role="tabpanel">
-          <br>
-          <form id="formularioDijkstra">
-            <div class="row g-3">
-              <div class="col-auto">
-                <label for="NverticesDijkstra" class="form-label">Número de Vértices (Actividades)</label>
-                <input type="tel" class="form-control" id="NverticesDijkstra" maxlength="2" required>
-                <div class="form-text">(aristas, arcos)</div>
-              </div>
-            </div>
-          </form>
-          <br>
-
-          <button type="button" class="btn btn-primary" onclick="showTable('Dijkstra', 'formularioDijkstra', 'NverticesDijkstra')">Generar Tabla</button>
-          <br><br>
-          <button type="button" class="btn btn-outline-primary" onclick="ejemploDijkstra()">Ejemplo</button>
-          <br>
-          <br>
-
-          <div id="Dijkstra" style="display: none;">
+          <!-- PERT -->
+          <div class="tab-pane fade" id="rpert" role="tabpanel"  aria-labelledby="pert-tab">
             <br>
-            <p>Ingresa todos los orígenes, sus destinos y sus respectivos pesos.</p>
-
-            <form id="TablaDijkstra">
-              <table class="table table-sm">
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Origen</th>
-                    <th scope="col">Destino</th>
-                    <th scope="col">Peso</th>
-                  </tr>
-                </thead>
-                <tbody id="innerTablaDijkstra">
-                </tbody>
-              </table>
-              <br>
-              <label for="OrigenDijkstra" class="form-label">Origen</label>
-              <input type="tel" class="form-control" id="OrigenDijkstra" required>
-              <br>
-              <label for="DestinoDijkstra" class="form-label">Destino</label>
-              <input type="tel" class="form-control" id="DestinoDijkstra" required>
-              <br>
-
-              <button type="button" class="btn btn-primary" onclick="Dijkstra()">Resolver</button>
-              <br><br><br>
+            <form id="formularioPERT">
+              <div class="row g-3">
+                <div class="col-auto">
+                  <label for="NverticesPERT" class="form-label">Número de Vértices (Actividades)</label>
+                  <input type="tel" class="form-control" id="NverticesPERT" maxlength="2" required>
+                  <div class="form-text">(aristas, arcos)</div>
+                </div>
+              </div>
             </form>
+            <br>
 
-            <div id="respuestaDijkstra">
+            <button type="button" class="btn btn-primary" onclick="showTable('PERT', 'formularioPERT', 'NverticesPERT')">Generar Tabla</button>
+            <br>
+            <br>
+            <button type="button" class="btn btn-outline-primary" onclick="ejemploPERT()">Ejemplo</button>
+
+            <div id="PERT" style="display: none;">
+              <br>
+              <p>Ingresa todas las actividades, sus predecesora y sus respectivas duraciones(optimista, más probable y pesimista). Si una actividad no tiene predecesora, utiliza un guión medio ("-").</p>
+
+              <form id="TablaPERT">
+                <table class="table table-sm">
+                  <thead>
+                    <tr id="PERTHeader">
+                      <th scope="col">#</th>
+                      <th scope="col">Actividad</th>
+                      <th scope="col">Predecesora</th>
+                      <th scope="col">Optimista</th>
+                      <th scope="col">Más Probable</th>
+                      <th scope="col">Pesimista</th>
+                    </tr>
+                  </thead>
+                  <tbody id="innerTablaPERT">
+                  </tbody>
+                </table>
+
+                <button type="button" class="btn btn-primary" onclick="PERT()">Resolver</button>
+                <br>
+                <br>
+              </form>
+              <div id="graph" style="text-align: center;"></div>
+              <div id="respuestasPERT"></div><br>
+                Probabilidad de que el proyecto termine en
+              <input id="tiempoID" style="max-width:5em" type="text" class="form-control" placeholder="0.0">
+                o menos unidades de tiempo:<p id="normalCDF"></p><br>
+              <button type="button" class="btn btn-primary" onclick="renderNormalCDF()">Calcular</button>
+              <br><br><br><br>
+              <div id="imagenPERT" style="text-align: center;" class="center img-fluid">
+              </div><br><br><br><br>
+            </div>
+          </div>
+
+          <!-- Aceleración de Proyectos -->
+          <div class="tab-pane fade" id="raceleracion" role="tabpanel" aria-labelledby="acelaracion-tab">
+            <br>
+            <form id="formularioCompresion">
+              <div class="row g-3">
+                <div class="col-auto">
+                  <label for="NverticesCompresion" class="form-label">Número de Vértices (Actividades)</label>
+                  <input type="tel" class="form-control" id="NverticesCompresion" maxlength="2" required>
+                  <div class="form-text">(aristas, arcos)</div>
+                </div>
+              </div>
+            </form>
+            <br>
+            <button type="button" class="btn btn-primary" onclick="showTable('Compresion', 'formularioCompresion', 'NverticesCompresion')">Generar Tabla</button>
+            <br>
+            <br>
+            <button type="button" class="btn btn-outline-primary" onclick="ejemploCompresion()">Ejemplo</button>
+
+            <div id="Compresion" style="display: none;">
+              <br>
+              <p> Ingresa todas las actividades, sus predecesoras, su duración y costo (normal y urgente). <br> Si una actividad no tiene predecesora, utiliza un guión medio ("-").</p>
+
+              <form id="TablaCompresion">
+                <table class="table table-sm">
+                  <thead>
+                    <tr id="CompresionHeader">
+                      <th scope="col">#</th>
+                      <th scope="col">Actividad</th>
+                      <th scope="col">Predecesora</th>
+                      <th scope="col">Duración</th>
+                      <th scope="col">Costo</th>
+                      <th scope="col">Duración Compresión</th>
+                      <th scope="col">Costo Compresión</th>
+                    </tr>
+                  </thead>
+                  <tbody id="innerTablaCompresion">
+                  </tbody>
+                </table>
+
+                <button type="button" class="btn btn-primary" onclick="Compresion()">Resolver</button>
+                <br>
+                <br>
+              </form>
+              <div id="respuestasCompresion">
+              </div>
             </div>
             <br><br><br>
           </div>
-        </div>
-        <!-- Kruskal -->
-        <div class="tab-pane fade" id="rkruskal" role="tabpanel">
-          <br>
-          <form id="formularioKruskal">
-            <div class="row g-3">
-              <div class="col-auto">
-                <label for="NverticesKruskal" class="form-label">Número de Vértices (Actividades)</label>
-                <input type="tel" class="form-control" id="NverticesKruskal" maxlength="2" required>
-                <div class="form-text">(aristas, arcos)</div>
-              </div>
-            </div>
-          </form>
-          <br>
 
-          <button type="button" class="btn btn-primary" onclick="showTable('Kruskal', 'formularioKruskal', 'NverticesKruskal')">Generar Tabla</button>
-          <br><br>
-          <button type="button" class="btn btn-outline-primary" onclick="ejemploKruskal()">Ejemplo</button>
-          <br>
-          <br>
-
-          <div id="Kruskal" style="display: none;">
+          <!-- Dijkstra -->
+          <div class="tab-pane fade" id="rdijkstra" role="tabpanel" aria-labelledby="dijkstra-tab">
             <br>
-            <p>Ingresa todos los orígenes, sus destinos y sus respectivos pesos.</p>
-
-            <form id="TablaKruskal">
-              <table class="table table-sm">
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Origen</th>
-                    <th scope="col">Destino</th>
-                    <th scope="col">Peso</th>
-                  </tr>
-                </thead>
-                <tbody id="innerTablaKruskal">
-                </tbody>
-              </table>
-              <br>
-
-              <button type="button" class="btn btn-primary" onclick="Kruskal()">Resolver</button>
-              <br><br><br>
+            <form id="formularioDijkstra">
+              <div class="row g-3">
+                <div class="col-auto">
+                  <label for="NverticesDijkstra" class="form-label">Número de Vértices (Actividades)</label>
+                  <input type="tel" class="form-control" id="NverticesDijkstra" maxlength="2" required>
+                  <div class="form-text">(aristas, arcos)</div>
+                </div>
+              </div>
             </form>
+            <br>
 
-            <div id="respuestaKruskal">
+            <button type="button" class="btn btn-primary" onclick="showTable('Dijkstra', 'formularioDijkstra', 'NverticesDijkstra')">Generar Tabla</button>
+            <br><br>
+            <button type="button" class="btn btn-outline-primary" onclick="ejemploDijkstra()">Ejemplo</button>
+            <br>
+            <br>
+
+            <div id="Dijkstra" style="display: none;">
+              <br>
+              <p>Ingresa todos los orígenes, sus destinos y sus respectivos pesos.</p>
+
+              <form id="TablaDijkstra">
+                <table class="table table-sm">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Origen</th>
+                      <th scope="col">Destino</th>
+                      <th scope="col">Peso</th>
+                    </tr>
+                  </thead>
+                  <tbody id="innerTablaDijkstra">
+                  </tbody>
+                </table>
+                <br>
+                <label for="OrigenDijkstra" class="form-label">Origen</label>
+                <input type="tel" class="form-control" id="OrigenDijkstra" required>
+                <br>
+                <label for="DestinoDijkstra" class="form-label">Destino</label>
+                <input type="tel" class="form-control" id="DestinoDijkstra" required>
+                <br>
+
+                <button type="button" class="btn btn-primary" onclick="Dijkstra()">Resolver</button>
+                <br><br><br>
+              </form>
+
+              <div id="respuestaDijkstra">
+              </div>
+              <br><br><br>
             </div>
-            <br><br><br>
           </div>
-        </div>
+          <!-- Kruskal -->
+          <div class="tab-pane fade" id="rkruskal" role="tabpanel" aria-labelledby="kruskal-tab">
+            <br>
+            <form id="formularioKruskal">
+              <div class="row g-3">
+                <div class="col-auto">
+                  <label for="NverticesKruskal" class="form-label">Número de Vértices (Actividades)</label>
+                  <input type="tel" class="form-control" id="NverticesKruskal" maxlength="2" required>
+                  <div class="form-text">(aristas, arcos)</div>
+                </div>
+              </div>
+            </form>
+            <br>
 
-        <!-- Código fuente -->
-        <div class="tab-pane fade" id="fuente" role="tabpanel">
-          <br>
-          <a href="https://github.com/mucinoab/GrafosOptimizacion"><img src="https://opengraph.githubassets.com/763e008e80ee4ad63212e0ec3e7b57379b20f7f683111a8eb5b9570762a0c3e1/mucinoab/GrafosOptimizacion" alt="Grafos Optimización" width="720" height="360" class="center" loading="lazy"></a>
+            <button type="button" class="btn btn-primary" onclick="showTable('Kruskal', 'formularioKruskal', 'NverticesKruskal')">Generar Tabla</button>
+            <br><br>
+            <button type="button" class="btn btn-outline-primary" onclick="ejemploKruskal()">Ejemplo</button>
+            <br>
+            <br>
+
+            <div id="Kruskal" style="display: none;">
+              <br>
+              <p>Ingresa todos los orígenes, sus destinos y sus respectivos pesos.</p>
+
+              <form id="TablaKruskal">
+                <table class="table table-sm">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Origen</th>
+                      <th scope="col">Destino</th>
+                      <th scope="col">Peso</th>
+                    </tr>
+                  </thead>
+                  <tbody id="innerTablaKruskal">
+                  </tbody>
+                </table>
+                <br>
+
+                <button type="button" class="btn btn-primary" onclick="Kruskal()">Resolver</button>
+                <br><br><br>
+              </form>
+
+              <div id="respuestaKruskal">
+              </div>
+              <br><br><br>
+            </div>
+          </div>
+
+          <!-- Código fuente -->
+          <div class="tab-pane fade" id="fuente" role="tabpanel" aria-labelledby="codigo-tab">
+            <br>
+            <a href="https://github.com/mucinoab/GrafosOptimizacion">
+              <img src="https://opengraph.githubassets.com/763e008e80ee4ad63212e0ec3e7b57379b20f7f683111a8eb5b9570762a0c3e1/mucinoab/GrafosOptimizacion" alt="Grafos Optimización"  width="960" height="480" class="center" loading="lazy">
+            </a>
+          </div>
         </div>
       </div>
     </div>
