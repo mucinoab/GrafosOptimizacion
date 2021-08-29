@@ -101,5 +101,5 @@ interface ResponseKruskal {
   grafo: Array<Vertices>,
   arbol: Array<number>,
   peso: number,
-  slides: string,
+  graphs: Array<string>,
 }
