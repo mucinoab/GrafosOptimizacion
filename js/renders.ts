@@ -26,13 +26,15 @@ function renderResponsePERT(r: ResponsePERT) {
     idx += 1;
   }
 
+  renderDot("#imagenPERT", drawGraphLinkCritical(r.cpm));
+
   varianza = r.sumaVariazas;
   media = r.media;
 
-  let response = `μ = ${r.media.toFixed(3)}, σ² = ${r.sumaVariazas.toFixed(3)}`;
+  const response = document.getElementById("respuestasPERT");
 
-  (<HTMLImageElement>document.getElementById("imagenPERT")).src = `${drawGraphLinkCritical(r.cpm)}`;
-  document.getElementById("respuestasPERT").innerHTML = response;
+  response.innerText = `μ = ${r.media.toFixed(3)}, σ² = ${r.sumaVariazas.toFixed(3)}`;
+  response.scrollIntoView(true);
 }
 
 function renderResponseFlujo(r: ResponseFlujoMaximo) {
@@ -47,11 +49,16 @@ function renderResponseFlujo(r: ResponseFlujoMaximo) {
     <th scope="col">Peso</th>
   </tr></thead><tbody>`;
 
+  let graphs = [];
+
   let iter = 0;
   for (const e of r.Data) {
     respHTML += `<tr class="table-primary"><td class="success">
-      ${e.camino}</td><td colspan="2">${graphButton(`flujo_${iter}`, drawGraphLink(e.data, e.camino, dirigido.checked))}
+      ${e.camino}</td><td colspan="2">${graphButton(`flujo_${iter}`)}
       </td></tr>`;
+
+    // TODO Fix visualizations
+    graphs.push([`#imagenflujo_${iter}`, drawGraphLink(e.data, e.camino, dirigido.checked)]);
 
     for (const v of e.data) {
       respHTML += `
@@ -65,6 +72,7 @@ function renderResponseFlujo(r: ResponseFlujoMaximo) {
 
   clearElement(respuesta);
   respuesta.insertAdjacentHTML("afterbegin", respHTML);
+
   respuesta.style.setProperty("display", "block", 'important');
 }
 
@@ -128,13 +136,10 @@ function renderNormalCDF() {
 }
 
 function renderResponseCPM(r: ResponseCPM) {
-  let respHTML = `<br><p>Duración Total: ${r.duracionTotal}</p><br>`;
-  respHTML += `<img src="${drawGraphLinkCritical(r)}" width="999" height="360" class="center img-fluid"><br><br>`;
+  renderDot("#imagenCPM", drawGraphLinkCritical(r));
 
-  let respuesta = document.getElementById("respuestaCPM");
-  clearElement(respuesta);
-  respuesta.insertAdjacentHTML("afterbegin", respHTML);
-  respuesta.style.setProperty("display", "block", 'important');
+  const respuesta = document.getElementById("respuestaCPM");
+  respuesta.innerText = `Duración Total: ${r.duracionTotal}`;
   respuesta.scrollIntoView(true);
 }
 
@@ -157,13 +162,16 @@ function renderResponseCompresion(r: ResponseCompresion) {
 
   let rh = document.createElement("div");
   const newLine = document.createElement("br");
+  let graphs = [];
 
   for (const [idx, iter] of r.iteraciones.entries()) {
     rh.appendChild(newTextElement(`Duración: ${iter.duracionTotal}`, "h4"));
     rh.appendChild(newTextElement(`Costo: $${r.costoActual[idx].toFixed(2)}`, "h4"));
     rh.appendChild(newLine.cloneNode());
 
-    rh.appendChild(newImageElement(drawGraphLinkCritical(iter), 999, 360));
+    rh.appendChild(newElement("div", `compresion-${idx}`, "center img-fluid"));
+    graphs.push([`#compresion-${idx}`, iter]);
+
     rh.appendChild(newLine.cloneNode());
 
     if (r.actividadesComprimidas[idx] != undefined) {
@@ -174,9 +182,15 @@ function renderResponseCompresion(r: ResponseCompresion) {
     rh.appendChild(newLine.cloneNode());
   }
 
-  let respuesta = document.getElementById("respuestasCompresion");
+  const respuesta = document.getElementById("respuestasCompresion");
   clearElement(respuesta);
   respuesta.appendChild(rh);
+
+
+  for (const graph of graphs) {
+    renderDot(graph[0], drawGraphLinkCritical(graph[1]));
+  }
+
   document.getElementById("Compresion").style.setProperty("display", "block", 'important');
 }
 
@@ -223,22 +237,33 @@ function renderResponseKruskal(data: ResponseKruskal) {
   let respuesta = document.getElementById("respuestaKruskal");
   // TODO render table
 
+  let dots = data.graphs;
   clearElement(respuesta);
-  window.clearInterval(kruskalInterval);
 
   respuesta.appendChild(newTextElement(`Peso: ${data.peso}`, "h4"));
-  respuesta.innerHTML  += data.slides;
-  kruskalInterval = window.setInterval(showSlides, 300);
-}
+  respuesta.appendChild(newElement("div", "kruskal-graph", "center img-fluid"));
 
-function showSlides() {
-  let slides = <HTMLCollectionOf<HTMLElement>>document.getElementsByClassName("slides");
-  for (const slide of slides) {
-    slide.style.display = "none";
+  let dotIndex = 0;
+
+  //@ts-ignore
+  const kruskalAnimaiton = d3.select("#kruskal-graph")
+  .graphviz()
+  .transition(() => {
+    //@ts-ignore
+    return d3.transition("main")
+      //@ts-ignore
+      .ease(d3.easeLinear)
+      .duration(700);
+  }).on("initEnd", render);
+
+  function render() {
+    kruskalAnimaiton
+      .renderDot(dots[dotIndex])
+      .on("end", function () {
+        dotIndex = (dotIndex + 1) % dots.length;
+        render();
+      });
   }
 
-  slideIndex += 1;
-  if (slideIndex > slides.length) { slideIndex = 1; }
-
-  slides[slideIndex - 1].style.display = "block";
+  respuesta.scrollIntoView(true);
 }

@@ -1,11 +1,7 @@
-// TODO Use https://github.com/magjac/d3-graphviz
 // TODO
 // Globals
 var varianza: number = 0;
 var media: number = 0;
-// drives the slides in Kruskal
-var slideIndex: number = 0;
-var kruskalInterval: number = -1;
 
 function showTable(tablaId: string, formId: string, verticesId: string) {
   const form = <HTMLFormElement>document.getElementById(formId);
@@ -285,9 +281,9 @@ function fillTable(id: string, d: Array<any>) {
   }
 }
 
-function drawGraphLink(nodes: Array<Vertices>, camino: string, dirigido: boolean): string{
-  // Documentación: https://documentation.image-charts.com/graph-viz-charts/
-  let link: string = "https://image-charts.com/chart?chof=.svg&chs=640x640&cht=gv&chl=";
+function drawGraphLink(nodes: Array<Vertices>, camino: string, dirigido: boolean): string {
+  let link = "";
+
   let sep: string;
   if (dirigido) {
     link += "digraph{rankdir=LR;";
@@ -313,15 +309,14 @@ function drawGraphLink(nodes: Array<Vertices>, camino: string, dirigido: boolean
   return link;
 }
 
-function graphButton(id: string, link: string): string {
+function graphButton(id: string): string {
   return `<button class="btn btn-primary" type="button"
 data-bs-toggle="collapse" data-bs-target="#${id}" aria-expanded="false"
 aria-controls="${id}">Visualizar</button>
 <div class="collapse" id="${id}"><br><br>
 <div class="card card-body" style="padding:0px;">
-<img src="${link}" width="640" height="640" class="center img-fluid" loading="lazy">
-</div>
-    </div>`;
+<div id="imagen${id}" style="text-align: center;" class="center img-fluid">
+    </div></div>`;
 }
 
 function setOfTrajectory(trajectory: string): Set<string> {
@@ -345,7 +340,7 @@ function drawGraphLinkCritical(r: ResponseCPM): string {
   const rutaCritica: Set<string> = new Set(r.rutaCritica);
   rutaCritica.add("Inicio");
 
-  let link = "https://image-charts.com/chart?chof=.svg&chs=999x999&cht=gv&chl=digraph{rankdir=LR;";
+  let link = "digraph{rankdir=LR;";
 
   for (const a of r.actividades) {
     for (const s of a.sucesores){
@@ -360,9 +355,10 @@ function drawGraphLinkCritical(r: ResponseCPM): string {
       link +=";";
     }
   }
+
   link += "}";
 
-  return encodeURI(link);
+  return link;
 }
 
 function colorear(coors: Array<coor>, row: number, col: number): boolean {

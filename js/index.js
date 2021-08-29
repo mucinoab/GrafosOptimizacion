@@ -1,7 +1,5 @@
 var varianza = 0;
 var media = 0;
-var slideIndex = 0;
-var kruskalInterval = -1;
 function showTable(tablaId, formId, verticesId) {
     const form = document.getElementById(formId);
     if (form.checkValidity()) {
@@ -228,7 +226,7 @@ function fillTable(id, d) {
     }
 }
 function drawGraphLink(nodes, camino, dirigido) {
-    let link = "https://image-charts.com/chart?chof=.svg&chs=640x640&cht=gv&chl=";
+    let link = "";
     let sep;
     if (dirigido) {
         link += "digraph{rankdir=LR;";
@@ -250,15 +248,14 @@ function drawGraphLink(nodes, camino, dirigido) {
     link += "}";
     return link;
 }
-function graphButton(id, link) {
+function graphButton(id) {
     return `<button class="btn btn-primary" type="button"
 data-bs-toggle="collapse" data-bs-target="#${id}" aria-expanded="false"
 aria-controls="${id}">Visualizar</button>
 <div class="collapse" id="${id}"><br><br>
 <div class="card card-body" style="padding:0px;">
-<img src="${link}" width="640" height="640" class="center img-fluid" loading="lazy">
-</div>
-    </div>`;
+<div id="imagen${id}" style="text-align: center;" class="center img-fluid">
+    </div></div>`;
 }
 function setOfTrajectory(trajectory) {
     const t = new Set();
@@ -276,7 +273,7 @@ function drawGraphLinkCritical(r) {
     }
     const rutaCritica = new Set(r.rutaCritica);
     rutaCritica.add("Inicio");
-    let link = "https://image-charts.com/chart?chof=.svg&chs=999x999&cht=gv&chl=digraph{rankdir=LR;";
+    let link = "digraph{rankdir=LR;";
     for (const a of r.actividades) {
         for (const s of a.sucesores) {
             link += `${a.nombre}->${s}`;
@@ -291,7 +288,7 @@ function drawGraphLinkCritical(r) {
         }
     }
     link += "}";
-    return encodeURI(link);
+    return link;
 }
 function colorear(coors, row, col) {
     for (const cord of coors) {
