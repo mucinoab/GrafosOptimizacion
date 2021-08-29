@@ -3,6 +3,15 @@ function clearElement(e: HTMLElement) {
   while(e.firstChild && e.removeChild(e.firstChild));
 }
 
+// Creates new HTML element.
+function newElement(tagType: string, id: string, className: string = ""): HTMLElement {
+  const ele = document.createElement(tagType);
+  ele.className = className;
+  ele.id = id;
+
+  return ele;
+}
+
 function newInputElement(className: string, placeholder: string = ""): HTMLInputElement {
   let input = document.createElement("input");
   input.type = "text";
@@ -61,12 +70,25 @@ function findStrip(str: string, needle: string): string {
 }
 
 // By Ian H. from https://stackoverflow.com/a/59217784
-// Normal cumulative distribution
+// Normal Cumulative Distribution
 function normalCDF(x: number, mean: number , variance: number): number {
-  let z = (x - mean) / Math.sqrt(variance);
-  let t = 1 / (1 + .2315419 * Math.abs(z));
-  let d =.3989423 * Math.exp( -z * z / 2);
+  const z = (x - mean) / Math.sqrt(variance);
+  const t = 1 / (1 + .2315419 * Math.abs(z));
+  const d =.3989423 * Math.exp( -z * z / 2);
+
   let prob = d * t * (.3193815 + t * ( -.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
   if( z > 0 ) prob = 1 - prob;
+
   return prob;
+}
+
+// Renders a DOT language graph
+function renderDot(id: string, dot: string) {
+  //https://www.graphviz.org/doc/info/lang.html
+
+  // @ts-ignore
+  d3.select(id)
+    .graphviz()
+    .width(window.screen.width * .6)
+    .renderDot(dot);
 }
