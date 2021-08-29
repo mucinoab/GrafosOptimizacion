@@ -1,18 +1,16 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"sort"
 	"strings"
-	"text/template"
 )
 
 type RespuestaKruskal struct {
 	Grafo  []Vertice `json:"grafo"`
 	Arbol  []int     `json:"arbol"`
 	Peso   float64   `json:"peso"`
-	Slides string    `json:"slides"`
+	Graphs []string  `json:"graphs"`
 }
 
 func ResuelveKruskal(grafo []Vertice) RespuestaKruskal {
@@ -28,6 +26,7 @@ func ResuelveKruskal(grafo []Vertice) RespuestaKruskal {
 	peso := 0.0
 
 	for idx, v := range grafo[:] {
+		// TODO parar al completar el árbol?
 		ciclo := ""
 		if !uf.Cycle(v.Origen, v.Destino) {
 			uf.Union(v.Origen, v.Destino)
@@ -48,16 +47,16 @@ func ResuelveKruskal(grafo []Vertice) RespuestaKruskal {
 		links = append(links, finalGraph)
 	}
 
-	return RespuestaKruskal{grafo, arbol, peso, SlideShow(links)}
+	return RespuestaKruskal{grafo, arbol, peso, links}
 }
 
 func GraphLink(nodos []Vertice, camino, ciclo string, dirigido bool) string {
-	link := "https://image-charts.com/chart?chof=.svg&chs=999x999&cht=gv&chl="
+	var link string
 	var sep string
 
 	if dirigido {
 		link += "digraph{rankdir=LR;"
-		sep = "-%3E"
+		sep = "->"
 	} else {
 		link += "graph{rankdir=LR;"
 		sep = "--"
@@ -72,13 +71,13 @@ func GraphLink(nodos []Vertice, camino, ciclo string, dirigido bool) string {
 
 	for _, n := range nodos[:] {
 		link += fmt.Sprintf("%s%s%s", n.Origen, sep, n.Destino)
-		link += fmt.Sprintf("[label=%%22%.3f%%22", n.Peso)
+		link += fmt.Sprintf("[label=\"%.3f\"", n.Peso)
 
 		if s.Contains(n.Origen + n.Destino) {
-			link += ",color=red,penwidth=3.0];"
+			link += ",color=blue,penwidth=3.0];"
 		} else if (n.Origen + n.Destino) == ciclo {
 			// Arista que forma un ciclo
-			link += ",color=blue,penwidth=3.1];"
+			link += ",color=red,penwidth=3.2];"
 		} else {
 			link += "];"
 		}
@@ -87,21 +86,4 @@ func GraphLink(nodos []Vertice, camino, ciclo string, dirigido bool) string {
 	link += "}"
 
 	return link
-}
-
-func SlideShow(links []string) string {
-	tpl := `
-  <div>
-  {{range . }}
-  <div class="slides center">
-  <img src="{{.}}" style="width:100%">
-  </div>
-  {{end}}
-  </div>`
-
-	slides := new(bytes.Buffer)
-	t, _ := template.New("slide show").Parse(tpl)
-	t.Execute(slides, links)
-
-	return slides.String()
 }
