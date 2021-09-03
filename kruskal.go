@@ -26,7 +26,6 @@ func ResuelveKruskal(grafo []Vertice) RespuestaKruskal {
 	peso := 0.0
 
 	for idx, v := range grafo[:] {
-		// TODO parar al completar el árbol?
 		ciclo := ""
 		if !uf.Cycle(v.Origen, v.Destino) {
 			uf.Union(v.Origen, v.Destino)

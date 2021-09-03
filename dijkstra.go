@@ -55,7 +55,6 @@ func ResuelveDijkstra(g dijkstra) dijkstraRespuesta {
 
 	min, min2, aux, pesoAns := 0.0, Inf, "", 0.0
 	CoordBases := make([]coor, 0)
-	Bases := []string{g.Origen}
 
 	vis := set()
 	vis.Add(g.Origen)
@@ -104,7 +103,6 @@ func ResuelveDijkstra(g dijkstra) dijkstraRespuesta {
 		min = Tabla[i][Mapeo[base]]
 		min2 = Inf
 
-		Bases = append(Bases, base)
 		CoordBases = append(CoordBases, coor{i, Mapeo[base]})
 
 		TablaString[i][numeroNodos+1] = Arcos(Tabla, i, Mapeo[base], min, Mapeo2, TablaString, numeroNodos)
@@ -121,7 +119,7 @@ func ResuelveDijkstra(g dijkstra) dijkstraRespuesta {
 	}
 }
 
-func BFS(adj adjlist, origen string) []string {
+func BFS(adj adjList, origen string) []string {
 	q := []string{origen}
 	lista := []string{origen}
 	visitado := set()

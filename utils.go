@@ -25,7 +25,7 @@ type Vertice struct {
 	Peso    float64 `json:"peso"`
 }
 
-type adjlist map[string]map[string]float64
+type adjList map[string]map[string]float64
 
 // Custom Hash Set
 type Set struct {
@@ -35,9 +35,11 @@ type Set struct {
 func set() *Set {
 	return &Set{make(map[string]struct{})}
 }
+
 func (s *Set) Len() int {
 	return len(s.m)
 }
+
 func (s *Set) Add(k string) {
 	s.m[k] = struct{}{}
 }
