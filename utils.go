@@ -219,6 +219,7 @@ func gzipHandler(h http.Handler) http.Handler {
 			return
 		}
 
+		w.Header().Set("Cache-Control", "max-age=3600")
 		w.Header().Set("Content-Encoding", "gzip")
 		gz := gzip.NewWriter(w)
 		defer gz.Close()
