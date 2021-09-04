@@ -1,48 +1,60 @@
+"use strict";
+var Method;
+(function (Method) {
+    Method[Method["FlujoMaximo"] = 0] = "FlujoMaximo";
+    Method[Method["FloydWarshall"] = 1] = "FloydWarshall";
+    Method[Method["CPM"] = 2] = "CPM";
+    Method[Method["PERT"] = 3] = "PERT";
+    Method[Method["Aceleracion"] = 4] = "Aceleracion";
+    Method[Method["Dijkstra"] = 5] = "Dijkstra";
+    Method[Method["Kruskal"] = 6] = "Kruskal";
+    Method[Method["None"] = 7] = "None";
+})(Method || (Method = {}));
 var varianza = 0;
 var media = 0;
-function showTable(tablaId, formId, verticesId) {
-    const form = document.getElementById(formId);
+const tabs = document.querySelectorAll('.nav-link');
+var activeTab = Method.FlujoMaximo;
+const form = document.getElementById("generalForm");
+const vertices = document.getElementById("generalNvertices");
+function showTable() {
     if (form.checkValidity()) {
-        if (generateTable(tablaId, verticesId)) {
-            document.getElementById(tablaId).style.setProperty("display", "block", 'important');
+        const method = Method[activeTab];
+        const nvertices = parseInt(vertices.value, 10);
+        if (isNaN(nvertices) || nvertices <= 0) {
+            alert("Número de vértices NO valido.");
         }
         else {
-            alert("Número de vértices NO valido.");
+            generateTable(method, nvertices);
+            document.getElementById(method).style.setProperty("display", "block");
         }
     }
     else {
         form.reportValidity();
     }
 }
-function generateTable(tablaId, verticesId) {
-    const vertices = document.getElementById(verticesId);
-    const nRows = document.getElementById(`${tablaId}Header`);
-    const nvertices = parseInt(vertices.value, 10);
-    if (isNaN(nvertices) || nvertices <= 0) {
-        return false;
-    }
-    let table = document.getElementById(`innerTabla${tablaId}`);
+function generateTable(tableId, nvertices) {
+    const nRows = document.getElementById(`${tableId}Header`);
+    let table = document.getElementById(`innerTable${tableId}`);
     let r;
     clearElement(table);
     for (let i = 0; i < nvertices; i += 1) {
         r = table.insertRow();
         r.insertCell().appendChild(document.createTextNode(String(i)));
-        r.insertCell().appendChild(newInputElement(`origenes${tablaId}`));
-        r.insertCell().appendChild(newInputElement(`destinos${tablaId}`));
-        r.insertCell().appendChild(newInputElement(`pesos${tablaId}`, "0.0"));
+        r.insertCell().appendChild(newInputElement(`origenes${tableId}`));
+        r.insertCell().appendChild(newInputElement(`destinos${tableId}`));
+        r.insertCell().appendChild(newInputElement(`pesos${tableId}`, "0.0"));
         if (nRows != null) {
-            if (tablaId === "PERT") {
-                r.insertCell().appendChild(newInputElement(`probable${tablaId}`, "0.0"));
-                r.insertCell().appendChild(newInputElement(`pesimista${tablaId}`, "0.0"));
+            if (tableId === "PERT") {
+                r.insertCell().appendChild(newInputElement(`probable${tableId}`, "0.0"));
+                r.insertCell().appendChild(newInputElement(`pesimista${tableId}`, "0.0"));
             }
             else {
-                r.insertCell().appendChild(newInputElement(`costo${tablaId}`, "0.0"));
-                r.insertCell().appendChild(newInputElement(`pesosUrgente${tablaId}`, "0.0"));
-                r.insertCell().appendChild(newInputElement(`costosUrgente${tablaId}`, "0.0"));
+                r.insertCell().appendChild(newInputElement(`costo${tableId}`, "0.0"));
+                r.insertCell().appendChild(newInputElement(`pesosUrgente${tableId}`, "0.0"));
+                r.insertCell().appendChild(newInputElement(`costosUrgente${tableId}`, "0.0"));
             }
         }
     }
-    return true;
 }
 function flujoMaximo() {
     const tablaId = "Flujo";
@@ -53,12 +65,11 @@ function flujoMaximo() {
     }
     const origen = document.getElementById("origen");
     const destino = document.getElementById("destino");
-    const dirigido = document.getElementById("GrafoDirigido");
     let payload = {
         data: graphFromTable(tablaId),
         origen: origen.value.trim(),
         destino: destino.value.trim(),
-        dirigido: dirigido.checked
+        dirigido: true,
     };
     postData('flujomaximo', payload).then(data => { renderResponseFlujo(data); });
 }
@@ -105,12 +116,12 @@ function PERT() {
     postData("pert", actividaes).then(data => { renderResponsePERT(data); });
 }
 function Compresion() {
-    const act = graphFromTable("Compresion");
+    const act = graphFromTable("Aceleracion");
     if (act === undefined)
         return;
-    const costos = document.querySelectorAll(".costoCompresion");
-    const pesosUrgentes = document.querySelectorAll(".pesosUrgenteCompresion");
-    const costosUrgentes = document.querySelectorAll(".costosUrgenteCompresion");
+    const costos = document.querySelectorAll(".costoAceleracion");
+    const pesosUrgentes = document.querySelectorAll(".pesosUrgenteAceleracion");
+    const costosUrgentes = document.querySelectorAll(".costosUrgenteAceleracion");
     let actividades = Array();
     for (const [idx, a] of act.entries()) {
         const costoN = parseFloat(costos[idx].value.trim());
@@ -144,16 +155,6 @@ function Compresion() {
         tiempoObjetivo: duracion,
     };
     postData("compresion", data).then(data => { renderResponseCompresion(data); });
-}
-function swapValues(data) {
-    for (let row = 0; row < data.length; row++) {
-        for (let col = row + 1; col < data[0].length; col++) {
-            let tmp = data[col][row];
-            data[col][row] = data[row][col];
-            data[row][col] = tmp;
-        }
-    }
-    return data;
 }
 function Dijkstra() {
     const form = document.getElementById("TablaDijkstra");
@@ -207,7 +208,7 @@ function fillTable(id, d) {
     for (let idx = 0; idx < d.length; idx += 1) {
         origenes[idx].value = d[idx].origen;
         destinos[idx].value = d[idx].destino;
-        if (id === "Compresion") {
+        if (id === "Aceleracion") {
             origenes[idx].value = d[idx].actividad;
             destinos[idx].value = d[idx].predecesora;
             pesos[idx].value = String(d[idx].pesoNormal);
@@ -290,10 +291,35 @@ function drawGraphLinkCritical(r) {
     link += "}";
     return link;
 }
-function colorear(coors, row, col) {
-    for (const cord of coors) {
-        if (cord.row === row && cord.col === col)
-            return true;
-    }
-    return false;
-}
+tabs.forEach(tab => {
+    tab.addEventListener('shown.bs.tab', event => {
+        form.style.setProperty("display", "block");
+        const tab = event.target;
+        switch (tab.id) {
+            case "flujo-tab":
+                activeTab = Method.FlujoMaximo;
+                break;
+            case "floyd-tab":
+                activeTab = Method.FloydWarshall;
+                break;
+            case "cpm-tab":
+                activeTab = Method.CPM;
+                break;
+            case "pert-tab":
+                activeTab = Method.PERT;
+                break;
+            case "acelaracion-tab":
+                activeTab = Method.Aceleracion;
+                break;
+            case "dijkstra-tab":
+                activeTab = Method.Dijkstra;
+                break;
+            case "kruskal-tab":
+                activeTab = Method.Kruskal;
+                break;
+            default:
+                form.style.setProperty("display", "none");
+                activeTab = Method.None;
+        }
+    });
+});

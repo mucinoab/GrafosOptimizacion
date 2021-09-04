@@ -1,8 +1,9 @@
+"use strict";
 function clearElement(e) {
     while (e.firstChild && e.removeChild(e.firstChild))
         ;
 }
-function newElement(tagType, id, className = "") {
+function newElement(tagType, id = "", className = "") {
     const ele = document.createElement(tagType);
     ele.className = className;
     ele.id = id;
@@ -29,7 +30,7 @@ function newImageElement(src, w, h) {
     img.height = h;
     return img;
 }
-function insertCell(r, value, className = "", pos = -1) {
+function putCell(r, value, className = "", pos = -1) {
     let c = r.insertCell(pos);
     c.innerHTML = value;
     c.className = className;

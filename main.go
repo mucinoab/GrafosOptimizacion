@@ -48,6 +48,7 @@ func CPM(rw http.ResponseWriter, req *http.Request) {
 	rw.Header().Set("Content-Type", "application/json")
 	rw.Write(toBytes(ResuelveCPM(actividades)))
 }
+
 func Dijkstra(rw http.ResponseWriter, req *http.Request) {
 	var actividades dijkstra
 	deserialize(req.Body, &actividades)

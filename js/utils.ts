@@ -4,7 +4,7 @@ function clearElement(e: HTMLElement) {
 }
 
 // Creates new HTML element.
-function newElement(tagType: string, id: string, className: string = ""): HTMLElement {
+function newElement(tagType: string, id: string="", className: string=""): HTMLElement {
   const ele = document.createElement(tagType);
   ele.className = className;
   ele.id = id;
@@ -39,7 +39,7 @@ function newImageElement(src: string, w: number, h: number): HTMLElement {
   return img;
 }
 
-function insertCell(r: HTMLTableRowElement, value: string, className: string = "", pos: number = -1) {
+function putCell(r: HTMLTableRowElement, value: string, className: string = "", pos: number = -1) {
   let c = r.insertCell(pos);
   c.innerHTML = value;
   c.className = className;

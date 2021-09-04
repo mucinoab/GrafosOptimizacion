@@ -6,7 +6,7 @@ function renderResponsePERT(r: ResponsePERT) {
     header.insertAdjacentHTML("beforeend", '<th scope="col">Duración Estimada</th><th scope="col">Varianza</th>');
   }
 
-  let table = <HTMLTableElement>document.getElementById("innerTablaPERT");
+  let table = <HTMLTableElement>document.getElementById("innerTablePERT");
   let idx = 0;
 
   for (let row of table.rows) {
@@ -20,8 +20,8 @@ function renderResponsePERT(r: ResponsePERT) {
     }
 
     const tdClass = (rutaC.has(activida) && rutaC.has(predecesora)) ? "cambio":"";
-    insertCell(row, r.estimaciones[idx].toFixed(3), tdClass);
-    insertCell(row, r.varianzas[idx].toFixed(3), tdClass);
+    putCell(row, r.estimaciones[idx].toFixed(3), tdClass);
+    putCell(row, r.varianzas[idx].toFixed(3), tdClass);
 
     idx += 1;
   }
@@ -39,11 +39,11 @@ function renderResponsePERT(r: ResponsePERT) {
 
 function renderResponseFlujo(r: ResponseFlujoMaximo) {
   let respuesta = document.getElementById("respuestaFlujo");
-  const dirigido = <HTMLInputElement>document.getElementById("GrafoDirigido");
+  const dirigido = true;
 
   let respHTML: string = `<p>Flujo Máximo: ${r.Flujo}</p><br>
     <table class="table table-hover">
-    <thead class="thead-light"><tr>
+    <thead class="thead-light table-header"><tr>
     <th scope="col">Origen</th>
     <th scope="col">Destino</th>
     <th scope="col">Peso</th>
@@ -58,7 +58,7 @@ function renderResponseFlujo(r: ResponseFlujoMaximo) {
       </td></tr>`;
 
     // TODO Fix visualizations
-    graphs.push([`#imagenflujo_${iter}`, drawGraphLink(e.data, e.camino, dirigido.checked)]);
+    graphs.push([`#imagenflujo_${iter}`, drawGraphLink(e.data, e.camino, dirigido)]);
 
     for (const v of e.data) {
       respHTML += `
@@ -92,11 +92,11 @@ function renderResponseFloyd(r: ResponseFloydW) {
   table.className = "table table-hover";
 
   for (const [idx, iteracion] of r.iteraciones.entries()) {
-    table.insertAdjacentHTML("beforeend", `<thead><tr><td class="table-primary">Iteración ${idx}</td>${nodesHeader}<tr></thead>`);
+    table.insertAdjacentHTML("beforeend", `<tr class="table-header"><td class="table-primary">Iteración ${idx}</td>${nodesHeader}<tr>`);
 
     for (const a of r.nodos) {
       let row = table.insertRow();
-      insertCell(row, a, "table_nodes");
+      putCell(row, a, "table_nodes");
 
       for (const b of r.nodos) {
         for (const n of iteracion) {
@@ -105,9 +105,9 @@ function renderResponseFloyd(r: ResponseFloydW) {
 
             if (cambios.has(JSON.stringify({iteracion:idx, origen: a, destino: b}))) {
               // A change in value
-              insertCell(row, v, "cambio");
+              putCell(row, v, "cambio");
             } else {
-              insertCell(row, v);
+              putCell(row, v);
             }
 
             break;
@@ -144,25 +144,25 @@ function renderResponseCPM(r: ResponseCPM) {
 }
 
 function renderResponseCompresion(r: ResponseCompresion) {
-  let tableHeader = <HTMLTableRowElement>document.getElementById("CompresionHeader");
+  let tableHeader = <HTMLTableRowElement>document.getElementById("AceleracionHeader");
   if (tableHeader.cells.length === 7) {
     tableHeader.insertAdjacentHTML("beforeend", '<th scope="col">P<sub>ij</sub></th>');
   }
 
-  let table = <HTMLTableElement>document.getElementById("innerTablaCompresion");
+  let table = <HTMLTableElement>document.getElementById("innerTableAceleracion");
   let idx = 0;
 
   for (let row of table.rows) {
     if (row.cells.length != 7) {
       row.removeChild(row.lastChild);
     }
-    insertCell(row, r.costoTiempo[idx].toFixed(3));
+    putCell(row, r.costoTiempo[idx].toFixed(3));
     idx += 1;
   }
 
   let rh = document.createElement("div");
   const newLine = document.createElement("br");
-  let graphs = [];
+  let graphs: Array<[string, ResponseCPM]> = [];
 
   for (const [idx, iter] of r.iteraciones.entries()) {
     rh.appendChild(newTextElement(`Duración: ${iter.duracionTotal}`, "h4"));
@@ -174,11 +174,11 @@ function renderResponseCompresion(r: ResponseCompresion) {
 
     rh.appendChild(newLine.cloneNode());
 
-    if (r.actividadesComprimidas[idx] != undefined) {
+    if (r.actividadesComprimidas[idx] !== undefined) {
       rh.appendChild(newTextElement(`Compresión: ${r.actividadesComprimidas[idx]}`));
+      rh.appendChild(newElement("hr"));
     }
 
-    rh.appendChild(newLine.cloneNode());
     rh.appendChild(newLine.cloneNode());
   }
 
@@ -186,16 +186,13 @@ function renderResponseCompresion(r: ResponseCompresion) {
   clearElement(respuesta);
   respuesta.appendChild(rh);
 
-
   for (const graph of graphs) {
     renderDot(graph[0], drawGraphLinkCritical(graph[1]));
   }
-
-  document.getElementById("Compresion").style.setProperty("display", "block", 'important');
 }
 
 function renderResponseDijkstra(data: ResponseDijkstra) {
-  let nodesHeader = `<thead><tr><th scope="col" style="font-weight:bold;"></th>`;
+  let nodesHeader = `<thead class="table-header"><tr><th scope="col" style="font-weight:bold;"></th>`;
   for (const b of data.bases) {
     nodesHeader += `<th scope="col" style="font-weight:bold;">${b}</th>`;
   }
@@ -213,8 +210,10 @@ function renderResponseDijkstra(data: ResponseDijkstra) {
     if(data.tabla[idx]) {
       nodosBody += `<tr><th scope=\"row\">${data.bases[idx]}</th>`
 
-      for(let col=0; col < data.tabla[idx].length; col++) {
-        if(colorear(data.coords, idx, col)) {
+      for(let col = 0; col < data.tabla[idx].length; col += 1) {
+
+        // Color the cell
+        if(data.coords.some(c => c.row === idx && c.col === col)) {
           nodosBody += `<td class="cambio">${data.tabla[idx][col]}</td>`;
         } else {
           nodosBody += `<td>${data.tabla[idx][col]}</td>`;

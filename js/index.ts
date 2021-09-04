@@ -1,59 +1,71 @@
+enum Method {
+  FlujoMaximo,
+  FloydWarshall,
+  CPM,
+  PERT,
+  Aceleracion,
+  Dijkstra,
+  Kruskal,
+  None
+}
+
 // TODO
 // Globals
 var varianza: number = 0;
 var media: number = 0;
 
-function showTable(tablaId: string, formId: string, verticesId: string) {
-  const form = <HTMLFormElement>document.getElementById(formId);
+const tabs = document.querySelectorAll('.nav-link');
+var activeTab: Method = Method.FlujoMaximo;
 
+const form = <HTMLFormElement>document.getElementById("generalForm");
+const vertices = <HTMLInputElement>document.getElementById("generalNvertices");
+
+function showTable() {
   if (form.checkValidity()) {
-    if (generateTable(tablaId, verticesId)) {
-      document.getElementById(tablaId).style.setProperty("display", "block", 'important');
-    } else {
+    const method = Method[activeTab];
+    const nvertices = parseInt(vertices.value, 10);
+
+    if (isNaN(nvertices) || nvertices <= 0) {
       alert("Número de vértices NO valido.");
+    } else {
+      generateTable(method, nvertices);
+      document.getElementById(method).style.setProperty("display", "block");
     }
   } else {
     form.reportValidity();
   }
 }
 
-function generateTable(tablaId: string, verticesId: string): boolean {
-  const vertices = <HTMLInputElement>document.getElementById(verticesId);
-  const nRows = <HTMLTableRowElement>document.getElementById(`${tablaId}Header`);
-  const nvertices: number = parseInt(vertices.value, 10);
-
-  if (isNaN(nvertices) || nvertices <= 0){
-    return false;
-  }
-
-  let table = <HTMLTableElement>document.getElementById(`innerTabla${tablaId}`);
+function generateTable(tableId: string, nvertices: number): void {
+  const nRows = <HTMLTableRowElement>document.getElementById(`${tableId}Header`);
+  let table = <HTMLTableElement>document.getElementById(`innerTable${tableId}`);
   let r: HTMLTableRowElement;
+
   clearElement(table);
 
   // #, origen, destino, peso, [probable, pesimista]
   for (let i = 0; i < nvertices; i += 1) {
     r = table.insertRow();
+    // TODO Refactor all this long lines
 
     r.insertCell().appendChild(document.createTextNode(String(i)));
-    r.insertCell().appendChild(newInputElement(`origenes${tablaId}`));
-    r.insertCell().appendChild(newInputElement(`destinos${tablaId}`));
-    r.insertCell().appendChild(newInputElement(`pesos${tablaId}`, "0.0"));
+    r.insertCell().appendChild(newInputElement(`origenes${tableId}`));
+    r.insertCell().appendChild(newInputElement(`destinos${tableId}`));
+    r.insertCell().appendChild(newInputElement(`pesos${tableId}`, "0.0"));
 
     if (nRows != null) {
-      if (tablaId === "PERT") {
+      if (tableId === "PERT") {
         // special case PERT
-        r.insertCell().appendChild(newInputElement(`probable${tablaId}`, "0.0"));
-        r.insertCell().appendChild(newInputElement(`pesimista${tablaId}`, "0.0"));
+        r.insertCell().appendChild(newInputElement(`probable${tableId}`, "0.0"));
+        r.insertCell().appendChild(newInputElement(`pesimista${tableId}`, "0.0"));
       } else {
         // special case Compresion
-        r.insertCell().appendChild(newInputElement(`costo${tablaId}`, "0.0"));
-        r.insertCell().appendChild(newInputElement(`pesosUrgente${tablaId}`, "0.0"));
-        r.insertCell().appendChild(newInputElement(`costosUrgente${tablaId}`, "0.0"));
+        r.insertCell().appendChild(newInputElement(`costo${tableId}`, "0.0"));
+        r.insertCell().appendChild(newInputElement(`pesosUrgente${tableId}`, "0.0"));
+        r.insertCell().appendChild(newInputElement(`costosUrgente${tableId}`, "0.0"));
       }
     }
   }
-
-  return true;
 }
 
 function flujoMaximo() {
@@ -67,13 +79,12 @@ function flujoMaximo() {
 
   const origen = <HTMLInputElement>document.getElementById("origen");
   const destino = <HTMLInputElement>document.getElementById("destino");
-  const dirigido = <HTMLInputElement>document.getElementById("GrafoDirigido");
 
   let payload = {
     data: graphFromTable(tablaId),
     origen: origen.value.trim(),
     destino: destino.value.trim(),
-    dirigido: dirigido.checked
+    dirigido: true, // HACK, for now
   };
 
   postData('flujomaximo', payload).then(data => {renderResponseFlujo(data)});
@@ -137,13 +148,13 @@ function PERT() {
 }
 
 function Compresion() {
-  const act = graphFromTable("Compresion");
+  const act = graphFromTable("Aceleracion");
 
   if (act === undefined) return;
 
-  const costos = document.querySelectorAll<HTMLInputElement>(".costoCompresion");
-  const pesosUrgentes = document.querySelectorAll<HTMLInputElement>(".pesosUrgenteCompresion");
-  const costosUrgentes = document.querySelectorAll<HTMLInputElement>(".costosUrgenteCompresion");
+  const costos = document.querySelectorAll<HTMLInputElement>(".costoAceleracion");
+  const pesosUrgentes = document.querySelectorAll<HTMLInputElement>(".pesosUrgenteAceleracion");
+  const costosUrgentes = document.querySelectorAll<HTMLInputElement>(".costosUrgenteAceleracion");
 
   let actividades: Array<VerticeCompresion> = Array();
 
@@ -185,18 +196,6 @@ function Compresion() {
   };
 
   postData("compresion", data).then(data => {renderResponseCompresion(data)});
-}
-
-function swapValues(data: string[][]): string[][] {
-  for(let row = 0 ; row < data.length ;row ++ ) {
-    for(let col = row  + 1; col < data[0].length;col++) {
-      let tmp = data[col][row];
-      data[col][row] =  data[row][col];
-      data[row][col] = tmp;
-    }
-  }
-
-  return data;
 }
 
 function Dijkstra() {
@@ -264,7 +263,7 @@ function fillTable(id: string, d: Array<any>) {
     origenes[idx].value = d[idx].origen;
     destinos[idx].value = d[idx].destino;
 
-    if (id === "Compresion") {
+    if (id === "Aceleracion") {
       origenes[idx].value = d[idx].actividad;
       destinos[idx].value = d[idx].predecesora;
       pesos[idx].value = String(d[idx].pesoNormal);
@@ -361,10 +360,44 @@ function drawGraphLinkCritical(r: ResponseCPM): string {
   return link;
 }
 
-function colorear(coors: Array<coor>, row: number, col: number): boolean {
-  for (const cord of coors) {
-    if (cord.row === row && cord.col === col) return true;
-  }
+// This the way we signal in which tab are we in currently.
+tabs.forEach(tab => {
+  tab.addEventListener('shown.bs.tab', event => {
+    form.style.setProperty("display", "block");
+    const tab = <HTMLElement>event.target;
 
-  return false
-}
+    switch (tab.id) {
+      case "flujo-tab":
+        activeTab = Method.FlujoMaximo;
+        break;
+
+      case "floyd-tab":
+        activeTab = Method.FloydWarshall;
+        break;
+
+      case "cpm-tab":
+        activeTab = Method.CPM;
+        break;
+
+      case "pert-tab":
+        activeTab = Method.PERT;
+        break;
+
+      case "acelaracion-tab":
+        activeTab = Method.Aceleracion;
+        break;
+
+      case "dijkstra-tab":
+        activeTab = Method.Dijkstra;
+        break;
+
+      case "kruskal-tab":
+        activeTab = Method.Kruskal;
+        break;
+
+      default:
+      form.style.setProperty("display", "none");
+      activeTab = Method.None;
+    }
+  })
+});
