@@ -14,11 +14,25 @@ enum Method {
 var varianza: number = 0;
 var media: number = 0;
 
+// Id of the Kruskal animation
+var KruskalTimeOut: number;
+
 const tabs = document.querySelectorAll('.nav-link');
 var activeTab: Method = Method.FlujoMaximo;
 
 const form = <HTMLFormElement>document.getElementById("generalForm");
 const vertices = <HTMLInputElement>document.getElementById("generalNvertices");
+
+// @ts-ignore
+const graphWasm = window["@hpcc-js/wasm"];
+
+// Draw graph stuff
+const graphInput = <HTMLTextAreaElement>document.getElementById("graphInput");
+renderDotGraph("drawContainer", `digraph{rankdir=LR;${graphInput.value}}`);
+graphInput.addEventListener("input", debounce(() => {
+  const dotGraph = `digraph{rankdir=LR;${graphInput.value}}`;
+  renderDotGraph("drawContainer", dotGraph);
+}, 250));
 
 function showTable() {
   if (form.checkValidity()) {
@@ -280,15 +294,15 @@ function fillTable(id: string, d: Array<any>) {
   }
 }
 
-function drawGraphLink(nodes: Array<Vertices>, camino: string, dirigido: boolean): string {
-  let link = "";
+function createGraph(nodes: Array<Vertices>, camino: string, dirigido: boolean): string {
+  let graph = "";
 
   let sep: string;
   if (dirigido) {
-    link += "digraph{rankdir=LR;";
-    sep = "-%3E";
+    graph += "digraph{rankdir=LR;";
+    sep = "->";
   } else {
-    link += "graph{rankdir=LR;";
+    graph += "graph{rankdir=LR;";
     sep = "--";
   }
 
@@ -297,24 +311,22 @@ function drawGraphLink(nodes: Array<Vertices>, camino: string, dirigido: boolean
   for (const v of nodes) {
     if (s.has(`${v.origen}${v.destino}`)) {
       // Fue parte de la trayectoria que se tomó
-      link += `${v.origen}${sep}${v.destino}[label=%22${v.peso}%22,color=red,penwidth=3.0];`;
+      graph += `${v.origen}${sep}${v.destino}[label=\"${v.peso}\",color=red,penwidth=3.0];`;
     } else {
-      link += `${v.origen}${sep}${v.destino}[label=%22${v.peso}%22];`;
+      graph += `${v.origen}${sep}${v.destino}[label=\"${v.peso}\"];`;
     }
   }
 
-  link += "}";
-
-  return link;
+  return graph + '}';
 }
 
 function graphButton(id: string): string {
   return `<button class="btn btn-primary" type="button"
-data-bs-toggle="collapse" data-bs-target="#${id}" aria-expanded="false"
-aria-controls="${id}">Visualizar</button>
-<div class="collapse" id="${id}"><br><br>
-<div class="card card-body" style="padding:0px;">
-<div id="imagen${id}" style="text-align: center;" class="center img-fluid">
+      data-bs-toggle="collapse" data-bs-target="#${id}" aria-expanded="false"
+      aria-controls="${id}">Visualizar</button>
+        <div class="collapse" id="${id}"><br><br>
+          <div class="card card-body" style="padding:0px;">
+          <div id="imagen${id}" class="grafo-svg">
     </div></div>`;
 }
 

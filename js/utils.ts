@@ -29,16 +29,6 @@ function newTextElement(value: string, tagType: string = "p"): HTMLElement {
   return txt
 }
 
-function newImageElement(src: string, w: number, h: number): HTMLElement {
-  let img = document.createElement("img");
-  img.className ="center img-fluid";
-  img.src = src;
-  img.width = w;
-  img.height = h;
-
-  return img;
-}
-
 function putCell(r: HTMLTableRowElement, value: string, className: string = "", pos: number = -1) {
   let c = r.insertCell(pos);
   c.innerHTML = value;
@@ -82,13 +72,26 @@ function normalCDF(x: number, mean: number , variance: number): number {
   return prob;
 }
 
-// Renders a DOT language graph
-function renderDot(id: string, dot: string) {
-  //https://www.graphviz.org/doc/info/lang.html
+function debounce(func: () => void, timeout: number) {
+  let timer: number;
 
-  // @ts-ignore
-  d3.select(id)
-    .graphviz()
-    .width(window.screen.width * .6)
-    .renderDot(dot);
+  return () => {
+    clearTimeout(timer);
+    timer = setTimeout(func, timeout);
+  };
+}
+
+function renderDotGraph(containerId: string, dotGraph: string) {
+  //Reference: https://www.graphviz.org/doc/info/lang.html
+
+  const graphContainer = document.getElementById(containerId);
+  if (graphContainer === null) return;
+
+  graphWasm.graphviz.dot(dotGraph, "svg").then((svg: string) => {
+    graphContainer.innerHTML = svg;
+
+    let graphSVG = <SVGElement>graphContainer.childNodes[6];
+    graphSVG.removeAttribute("height"); // To be resized by the parent container.
+    graphSVG.removeAttribute("width");
+  }, (_: any) => { /* TODO: Report the error */ });
 }

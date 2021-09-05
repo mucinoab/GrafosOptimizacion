@@ -26,7 +26,7 @@ function renderResponsePERT(r: ResponsePERT) {
     idx += 1;
   }
 
-  renderDot("#imagenPERT", drawGraphLinkCritical(r.cpm));
+  renderDotGraph("imagenPERT", drawGraphLinkCritical(r.cpm));
 
   varianza = r.sumaVariazas;
   media = r.media;
@@ -42,7 +42,7 @@ function renderResponseFlujo(r: ResponseFlujoMaximo) {
   const dirigido = true;
 
   let respHTML: string = `<p>Flujo Máximo: ${r.Flujo}</p><br>
-    <table class="table table-hover">
+    <table class="table table-hover" style="max-width: 80%;">
     <thead class="thead-light table-header"><tr>
     <th scope="col">Origen</th>
     <th scope="col">Destino</th>
@@ -57,8 +57,7 @@ function renderResponseFlujo(r: ResponseFlujoMaximo) {
       ${e.camino}</td><td colspan="2">${graphButton(`flujo_${iter}`)}
       </td></tr>`;
 
-    // TODO Fix visualizations
-    graphs.push([`#imagenflujo_${iter}`, drawGraphLink(e.data, e.camino, dirigido)]);
+    graphs.push([`imagenflujo_${iter}`, createGraph(e.data, e.camino, dirigido)]);
 
     for (const v of e.data) {
       respHTML += `
@@ -71,9 +70,10 @@ function renderResponseFlujo(r: ResponseFlujoMaximo) {
   respHTML += "</tbody></table>"
 
   clearElement(respuesta);
-  respuesta.insertAdjacentHTML("afterbegin", respHTML);
 
+  respuesta.insertAdjacentHTML("afterbegin", respHTML);
   respuesta.style.setProperty("display", "block", 'important');
+  graphs.forEach(g => renderDotGraph(g[0], g[1]));
 }
 
 function renderResponseFloyd(r: ResponseFloydW) {
@@ -90,6 +90,7 @@ function renderResponseFloyd(r: ResponseFloydW) {
 
   let table: HTMLTableElement = document.createElement("table");
   table.className = "table table-hover";
+  table.style.setProperty("max-width", "80%");
 
   for (const [idx, iteracion] of r.iteraciones.entries()) {
     table.insertAdjacentHTML("beforeend", `<tr class="table-header"><td class="table-primary">Iteración ${idx}</td>${nodesHeader}<tr>`);
@@ -136,7 +137,7 @@ function renderNormalCDF() {
 }
 
 function renderResponseCPM(r: ResponseCPM) {
-  renderDot("#imagenCPM", drawGraphLinkCritical(r));
+  renderDotGraph("imagenCPM", drawGraphLinkCritical(r));
 
   const respuesta = document.getElementById("respuestaCPM");
   respuesta.innerText = `Duración Total: ${r.duracionTotal}`;
@@ -169,8 +170,8 @@ function renderResponseCompresion(r: ResponseCompresion) {
     rh.appendChild(newTextElement(`Costo: $${r.costoActual[idx].toFixed(2)}`, "h4"));
     rh.appendChild(newLine.cloneNode());
 
-    rh.appendChild(newElement("div", `compresion-${idx}`, "center img-fluid"));
-    graphs.push([`#compresion-${idx}`, iter]);
+    rh.appendChild(newElement("div", `compresion-${idx}`, "grafo-svg"));
+    graphs.push([`compresion-${idx}`, iter]);
 
     rh.appendChild(newLine.cloneNode());
 
@@ -186,9 +187,7 @@ function renderResponseCompresion(r: ResponseCompresion) {
   clearElement(respuesta);
   respuesta.appendChild(rh);
 
-  for (const graph of graphs) {
-    renderDot(graph[0], drawGraphLinkCritical(graph[1]));
-  }
+  graphs.forEach(g => renderDotGraph(g[0], drawGraphLinkCritical(g[1])));
 }
 
 function renderResponseDijkstra(data: ResponseDijkstra) {
@@ -202,6 +201,7 @@ function renderResponseDijkstra(data: ResponseDijkstra) {
 
   let table: HTMLTableElement = document.createElement("table");
   table.className = "table table-hover";
+  table.style.setProperty("max-width", "80%");
   table.insertAdjacentHTML("beforeend", nodesHeader);
 
   let nodosBody: string= "<tbody>";
@@ -233,36 +233,27 @@ function renderResponseDijkstra(data: ResponseDijkstra) {
 }
 
 function renderResponseKruskal(data: ResponseKruskal) {
-  let respuesta = document.getElementById("respuestaKruskal");
-  // TODO render table
+  const respuesta = document.getElementById("respuestaKruskal");
 
-  let dots = data.graphs;
+  clearTimeout(KruskalTimeOut);
   clearElement(respuesta);
 
   respuesta.appendChild(newTextElement(`Peso: ${data.peso}`, "h4"));
-  respuesta.appendChild(newElement("div", "kruskal-graph", "center img-fluid"));
+  respuesta.appendChild(newElement("div", "kruskal-graph", "grafo-svg"));
 
-  let dotIndex = 0;
+  const dots = data.graphs;
+  let dotIndex = 1;
 
-  //@ts-ignore
-  const kruskalAnimaiton = d3.select("#kruskal-graph")
-  .graphviz()
-  .transition(() => {
-    //@ts-ignore
-    return d3.transition("main")
-      //@ts-ignore
-      .ease(d3.easeLinear)
-      .duration(700);
-  }).on("initEnd", render);
+  renderDotGraph("kruskal-graph", dots[0]);
 
-  function render() {
-    kruskalAnimaiton
-      .renderDot(dots[dotIndex])
-      .on("end", function () {
-        dotIndex = (dotIndex + 1) % dots.length;
-        render();
-      });
+  function renderAnimation() {
+    KruskalTimeOut = setTimeout(() => {
+      renderDotGraph("kruskal-graph", dots[dotIndex]);
+      dotIndex = (dotIndex + 1) % dots.length;
+      renderAnimation();
+    }, 750);
   }
 
-  respuesta.scrollIntoView(true);
+  renderAnimation();
+  // TODO: Render table
 }

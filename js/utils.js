@@ -22,14 +22,6 @@ function newTextElement(value, tagType = "p") {
     txt.innerText = value;
     return txt;
 }
-function newImageElement(src, w, h) {
-    let img = document.createElement("img");
-    img.className = "center img-fluid";
-    img.src = src;
-    img.width = w;
-    img.height = h;
-    return img;
-}
 function putCell(r, value, className = "", pos = -1) {
     let c = r.insertCell(pos);
     c.innerHTML = value;
@@ -62,9 +54,21 @@ function normalCDF(x, mean, variance) {
         prob = 1 - prob;
     return prob;
 }
-function renderDot(id, dot) {
-    d3.select(id)
-        .graphviz()
-        .width(window.screen.width * .6)
-        .renderDot(dot);
+function debounce(func, timeout) {
+    let timer;
+    return () => {
+        clearTimeout(timer);
+        timer = setTimeout(func, timeout);
+    };
+}
+function renderDotGraph(containerId, dotGraph) {
+    const graphContainer = document.getElementById(containerId);
+    if (graphContainer === null)
+        return;
+    graphWasm.graphviz.dot(dotGraph, "svg").then((svg) => {
+        graphContainer.innerHTML = svg;
+        let graphSVG = graphContainer.childNodes[6];
+        graphSVG.removeAttribute("height");
+        graphSVG.removeAttribute("width");
+    }, (_) => { });
 }

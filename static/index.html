@@ -11,16 +11,14 @@
     <link rel="stylesheet" href="style.css">
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+    integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous" defer></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@hpcc-js/wasm/dist/index.min.js" defer></script>
 
     <script src="/js/utils.js" defer></script>
     <script src="/js/renders.js" defer></script>
     <script src="/js/index.js" defer></script>
     <script src="/js/examples.js" defer></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/d3@7.0.1/dist/d3.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/@hpcc-js/wasm/dist/index.min.js" defer></script>
-    <script src="https://unpkg.com/d3-graphviz@4.0.0/build/d3-graphviz.min.js" defer></script>
   </head>
 
   <body class="main-container">
@@ -29,13 +27,15 @@
       <hr>
 
       <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-        <button class="active nav-link" data-bs-toggle="pill" type="button" role="tab" aria-selected="true"  id="flujo-tab"       data-bs-target="#FlujoM"       aria-controls="FlujoM">    Flujo Máximo</button>
+        <button class="active nav-link" data-bs-toggle="pill" type="button" role="tab" aria-selected="true"  id="flujo-tab" data-bs-target="#FlujoM" aria-controls="FlujoM">            Flujo Máximo            </button>
         <button class="nav-link" data-bs-toggle="pill" type="button" role="tab" aria-selected="false" id="floyd-tab"       data-bs-target="#FloydW"       aria-controls="FloydW">       Floyd-Warshall          </button>
         <button class="nav-link" data-bs-toggle="pill" type="button" role="tab" aria-selected="false" id="cpm-tab"         data-bs-target="#contCPM"      aria-controls="contCPM">      Ruta Crítica (CPM)      </button>
         <button class="nav-link" data-bs-toggle="pill" type="button" role="tab" aria-selected="false" id="pert-tab"        data-bs-target="#rpert"        aria-controls="rpert">        Ruta Crítica (PERT)     </button>
         <button class="nav-link" data-bs-toggle="pill" type="button" role="tab" aria-selected="false" id="acelaracion-tab" data-bs-target="#raceleracion" aria-controls="raceleracion"> Aceleración de Proyectos</button>
         <button class="nav-link" data-bs-toggle="pill" type="button" role="tab" aria-selected="false" id="dijkstra-tab"    data-bs-target="#rdijkstra"    aria-controls="rdijkstra">    Dijkstra                </button>
         <button class="nav-link" data-bs-toggle="pill" type="button" role="tab" aria-selected="false" id="kruskal-tab"     data-bs-target="#rkruskal"     aria-controls="rkruskal">     Kruskal                 </button>
+        <hr>
+        <button class="nav-link" data-bs-toggle="pill" type="button" role="tab" aria-selected="false" id="dibujo-tab"      data-bs-target="#dibujo"       aria-controls="dibujo">       Dibujar Grafo           </button>
         <hr>
         <button class="nav-link" data-bs-toggle="pill" type="button" role="tab" aria-selected="false" id="codigo-tab"      data-bs-target="#fuente"       aria-controls="fuente">       Código Fuente           </button>
       </div>
@@ -74,9 +74,9 @@
               </tbody>
             </table>
             <br> <label class="form-label">Nodo Origen</label>
-            <input type="text" class="form-control pesos" id="origen" required>
+            <input type="text" class="form-control pesos" id="origen" required style="max-width: 15%;">
             <br> <label class="form-label">Nodo Destino</label>
-            <input type="text" class="form-control pesos" id="destino" required>
+            <input type="text" class="form-control pesos" id="destino" required style="max-width: 15%;">
             <br>
             <button type="button" class="btn btn-primary" onclick="flujoMaximo()">Resolver</button>
           </form>
@@ -137,7 +137,7 @@
           </form>
           <br> <br>
           <div id="respuestaCPM"></div>
-          <div id="imagenCPM" style="text-align: center;" class="center img-fluid">
+          <div id="imagenCPM" style="text-align: center;" class="grafo-svg">
           </div>
           <br> <br> <br>
         </div>
@@ -175,7 +175,7 @@
             o menos unidades de tiempo:<p id="normalCDF"></p><br>
           <button type="button" class="btn btn-primary" onclick="renderNormalCDF()">Calcular</button>
           <br><br><br><br>
-          <div id="imagenPERT" style="text-align: center;" class="center img-fluid">
+          <div id="imagenPERT" class="grafo-svg">
           </div><br><br><br><br>
         </div>
       </div>
@@ -232,10 +232,10 @@
             </table>
             <br>
             <label for="OrigenDijkstra" class="form-label">Origen</label>
-            <input type="tel" class="form-control" id="OrigenDijkstra" required>
+            <input type="tel" class="form-control" id="OrigenDijkstra" required style="max-width:15%">
             <br>
             <label for="DestinoDijkstra" class="form-label">Destino</label>
-            <input type="tel" class="form-control" id="DestinoDijkstra" required>
+            <input type="tel" class="form-control" id="DestinoDijkstra" required style="max-width:15%">
             <br>
 
             <button type="button" class="btn btn-primary" onclick="Dijkstra()">Resolver</button>
@@ -276,6 +276,18 @@
           </div>
           <br><br><br>
         </div>
+      </div>
+
+      <!-- Dibujar grafo -->
+      <div class="tab-pane" id="dibujo" role="tabpanel" aria-labelledby="dibujo-tab">
+        <textarea id="graphInput" cols="25" rows="10">
+a -> b
+b -> a
+z -> a  [color=blue]
+z -> x -> y [color=red]
+y -> {a b}</textarea>
+        <div class="grafo-svg" id="drawContainer"></div>
+        <a href="https://graphs.grevian.org/example">Referencia</a>
       </div>
 
       <!-- Código fuente -->

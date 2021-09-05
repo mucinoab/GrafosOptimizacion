@@ -19,7 +19,7 @@ function renderResponsePERT(r) {
         putCell(row, r.varianzas[idx].toFixed(3), tdClass);
         idx += 1;
     }
-    renderDot("#imagenPERT", drawGraphLinkCritical(r.cpm));
+    renderDotGraph("imagenPERT", drawGraphLinkCritical(r.cpm));
     varianza = r.sumaVariazas;
     media = r.media;
     const response = document.getElementById("respuestasPERT");
@@ -30,7 +30,7 @@ function renderResponseFlujo(r) {
     let respuesta = document.getElementById("respuestaFlujo");
     const dirigido = true;
     let respHTML = `<p>Flujo Máximo: ${r.Flujo}</p><br>
-    <table class="table table-hover">
+    <table class="table table-hover" style="max-width: 80%;">
     <thead class="thead-light table-header"><tr>
     <th scope="col">Origen</th>
     <th scope="col">Destino</th>
@@ -42,7 +42,7 @@ function renderResponseFlujo(r) {
         respHTML += `<tr class="table-primary"><td class="success">
       ${e.camino}</td><td colspan="2">${graphButton(`flujo_${iter}`)}
       </td></tr>`;
-        graphs.push([`#imagenflujo_${iter}`, drawGraphLink(e.data, e.camino, dirigido)]);
+        graphs.push([`imagenflujo_${iter}`, createGraph(e.data, e.camino, dirigido)]);
         for (const v of e.data) {
             respHTML += `
         <tr><td>${v.origen}</td>
@@ -55,6 +55,7 @@ function renderResponseFlujo(r) {
     clearElement(respuesta);
     respuesta.insertAdjacentHTML("afterbegin", respHTML);
     respuesta.style.setProperty("display", "block", 'important');
+    graphs.forEach(g => renderDotGraph(g[0], g[1]));
 }
 function renderResponseFloyd(r) {
     const cambios = new Set();
@@ -67,6 +68,7 @@ function renderResponseFloyd(r) {
     }
     let table = document.createElement("table");
     table.className = "table table-hover";
+    table.style.setProperty("max-width", "80%");
     for (const [idx, iteracion] of r.iteraciones.entries()) {
         table.insertAdjacentHTML("beforeend", `<tr class="table-header"><td class="table-primary">Iteración ${idx}</td>${nodesHeader}<tr>`);
         for (const a of r.nodos) {
@@ -103,7 +105,7 @@ function renderNormalCDF() {
     r.innerHTML = `${(normalCDF(tiempo, media, varianza) * 100).toFixed(4)} %`;
 }
 function renderResponseCPM(r) {
-    renderDot("#imagenCPM", drawGraphLinkCritical(r));
+    renderDotGraph("imagenCPM", drawGraphLinkCritical(r));
     const respuesta = document.getElementById("respuestaCPM");
     respuesta.innerText = `Duración Total: ${r.duracionTotal}`;
     respuesta.scrollIntoView(true);
@@ -129,8 +131,8 @@ function renderResponseCompresion(r) {
         rh.appendChild(newTextElement(`Duración: ${iter.duracionTotal}`, "h4"));
         rh.appendChild(newTextElement(`Costo: $${r.costoActual[idx].toFixed(2)}`, "h4"));
         rh.appendChild(newLine.cloneNode());
-        rh.appendChild(newElement("div", `compresion-${idx}`, "center img-fluid"));
-        graphs.push([`#compresion-${idx}`, iter]);
+        rh.appendChild(newElement("div", `compresion-${idx}`, "grafo-svg"));
+        graphs.push([`compresion-${idx}`, iter]);
         rh.appendChild(newLine.cloneNode());
         if (r.actividadesComprimidas[idx] !== undefined) {
             rh.appendChild(newTextElement(`Compresión: ${r.actividadesComprimidas[idx]}`));
@@ -141,9 +143,7 @@ function renderResponseCompresion(r) {
     const respuesta = document.getElementById("respuestasCompresion");
     clearElement(respuesta);
     respuesta.appendChild(rh);
-    for (const graph of graphs) {
-        renderDot(graph[0], drawGraphLinkCritical(graph[1]));
-    }
+    graphs.forEach(g => renderDotGraph(g[0], drawGraphLinkCritical(g[1])));
 }
 function renderResponseDijkstra(data) {
     let nodesHeader = `<thead class="table-header"><tr><th scope="col" style="font-weight:bold;"></th>`;
@@ -155,6 +155,7 @@ function renderResponseDijkstra(data) {
     nodesHeader += "</tr></thead>";
     let table = document.createElement("table");
     table.className = "table table-hover";
+    table.style.setProperty("max-width", "80%");
     table.insertAdjacentHTML("beforeend", nodesHeader);
     let nodosBody = "<tbody>";
     for (let idx = 0; idx < data.tabla.length; idx++) {
@@ -180,26 +181,20 @@ function renderResponseDijkstra(data) {
     respuesta.style.setProperty("display", "block", 'important');
 }
 function renderResponseKruskal(data) {
-    let respuesta = document.getElementById("respuestaKruskal");
-    let dots = data.graphs;
+    const respuesta = document.getElementById("respuestaKruskal");
+    clearTimeout(KruskalTimeOut);
     clearElement(respuesta);
     respuesta.appendChild(newTextElement(`Peso: ${data.peso}`, "h4"));
-    respuesta.appendChild(newElement("div", "kruskal-graph", "center img-fluid"));
-    let dotIndex = 0;
-    const kruskalAnimaiton = d3.select("#kruskal-graph")
-        .graphviz()
-        .transition(() => {
-        return d3.transition("main")
-            .ease(d3.easeLinear)
-            .duration(700);
-    }).on("initEnd", render);
-    function render() {
-        kruskalAnimaiton
-            .renderDot(dots[dotIndex])
-            .on("end", function () {
+    respuesta.appendChild(newElement("div", "kruskal-graph", "grafo-svg"));
+    const dots = data.graphs;
+    let dotIndex = 1;
+    renderDotGraph("kruskal-graph", dots[0]);
+    function renderAnimation() {
+        KruskalTimeOut = setTimeout(() => {
+            renderDotGraph("kruskal-graph", dots[dotIndex]);
             dotIndex = (dotIndex + 1) % dots.length;
-            render();
-        });
+            renderAnimation();
+        }, 750);
     }
-    respuesta.scrollIntoView(true);
+    renderAnimation();
 }

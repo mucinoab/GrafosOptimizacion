@@ -63,3 +63,12 @@ img:hover {
   background-color: white;
   box-shadow: inset 0 -1px 0 black;
 }
+
+.grafo-svg {
+  width: 90%;
+  height: 50%;
+  border: 2px solid lightgray;
+  resize:both; 
+  overflow:auto;
+  border-radius: 5px;
+}

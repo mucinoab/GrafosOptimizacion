@@ -12,10 +12,18 @@ var Method;
 })(Method || (Method = {}));
 var varianza = 0;
 var media = 0;
+var KruskalTimeOut;
 const tabs = document.querySelectorAll('.nav-link');
 var activeTab = Method.FlujoMaximo;
 const form = document.getElementById("generalForm");
 const vertices = document.getElementById("generalNvertices");
+const graphWasm = window["@hpcc-js/wasm"];
+const graphInput = document.getElementById("graphInput");
+renderDotGraph("drawContainer", `digraph{rankdir=LR;${graphInput.value}}`);
+graphInput.addEventListener("input", debounce(() => {
+    const dotGraph = `digraph{rankdir=LR;${graphInput.value}}`;
+    renderDotGraph("drawContainer", dotGraph);
+}, 250));
 function showTable() {
     if (form.checkValidity()) {
         const method = Method[activeTab];
@@ -226,36 +234,35 @@ function fillTable(id, d) {
         }
     }
 }
-function drawGraphLink(nodes, camino, dirigido) {
-    let link = "";
+function createGraph(nodes, camino, dirigido) {
+    let graph = "";
     let sep;
     if (dirigido) {
-        link += "digraph{rankdir=LR;";
-        sep = "-%3E";
+        graph += "digraph{rankdir=LR;";
+        sep = "->";
     }
     else {
-        link += "graph{rankdir=LR;";
+        graph += "graph{rankdir=LR;";
         sep = "--";
     }
     const s = setOfTrajectory(camino);
     for (const v of nodes) {
         if (s.has(`${v.origen}${v.destino}`)) {
-            link += `${v.origen}${sep}${v.destino}[label=%22${v.peso}%22,color=red,penwidth=3.0];`;
+            graph += `${v.origen}${sep}${v.destino}[label=\"${v.peso}\",color=red,penwidth=3.0];`;
         }
         else {
-            link += `${v.origen}${sep}${v.destino}[label=%22${v.peso}%22];`;
+            graph += `${v.origen}${sep}${v.destino}[label=\"${v.peso}\"];`;
         }
     }
-    link += "}";
-    return link;
+    return graph + '}';
 }
 function graphButton(id) {
     return `<button class="btn btn-primary" type="button"
-data-bs-toggle="collapse" data-bs-target="#${id}" aria-expanded="false"
-aria-controls="${id}">Visualizar</button>
-<div class="collapse" id="${id}"><br><br>
-<div class="card card-body" style="padding:0px;">
-<div id="imagen${id}" style="text-align: center;" class="center img-fluid">
+      data-bs-toggle="collapse" data-bs-target="#${id}" aria-expanded="false"
+      aria-controls="${id}">Visualizar</button>
+        <div class="collapse" id="${id}"><br><br>
+          <div class="card card-body" style="padding:0px;">
+          <div id="imagen${id}" class="grafo-svg">
     </div></div>`;
 }
 function setOfTrajectory(trajectory) {
