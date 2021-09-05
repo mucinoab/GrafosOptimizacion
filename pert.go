@@ -1,7 +1,5 @@
 package main
 
-import "math"
-
 type VerticePert struct {
 	Actividad   string  `json:"origen"`
 	Predecesora string  `json:"destino"`
@@ -54,7 +52,7 @@ func duracionEstimada(v *VerticePert) float64 {
 }
 
 func varianza(v VerticePert) float64 {
-	return math.Pow(v.Pesimista-v.Optimista, 2) / 36
+	return (v.Pesimista - v.Optimista) * (v.Pesimista - v.Optimista) / 36
 }
 
 func estimaDuraciones(v []VerticePert) []Vertice {
