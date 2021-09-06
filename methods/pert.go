@@ -1,4 +1,4 @@
-package main
+package methods
 
 type VerticePert struct {
 	Actividad   string  `json:"origen"`

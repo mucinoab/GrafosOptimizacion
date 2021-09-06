@@ -1,4 +1,4 @@
-package main
+package methods
 
 type RespuestaFloydWarshall struct {
 	Cambios     []Cambio    `json:"cambios"`
@@ -16,7 +16,7 @@ type Cambio struct {
 // TODO matriz de cambios rara
 func ResuelveFloyWarshall(grafo *[]Vertice) RespuestaFloydWarshall {
 	sol := VerticesToAdjList(grafo, false)
-	nodos := set()
+	nodos := Set()
 
 	for _, v := range *grafo {
 		nodos.Add(v.Origen)

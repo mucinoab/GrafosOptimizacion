@@ -1,8 +1,8 @@
-package main
+package methods
 
 import "fmt"
 
-type dijkstra struct {
+type Dijkstra struct {
 	Origen  string    `json:"origen"`
 	Destino string    `json:"destino"`
 	Grafo   []Vertice `json:"grafo"`
@@ -13,7 +13,7 @@ type coor struct {
 	Col int `json:"col"`
 }
 
-type dijkstraRespuesta struct {
+type DijkstraRespuesta struct {
 	Tabla   [][]string `json:"tabla"`
 	Destino string     `json:"destino"`
 	Origen  string     `json:"origen"`
@@ -22,7 +22,7 @@ type dijkstraRespuesta struct {
 	Coords  []coor     `json:"coords"`
 }
 
-func ResuelveDijkstra(g dijkstra) dijkstraRespuesta {
+func ResuelveDijkstra(g Dijkstra) DijkstraRespuesta {
 	grafo := VerticesToAdjList(&g.Grafo, true)
 	lista := BFS(grafo, g.Origen)
 	numeroNodos := len(lista)
@@ -56,7 +56,7 @@ func ResuelveDijkstra(g dijkstra) dijkstraRespuesta {
 	min, min2, aux, pesoAns := 0.0, Inf, "", 0.0
 	CoordBases := make([]coor, 0)
 
-	vis := set()
+	vis := Set()
 	vis.Add(g.Origen)
 
 	base := g.Origen
@@ -109,7 +109,7 @@ func ResuelveDijkstra(g dijkstra) dijkstraRespuesta {
 		TablaString[i][numeroNodos] = base
 	}
 
-	return dijkstraRespuesta{
+	return DijkstraRespuesta{
 		Tabla:   TablaString,
 		Destino: g.Destino,
 		Origen:  g.Origen,
@@ -122,7 +122,7 @@ func ResuelveDijkstra(g dijkstra) dijkstraRespuesta {
 func BFS(adj adjList, origen string) []string {
 	q := []string{origen}
 	lista := []string{origen}
-	visitado := set()
+	visitado := Set()
 
 	for len(q) > 0 {
 		actual := q[0]

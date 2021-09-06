@@ -1,4 +1,4 @@
-package main
+package methods
 
 import (
 	"math"
@@ -42,7 +42,7 @@ func ResuelveCompresion(c CompresionData) RespuesaCompresion {
 	costoActual := make([]float64, 0, len(c.Actividades))
 	costos := mapCostos(c.Actividades)
 
-	actividadesComprimidas := set()
+	actividadesComprimidas := Set()
 	actividadesComprimidas.Add("-") // Inicio
 	actividadesComprimidas.Add("Fin")
 
@@ -153,8 +153,8 @@ func Clone(arre []Vertice) []Vertice {
 	return cpy
 }
 
-func calculaCostoRuta(c map[string]Costos, act []Vertice, comprimidos *Set) float64 {
-	vistos := set()
+func calculaCostoRuta(c map[string]Costos, act []Vertice, comprimidos *set) float64 {
+	vistos := Set()
 	costo := 0.0
 
 	for _, a := range act[:] {

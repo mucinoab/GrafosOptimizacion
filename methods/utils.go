@@ -1,4 +1,4 @@
-package main
+package methods
 
 import (
 	"compress/gzip"
@@ -28,29 +28,29 @@ type Vertice struct {
 type adjList map[string]map[string]float64
 
 // Custom Hash Set
-type Set struct {
+type set struct {
 	m map[string]struct{}
 }
 
-func set() *Set {
-	return &Set{make(map[string]struct{})}
+func Set() *set {
+	return &set{make(map[string]struct{})}
 }
 
-func (s *Set) Len() int {
+func (s *set) Len() int {
 	return len(s.m)
 }
 
-func (s *Set) Add(k string) {
+func (s *set) Add(k string) {
 	s.m[k] = struct{}{}
 }
 
-func (s *Set) Contains(k string) bool {
+func (s *set) Contains(k string) bool {
 	_, c := s.m[k]
 
 	return c
 }
 
-func (s *Set) toSlice() *[]string {
+func (s *set) toSlice() *[]string {
 	sl := make([]string, 0, len(s.m))
 
 	for node := range s.m {
@@ -63,8 +63,8 @@ func (s *Set) toSlice() *[]string {
 }
 
 // Values that are in s or in sn but not in both
-func (s *Set) SymmetricDifference(sn *Set) *Set {
-	newS := set()
+func (s *set) SymmetricDifference(sn *set) *set {
+	newS := Set()
 
 	for i := range s.m {
 		if !sn.Contains(i) {
@@ -125,7 +125,7 @@ func (u UnionFind) Union(a, b string) {
 
 // Misc utilities
 
-func Find(slice *[]camino, val camino) bool {
+func Find(slice *[]Camino, val Camino) bool {
 	for _, item := range *slice {
 		if item == val {
 			return true
@@ -134,12 +134,12 @@ func Find(slice *[]camino, val camino) bool {
 	return false
 }
 
-func Pop(alist *[]camino) {
+func Pop(alist *[]Camino) {
 	f := len(*alist)
 	*alist = (*alist)[:f-1]
 }
 
-func Min(marcado *[]camino, grafo map[string]map[string]float64) float64 {
+func Min(marcado *[]Camino, grafo map[string]map[string]float64) float64 {
 	mini := Inf
 	for _, v := range *marcado {
 		e := grafo[v.izq][v.der]
@@ -202,16 +202,16 @@ func AdjListToVertices(grafo map[string]map[string]float64, dirigido bool) *[]Ve
 // Compression stuff
 
 // source https://gist.github.com/the42/1956518
-type gzipResponseWriter struct {
+type GzipResponseWriter struct {
 	io.Writer
 	http.ResponseWriter
 }
 
-func (w gzipResponseWriter) Write(b []byte) (int, error) {
+func (w GzipResponseWriter) Write(b []byte) (int, error) {
 	return w.Writer.Write(b)
 }
 
-func gzipHandler(h http.Handler) http.Handler {
+func GzipHandler(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer duration(track(r.URL.String()))
 		if !strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
@@ -223,13 +223,13 @@ func gzipHandler(h http.Handler) http.Handler {
 		w.Header().Set("Content-Encoding", "gzip")
 		gz := gzip.NewWriter(w)
 		defer gz.Close()
-		h.ServeHTTP(gzipResponseWriter{Writer: gz, ResponseWriter: w}, r)
+		h.ServeHTTP(GzipResponseWriter{Writer: gz, ResponseWriter: w}, r)
 	})
 }
 
 // Serialize
 
-func toBytes(someStruct interface{}) []byte {
+func ToBytes(someStruct interface{}) []byte {
 	s, err := json.Marshal(someStruct)
 
 	// TODO proper error handling
@@ -241,7 +241,7 @@ func toBytes(someStruct interface{}) []byte {
 	}
 }
 
-func deserialize(rawData io.ReadCloser, v interface{}) {
+func Deserialize(rawData io.ReadCloser, v interface{}) {
 	// TODO proper error handling
 	d, err := ioutil.ReadAll(rawData)
 	if err != nil {

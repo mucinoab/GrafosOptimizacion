@@ -1,4 +1,4 @@
-package main
+package methods
 
 import (
 	"math"
@@ -34,8 +34,8 @@ func ResuelveCPM(p []Vertice) RespuestaCPM {
 	actividades := make(map[string]*Actividad, len(p))
 	actividades["-"] = &Actividad{"-", 0, []string{}, 0, 0, 0, 0} // Inicio
 
-	s := set()
-	sn := set()
+	s := Set()
+	sn := Set()
 
 	for idx := 0; idx < len(p); idx += 1 {
 		actividades[p[idx].Origen] = NuevaActividad(p[idx].Origen, p[idx].Peso)

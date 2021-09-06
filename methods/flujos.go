@@ -1,4 +1,4 @@
-package main
+package methods
 
 import (
 	"fmt"
@@ -20,7 +20,7 @@ type RespuestaFlujoMaximo struct {
 	}
 }
 
-type camino struct {
+type Camino struct {
 	izq, der string
 }
 
@@ -46,7 +46,7 @@ func ResuelveFlujoMaximo(grafo FlujoMaximo) RespuestaFlujoMaximo {
 		Camino: "Grafo Inicial",
 	})
 
-	marcados := make([]camino, 0)
+	marcados := make([]Camino, 0)
 	sol.Flujo = dfs(&sol, &marcados, m, grafo.Origen, grafo.Destino)
 
 	vertices = make([]Vertice, 0)
@@ -68,7 +68,7 @@ func ResuelveFlujoMaximo(grafo FlujoMaximo) RespuestaFlujoMaximo {
 	return sol
 }
 
-func dfs(sol *RespuestaFlujoMaximo, marcado *[]camino, grafo map[string]map[string]float64, actual, destino string) float64 {
+func dfs(sol *RespuestaFlujoMaximo, marcado *[]Camino, grafo map[string]map[string]float64, actual, destino string) float64 {
 	var flujo float64
 
 	if actual == destino {
@@ -109,7 +109,7 @@ func dfs(sol *RespuestaFlujoMaximo, marcado *[]camino, grafo map[string]map[stri
 	}
 
 	for n, p := range grafo[actual] {
-		v := camino{actual, n}
+		v := Camino{actual, n}
 
 		if p > 0.0 && !Find(marcado, v) {
 			*marcado = append(*marcado, v)

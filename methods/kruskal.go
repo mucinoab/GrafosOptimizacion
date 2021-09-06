@@ -1,4 +1,4 @@
-package main
+package methods
 
 import (
 	"fmt"
@@ -61,7 +61,7 @@ func GraphLink(nodos []Vertice, camino, ciclo string, dirigido bool) string {
 		sep = "--"
 	}
 
-	s := set()
+	s := Set()
 	caminos := strings.Split(camino, ",")
 
 	for idx, camino := range caminos[:len(caminos)-1] {
