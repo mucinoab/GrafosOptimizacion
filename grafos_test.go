@@ -1,6 +1,7 @@
 package main
 
 import (
+	"grafos/methods"
 	"reflect"
 	"sort"
 	"testing"
@@ -8,8 +9,8 @@ import (
 
 func TestGrafos(t *testing.T) {
 	t.Run("Flujo Máximo", func(t *testing.T) {
-		grafo := FlujoMaximo{
-			Grafo: []Vertice{
+		grafo := methods.FlujoMaximo{
+			Grafo: []methods.Vertice{
 				{"bilbao", "s1", 4},
 				{"bilbao", "s2", 1},
 				{"barcelona", "s1", 2},
@@ -34,7 +35,7 @@ func TestGrafos(t *testing.T) {
 			Dirigido: true,
 		}
 
-		sol := ResuelveFlujoMaximo(grafo)
+		sol := methods.ResuelveFlujoMaximo(grafo)
 
 		if sol.Flujo != 20.00 {
 			t.Errorf("Flujo máximo incorrecto, obtuve %.2f, esperaba 20.00", sol.Flujo)
@@ -42,7 +43,7 @@ func TestGrafos(t *testing.T) {
 	})
 
 	t.Run("Floyd-Warshall", func(t *testing.T) {
-		grafo := []Vertice{
+		grafo := []methods.Vertice{
 			{"1", "2", 700}, {"1", "3", 200},
 			{"2", "3", 300}, {"2", "4", 200},
 			{"2", "6", 400}, {"3", "4", 700},
@@ -59,8 +60,8 @@ func TestGrafos(t *testing.T) {
 			"6": {"1": 800, "2": 300, "3": 600, "4": 100, "5": 400, "6": 0},
 		}
 
-		solution := ResuelveFloyWarshall(&grafo)
-		sol := VerticesToAdjList(&solution.Iteraciones[len(solution.Iteraciones)-1], true)
+		solution := methods.ResuelveFloyWarshall(&grafo)
+		sol := methods.VerticesToAdjList(&solution.Iteraciones[len(solution.Iteraciones)-1], true)
 
 		if !reflect.DeepEqual(sol, correctSol) {
 			t.Error("Respuesa incorrecta", correctSol, sol)
@@ -71,7 +72,7 @@ func TestGrafos(t *testing.T) {
 		const duracion float64 = 20.0
 		ruta := []string{"D", "I", "J", "L", "M", "-", "Fin"}
 
-		clase := ResuelveCPM([]Vertice{
+		clase := methods.ResuelveCPM([]methods.Vertice{
 			{"A", "-", 2}, {"B", "A", 4}, {"C", "B", 1}, {"C", "H", 1},
 			{"D", "-", 6}, {"E", "G", 3}, {"F", "E", 5}, {"G", "D", 2},
 			{"H", "G", 2}, {"I", "D", 3}, {"J", "I", 4}, {"K", "D", 3},
@@ -90,14 +91,14 @@ func TestGrafos(t *testing.T) {
 		}
 
 		// 7
-		ResuelveCPM([]Vertice{
+		methods.ResuelveCPM([]methods.Vertice{
 			{"A", "-", 10}, {"B", "-", 7}, {"C", "A", 5},
 			{"D", "C", 3}, {"E", "D", 2}, {"F", "B", 1},
 			{"F", "E", 1}, {"G", "E", 1}, {"G", "F", 14},
 		})
 
 		// 10
-		ResuelveCPM([]Vertice{
+		methods.ResuelveCPM([]methods.Vertice{
 			{"A", "-", 3}, {"B", "A", 14},
 			{"C", "A", 1}, {"D", "C", 3},
 			{"E", "C", 1}, {"F", "C", 2},
@@ -110,7 +111,7 @@ func TestGrafos(t *testing.T) {
 			{"O", "M", 3}, {"O", "N", 3},
 		})
 
-		ResuelveCPM([]Vertice{
+		methods.ResuelveCPM([]methods.Vertice{
 			{"a", "-", 5}, {"b", "-", 2},
 			{"c", "a", 2}, {"d", "a", 3},
 			{"e", "b", 1}, {"f", "c", 1},
@@ -119,7 +120,7 @@ func TestGrafos(t *testing.T) {
 	})
 
 	t.Run("PERT", func(t *testing.T) {
-		ejemplo := []VerticePert{
+		ejemplo := []methods.VerticePert{
 			{"A", "-", 1, 2, 3},
 			{"B", "A", 2, 4, 6},
 			{"C", "B", 0, 1, 2},
@@ -138,20 +139,20 @@ func TestGrafos(t *testing.T) {
 			{"M", "L", 1, 2, 3},
 		}
 
-		clase := ResuelvePERT(ejemplo)
+		clase := methods.ResuelvePERT(ejemplo)
 
 		if clase.Media != 20.0 {
 			t.Error("Media total erronea.")
 		}
 
-		if clase.SumaVariazas-19.0/9.0 > epsilon {
+		if clase.SumaVariazas-19.0/9.0 > methods.Epsilon {
 			t.Errorf("%f != %f", clase.SumaVariazas, 19.0/9.0)
 		}
 	})
 
 	t.Run("Compresion", func(t *testing.T) {
-		ejemplo := CompresionData{-1,
-			[]VerticeCompresion{
+		ejemplo := methods.CompresionData{-1,
+			[]methods.VerticeCompresion{
 				{"A", "-", 8, 100, 6, 200},
 				{"B", "-", 4, 150, 2, 350},
 				{"C", "A", 2, 50, 1, 90},
@@ -161,16 +162,16 @@ func TestGrafos(t *testing.T) {
 				{"F", "A", 10, 100, 5, 400},
 			}}
 
-		sol := ResuelveCompresion(ejemplo)
+		sol := methods.ResuelveCompresion(ejemplo)
 
-		if sol.CPMs[len(sol.CPMs)-1].DuracionTotal-11.0 > epsilon {
+		if sol.CPMs[len(sol.CPMs)-1].DuracionTotal-11.0 > methods.Epsilon {
 			t.Error("Duración total incorrecta.")
 		}
 	})
 
 	t.Run("Dijkstra", func(t *testing.T) {
-		ejemplo := dijkstra{
-			Grafo: []Vertice{
+		ejemplo := methods.Dijkstra{
+			Grafo: []methods.Vertice{
 				{"O", "A", 4},
 				{"O", "B", 3},
 				{"O", "C", 6},
@@ -198,9 +199,9 @@ func TestGrafos(t *testing.T) {
 			Destino: "T",
 		}
 
-		sol := ResuelveDijkstra(ejemplo)
+		sol := methods.ResuelveDijkstra(ejemplo)
 
-		if sol.Peso-17 > epsilon {
+		if sol.Peso-17 > methods.Epsilon {
 			t.Errorf("Peso incorrecto, debería ser 17, se obtuvo %f", sol.Peso)
 		}
 
@@ -214,7 +215,7 @@ func TestGrafos(t *testing.T) {
 	})
 
 	t.Run("Kruskal", func(t *testing.T) {
-		ejemplo := []Vertice{
+		ejemplo := []methods.Vertice{
 			{"C", "B", 4},
 			{"A", "C", 3},
 			{"A", "B", 6},
@@ -226,13 +227,13 @@ func TestGrafos(t *testing.T) {
 			{"S", "C", 8},
 		}
 
-		sol := ResuelveKruskal(ejemplo)
+		sol := methods.ResuelveKruskal(ejemplo)
 
 		if len(sol.Arbol) != 5 {
 			t.Error()
 		}
 
-		if sol.Peso-17.0 > epsilon {
+		if sol.Peso-17.0 > methods.Epsilon {
 			t.Error()
 		}
 	})

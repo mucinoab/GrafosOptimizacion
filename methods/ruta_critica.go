@@ -73,7 +73,7 @@ func ResuelveCPM(p []Vertice) RespuestaCPM {
 		acti = append(acti, v)
 
 		// Holgura de ~cero
-		if math.Abs(v.ProximoR-v.LejanoR) < epsilon {
+		if math.Abs(v.ProximoR-v.LejanoR) < Epsilon {
 			ruta = append(ruta, a)
 		}
 
