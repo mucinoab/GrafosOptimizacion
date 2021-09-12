@@ -83,6 +83,14 @@ function debounce(func: () => void, timeout: number) {
 
 function renderDotGraph(containerId: string, dotGraph: string) {
   //Reference: https://www.graphviz.org/doc/info/lang.html
+  // TODO Directed an undirected graphs
+
+  // HACK?
+  const narrow_screen = window.matchMedia('all and (max-width: 720px)');
+  if (narrow_screen.matches) {
+    // Draw the graph form top to bottom instead of left to right
+    dotGraph = dotGraph.replace("rankdir=LR;", "");
+  }
 
   const graphContainer = document.getElementById(containerId);
   if (graphContainer === null) return;

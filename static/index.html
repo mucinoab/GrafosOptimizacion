@@ -26,7 +26,7 @@
       <h1>Grafos</h1>
       <hr>
 
-      <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+      <div class="tabs nav nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
         <button class="active nav-link" data-bs-toggle="pill" type="button" role="tab" aria-selected="true"  id="flujo-tab" data-bs-target="#FlujoM" aria-controls="FlujoM">            Flujo Máximo            </button>
         <button class="nav-link" data-bs-toggle="pill" type="button" role="tab" aria-selected="false" id="floyd-tab"       data-bs-target="#FloydW"       aria-controls="FloydW">       Floyd-Warshall          </button>
         <button class="nav-link" data-bs-toggle="pill" type="button" role="tab" aria-selected="false" id="cpm-tab"         data-bs-target="#contCPM"      aria-controls="contCPM">      Ruta Crítica (CPM)      </button>
@@ -39,10 +39,11 @@
         <hr>
         <button class="nav-link" data-bs-toggle="pill" type="button" role="tab" aria-selected="false" id="codigo-tab"      data-bs-target="#fuente"       aria-controls="fuente">       Código Fuente           </button>
       </div>
+      <hr>
     </div>
 
     <div class="main-body tab-content" id="v-pills-tabContent">
-      <form id="generalForm" style="padding-top: 3em;">
+      <form id="generalForm" style="padding-top: 2em;">
         <div class="row g-3">
           <div class="col-auto">
             <label class="form-label">Número de Vértices</label>
@@ -74,7 +75,7 @@
               </tbody>
             </table>
             <br> <label class="form-label">Nodo Origen</label>
-            <input type="text" class="form-control pesos" id="origen" required style="max-width: 15%;">
+            <input type="text" class="form-control pesos" id="origen" required style="max-width:10em;">
             <br> <label class="form-label">Nodo Destino</label>
             <input type="text" class="form-control pesos" id="destino" required style="max-width: 15%;">
             <br>
@@ -232,10 +233,10 @@
             </table>
             <br>
             <label for="OrigenDijkstra" class="form-label">Origen</label>
-            <input type="tel" class="form-control" id="OrigenDijkstra" required style="max-width:15%">
+            <input type="tel" class="form-control" id="OrigenDijkstra" required style="max-width:10em;">
             <br>
             <label for="DestinoDijkstra" class="form-label">Destino</label>
-            <input type="tel" class="form-control" id="DestinoDijkstra" required style="max-width:15%">
+            <input type="tel" class="form-control" id="DestinoDijkstra" required style="max-width:10em;">
             <br>
 
             <button type="button" class="btn btn-primary" onclick="Dijkstra()">Resolver</button>

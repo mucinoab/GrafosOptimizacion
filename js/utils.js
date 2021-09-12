@@ -62,6 +62,10 @@ function debounce(func, timeout) {
     };
 }
 function renderDotGraph(containerId, dotGraph) {
+    const narrow_screen = window.matchMedia('all and (max-width: 720px)');
+    if (narrow_screen.matches) {
+        dotGraph = dotGraph.replace("rankdir=LR;", "");
+    }
     const graphContainer = document.getElementById(containerId);
     if (graphContainer === null)
         return;

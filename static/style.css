@@ -12,6 +12,34 @@ img:hover {
   transform: scale(1.1);
 }
 
+@media all and (max-width: 720px) {
+  .side-bar {
+    position: inherit !important;
+  }
+
+  .main-container {
+    grid-template-columns: 2fr !important;
+    grid-template-rows: 1fr 9fr;
+    grid-template-areas:
+      "side-bar"
+      "main-body" !important;
+  }
+
+  .main-body {
+    grid-area: main-body;
+    margin: auto;
+  }
+
+  .grafo-svg {
+    width: 50% !important;
+  }
+
+  .tabs {
+    flex-direction: row !important;
+    align-content: space-around;
+  }
+}
+
 .table_nodes {
   text-align: right;
   font-weight: bold;
@@ -68,7 +96,12 @@ img:hover {
   width: 90%;
   height: 50%;
   border: 2px solid lightgray;
-  resize:both; 
+  resize:both;
   overflow:auto;
   border-radius: 5px;
+}
+
+.tabs {
+  justify-content: center;
+  flex-direction: column;
 }
