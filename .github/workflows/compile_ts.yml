@@ -1,0 +1,31 @@
+name: Compile TypeScript
+on: 
+  push:
+    branches: [ main ]
+
+jobs:
+  run:
+    name: Compile and push TypeScript
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: install Node v12
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Install tsc
+        run: npm install typescript
+
+      - name: Compile
+        run: ./node_modules/typescript/bin/tsc --noErrorTruncation --pretty false --incremental false --project js
+
+      - name: Commit and push
+        uses: EndBug/add-and-commit@v7
+        with:
+          default_author: github_actions
+          add: 'js'
+          branch: prod
+          message: 'Build and deploy'
