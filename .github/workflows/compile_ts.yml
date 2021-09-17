@@ -29,3 +29,4 @@ jobs:
           add: 'js'
           branch: prod
           message: 'Build and deploy'
+          push: '--force'
