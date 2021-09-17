@@ -26,7 +26,8 @@ jobs:
         uses: EndBug/add-and-commit@v7
         with:
           default_author: github_actions
-          add: 'js'
           branch: prod
+          add: 'js --force'
           message: 'Build and deploy'
-          push: '--force'
+          push: 'origin prod --force'
+
