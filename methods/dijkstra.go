@@ -3,9 +3,9 @@ package methods
 import "fmt"
 
 type Dijkstra struct {
-	Origen  string    `json:"origen"`
-	Destino string    `json:"destino"`
-	Grafo   []Vertice `json:"grafo"`
+	Origen  string `json:"origen"`
+	Destino string `json:"destino"`
+	Grafo   []Edge `json:"grafo"`
 }
 
 type coor struct {

@@ -9,11 +9,11 @@ import (
 
 func main() {
 	port := os.Getenv("PORT")
-	static_files := http.FileServer(http.Dir("./static"))
-	js_files := http.StripPrefix("/js/", http.FileServer(http.Dir("./js")))
+	staticFiles := http.FileServer(http.Dir("./static"))
+	jsFiles := http.StripPrefix("/js/", http.FileServer(http.Dir("./js")))
 
-	http.Handle("/", static_files)
-	http.Handle("/js/", js_files)
+	http.Handle("/", staticFiles)
+	http.Handle("/js/", jsFiles)
 	http.HandleFunc("/flujomaximo", flujoMaximo)
 	http.HandleFunc("/floydwarshall", FloyWarshall)
 	http.HandleFunc("/cpm", CPM)
@@ -35,7 +35,7 @@ func flujoMaximo(rw http.ResponseWriter, req *http.Request) {
 }
 
 func FloyWarshall(rw http.ResponseWriter, req *http.Request) {
-	var grafo []methods.Vertice
+	var grafo []methods.Edge
 	methods.Deserialize(req.Body, &grafo)
 
 	rw.Header().Set("Content-Type", "application/json")
@@ -43,7 +43,7 @@ func FloyWarshall(rw http.ResponseWriter, req *http.Request) {
 }
 
 func CPM(rw http.ResponseWriter, req *http.Request) {
-	var actividades []methods.Vertice
+	var actividades []methods.Edge
 	methods.Deserialize(req.Body, &actividades)
 
 	rw.Header().Set("Content-Type", "application/json")
@@ -75,7 +75,7 @@ func Compresion(rw http.ResponseWriter, req *http.Request) {
 }
 
 func Kruskal(rw http.ResponseWriter, req *http.Request) {
-	var grafo []methods.Vertice
+	var grafo []methods.Edge
 	methods.Deserialize(req.Body, &grafo)
 
 	rw.Header().Set("Content-Type", "application/json")

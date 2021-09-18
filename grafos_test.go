@@ -10,25 +10,25 @@ import (
 func TestGrafos(t *testing.T) {
 	t.Run("Flujo Máximo", func(t *testing.T) {
 		grafo := methods.FlujoMaximo{
-			Grafo: []methods.Vertice{
-				{"bilbao", "s1", 4},
-				{"bilbao", "s2", 1},
-				{"barcelona", "s1", 2},
-				{"barcelona", "s2", 3},
-				{"sevilla", "s1", 2},
-				{"sevilla", "s2", 2},
-				{"sevilla", "s3", 3},
-				{"valencia", "s2", 2},
-				{"zaragoza", "s2", 3},
-				{"zaragoza", "s3", 1},
-				{"origen", "bilbao", 7},
-				{"origen", "barcelona", 5},
-				{"origen", "sevilla", 7},
-				{"origen", "zaragoza", 6},
-				{"origen", "valencia", 2},
-				{"s1", "madrid", 8},
-				{"s2", "madrid", 8},
-				{"s3", "madrid", 8},
+			Grafo: []methods.Edge{
+				{Source: "bilbao", Target: "s1", Weight: 4},
+				{Source: "bilbao", Target: "s2", Weight: 1},
+				{Source: "barcelona", Target: "s1", Weight: 2},
+				{Source: "barcelona", Target: "s2", Weight: 3},
+				{Source: "sevilla", Target: "s1", Weight: 2},
+				{Source: "sevilla", Target: "s2", Weight: 2},
+				{Source: "sevilla", Target: "s3", Weight: 3},
+				{Source: "valencia", Target: "s2", Weight: 2},
+				{Source: "zaragoza", Target: "s2", Weight: 3},
+				{Source: "zaragoza", Target: "s3", Weight: 1},
+				{Source: "origen", Target: "bilbao", Weight: 7},
+				{Source: "origen", Target: "barcelona", Weight: 5},
+				{Source: "origen", Target: "sevilla", Weight: 7},
+				{Source: "origen", Target: "zaragoza", Weight: 6},
+				{Source: "origen", Target: "valencia", Weight: 2},
+				{Source: "s1", Target: "madrid", Weight: 8},
+				{Source: "s2", Target: "madrid", Weight: 8},
+				{Source: "s3", Target: "madrid", Weight: 8},
 			},
 			Origen:   "origen",
 			Destino:  "madrid",
@@ -43,12 +43,12 @@ func TestGrafos(t *testing.T) {
 	})
 
 	t.Run("Floyd-Warshall", func(t *testing.T) {
-		grafo := []methods.Vertice{
-			{"1", "2", 700}, {"1", "3", 200},
-			{"2", "3", 300}, {"2", "4", 200},
-			{"2", "6", 400}, {"3", "4", 700},
-			{"3", "5", 600}, {"4", "6", 100},
-			{"4", "5", 300}, {"6", "5", 500},
+		grafo := []methods.Edge{
+			{Source: "1", Target: "2", Weight: 700}, {Source: "1", Target: "3", Weight: 200},
+			{Source: "2", Target: "3", Weight: 300}, {Source: "2", Target: "4", Weight: 200},
+			{Source: "2", Target: "6", Weight: 400}, {Source: "3", Target: "4", Weight: 700},
+			{Source: "3", Target: "5", Weight: 600}, {Source: "4", Target: "6", Weight: 100},
+			{Source: "4", Target: "5", Weight: 300}, {Source: "6", Target: "5", Weight: 500},
 		}
 
 		correctSol := map[string]map[string]float64{
@@ -72,71 +72,79 @@ func TestGrafos(t *testing.T) {
 		const duracion float64 = 20.0
 		ruta := []string{"D", "I", "J", "L", "M", "-", "Fin"}
 
-		clase := methods.ResuelveCPM([]methods.Vertice{
-			{"A", "-", 2}, {"B", "A", 4}, {"C", "B", 1}, {"C", "H", 1},
-			{"D", "-", 6}, {"E", "G", 3}, {"F", "E", 5}, {"G", "D", 2},
-			{"H", "G", 2}, {"I", "D", 3}, {"J", "I", 4}, {"K", "D", 3},
-			{"L", "J", 5}, {"L", "K", 5}, {"M", "C", 2}, {"M", "L", 2},
+		clase := methods.ResuelveCPM([]methods.Edge{
+			{Source: "A", Target: "-", Weight: 2}, {Source: "B", Target: "A", Weight: 4},
+			{Source: "C", Target: "B", Weight: 1}, {Source: "C", Target: "H", Weight: 1},
+			{Source: "D", Target: "-", Weight: 6}, {Source: "E", Target: "G", Weight: 3},
+			{Source: "F", Target: "E", Weight: 5}, {Source: "G", Target: "D", Weight: 2},
+			{Source: "H", Target: "G", Weight: 2}, {Source: "I", Target: "D", Weight: 3},
+			{Source: "J", Target: "I", Weight: 4}, {Source: "K", Target: "D", Weight: 3},
+			{Source: "L", Target: "J", Weight: 5}, {Source: "L", Target: "K", Weight: 5},
+			{Source: "M", Target: "C", Weight: 2}, {Source: "M", Target: "L", Weight: 2},
 		})
 
 		if clase.DuracionTotal != duracion {
-			t.Error("Duración total erronea.")
+			t.Error("Duración total errónea.")
 		}
 
 		sort.Strings(clase.RutaCritica)
 		sort.Strings(ruta)
 
 		if !reflect.DeepEqual(clase.RutaCritica, ruta) {
-			t.Error("Ruta Critica erronea", clase.RutaCritica, ruta)
+			t.Error("Ruta Critica errónea.", clase.RutaCritica, ruta)
 		}
 
-		// 7
-		methods.ResuelveCPM([]methods.Vertice{
-			{"A", "-", 10}, {"B", "-", 7}, {"C", "A", 5},
-			{"D", "C", 3}, {"E", "D", 2}, {"F", "B", 1},
-			{"F", "E", 1}, {"G", "E", 1}, {"G", "F", 14},
+		methods.ResuelveCPM([]methods.Edge{
+			{Source: "A", Target: "-", Weight: 10}, {Source: "B", Target: "-", Weight: 7},
+			{Source: "C", Target: "A", Weight: 5}, {Source: "D", Target: "C", Weight: 3},
+			{Source: "E", Target: "D", Weight: 2}, {Source: "F", Target: "B", Weight: 1},
+			{Source: "F", Target: "E", Weight: 1}, {Source: "G", Target: "E", Weight: 1},
+			{Source: "G", Target: "F", Weight: 14},
 		})
 
-		// 10
-		methods.ResuelveCPM([]methods.Vertice{
-			{"A", "-", 3}, {"B", "A", 14},
-			{"C", "A", 1}, {"D", "C", 3},
-			{"E", "C", 1}, {"F", "C", 2},
-			{"G", "D", 1}, {"G", "E", 1},
-			{"G", "F", 1}, {"H", "G", 1},
-			{"I", "H", 3}, {"J", "H", 2},
-			{"K", "I", 2}, {"K", "J", 2},
-			{"L", "K", 2}, {"M", "L", 4},
-			{"N", "L", 1}, {"O", "B", 3},
-			{"O", "M", 3}, {"O", "N", 3},
+		methods.ResuelveCPM([]methods.Edge{
+			{Source: "A", Target: "-", Weight: 3}, {Source: "B", Target: "A", Weight: 14},
+			{Source: "C", Target: "A", Weight: 1}, {Source: "D", Target: "C", Weight: 3},
+			{Source: "E", Target: "C", Weight: 1}, {Source: "F", Target: "C", Weight: 2},
+			{Source: "G", Target: "D", Weight: 1}, {Source: "G", Target: "E", Weight: 1},
+			{Source: "G", Target: "F", Weight: 1}, {Source: "H", Target: "G", Weight: 1},
+			{Source: "I", Target: "H", Weight: 3}, {Source: "J", Target: "H", Weight: 2},
+			{Source: "K", Target: "I", Weight: 2}, {Source: "K", Target: "J", Weight: 2},
+			{Source: "L", Target: "K", Weight: 2}, {Source: "M", Target: "L", Weight: 4},
+			{Source: "N", Target: "L", Weight: 1}, {Source: "O", Target: "B", Weight: 3},
+			{Source: "O", Target: "M", Weight: 3}, {Source: "O", Target: "N", Weight: 3},
 		})
 
-		methods.ResuelveCPM([]methods.Vertice{
-			{"a", "-", 5}, {"b", "-", 2},
-			{"c", "a", 2}, {"d", "a", 3},
-			{"e", "b", 1}, {"f", "c", 1},
-			{"f", "d", 1}, {"g", "e", 4},
+		methods.ResuelveCPM([]methods.Edge{
+			{Source: "a", Target: "-", Weight: 5},
+			{Source: "b", Target: "-", Weight: 2},
+			{Source: "c", Target: "a", Weight: 2},
+			{Source: "d", Target: "a", Weight: 3},
+			{Source: "e", Target: "b", Weight: 1},
+			{Source: "f", Target: "c", Weight: 1},
+			{Source: "f", Target: "d", Weight: 1},
+			{Source: "g", Target: "e", Weight: 4},
 		})
 	})
 
 	t.Run("PERT", func(t *testing.T) {
 		ejemplo := []methods.VerticePert{
-			{"A", "-", 1, 2, 3},
-			{"B", "A", 2, 4, 6},
-			{"C", "B", 0, 1, 2},
-			{"C", "H", 0, 1, 2},
-			{"D", "-", 3, 6, 9},
-			{"E", "G", 2, 3, 4},
-			{"F", "E", 3, 5, 7},
-			{"G", "D", 1, 2, 3},
-			{"H", "G", 1, 2, 3},
-			{"I", "D", 1, 3, 5},
-			{"J", "I", 3, 4, 5},
-			{"K", "D", 2, 3, 4},
-			{"L", "J", 3, 5, 7},
-			{"L", "K", 3, 5, 7},
-			{"M", "C", 1, 2, 3},
-			{"M", "L", 1, 2, 3},
+			{Actividad: "A", Predecesora: "-", Optimista: 1, Probable: 2, Pesimista: 3},
+			{Actividad: "B", Predecesora: "A", Optimista: 2, Probable: 4, Pesimista: 6},
+			{Actividad: "C", Predecesora: "B", Optimista: 0, Probable: 1, Pesimista: 2},
+			{Actividad: "C", Predecesora: "H", Optimista: 0, Probable: 1, Pesimista: 2},
+			{Actividad: "D", Predecesora: "-", Optimista: 3, Probable: 6, Pesimista: 9},
+			{Actividad: "E", Predecesora: "G", Optimista: 2, Probable: 3, Pesimista: 4},
+			{Actividad: "F", Predecesora: "E", Optimista: 3, Probable: 5, Pesimista: 7},
+			{Actividad: "G", Predecesora: "D", Optimista: 1, Probable: 2, Pesimista: 3},
+			{Actividad: "H", Predecesora: "G", Optimista: 1, Probable: 2, Pesimista: 3},
+			{Actividad: "I", Predecesora: "D", Optimista: 1, Probable: 3, Pesimista: 5},
+			{Actividad: "J", Predecesora: "I", Optimista: 3, Probable: 4, Pesimista: 5},
+			{Actividad: "K", Predecesora: "D", Optimista: 2, Probable: 3, Pesimista: 4},
+			{Actividad: "L", Predecesora: "J", Optimista: 3, Probable: 5, Pesimista: 7},
+			{Actividad: "L", Predecesora: "K", Optimista: 3, Probable: 5, Pesimista: 7},
+			{Actividad: "M", Predecesora: "C", Optimista: 1, Probable: 2, Pesimista: 3},
+			{Actividad: "M", Predecesora: "L", Optimista: 1, Probable: 2, Pesimista: 3},
 		}
 
 		clase := methods.ResuelvePERT(ejemplo)
@@ -151,15 +159,16 @@ func TestGrafos(t *testing.T) {
 	})
 
 	t.Run("Compresion", func(t *testing.T) {
-		ejemplo := methods.CompresionData{-1,
-			[]methods.VerticeCompresion{
-				{"A", "-", 8, 100, 6, 200},
-				{"B", "-", 4, 150, 2, 350},
-				{"C", "A", 2, 50, 1, 90},
-				{"D", "B", 5, 100, 1, 200},
-				{"E", "C", 3, 80, 1, 100},
-				{"E", "D", 3, 80, 1, 100},
-				{"F", "A", 10, 100, 5, 400},
+		ejemplo := methods.CompresionData{
+			TiempoObjetivo: -1,
+			Actividades: []methods.VerticeCompresion{
+				{Actividad: "A", Predecesora: "-", PesoNormal: 8, CostoNormal: 100, PesoUrgente: 6, CostoUrgente: 200},
+				{Actividad: "B", Predecesora: "-", PesoNormal: 4, CostoNormal: 150, PesoUrgente: 2, CostoUrgente: 350},
+				{Actividad: "C", Predecesora: "A", PesoNormal: 2, CostoNormal: 50, PesoUrgente: 1, CostoUrgente: 90},
+				{Actividad: "D", Predecesora: "B", PesoNormal: 5, CostoNormal: 100, PesoUrgente: 1, CostoUrgente: 200},
+				{Actividad: "E", Predecesora: "C", PesoNormal: 3, CostoNormal: 80, PesoUrgente: 1, CostoUrgente: 100},
+				{Actividad: "E", Predecesora: "D", PesoNormal: 3, CostoNormal: 80, PesoUrgente: 1, CostoUrgente: 100},
+				{Actividad: "F", Predecesora: "A", PesoNormal: 10, CostoNormal: 100, PesoUrgente: 5, CostoUrgente: 400},
 			}}
 
 		sol := methods.ResuelveCompresion(ejemplo)
@@ -171,29 +180,29 @@ func TestGrafos(t *testing.T) {
 
 	t.Run("Dijkstra", func(t *testing.T) {
 		ejemplo := methods.Dijkstra{
-			Grafo: []methods.Vertice{
-				{"O", "A", 4},
-				{"O", "B", 3},
-				{"O", "C", 6},
-				{"A", "D", 3},
-				{"A", "C", 5},
-				{"B", "C", 4},
-				{"B", "E", 6},
-				{"C", "D", 2},
-				{"C", "F", 2},
-				{"C", "E", 5},
-				{"D", "G", 4},
-				{"D", "F", 2},
-				{"E", "F", 1},
-				{"F", "G", 2},
-				{"F", "H", 5},
-				{"E", "H", 2},
-				{"E", "I", 5},
-				{"I", "H", 3},
-				{"G", "H", 2},
-				{"G", "T", 7},
-				{"H", "T", 8},
-				{"I", "T", 4},
+			Grafo: []methods.Edge{
+				{Source: "O", Target: "A", Weight: 4},
+				{Source: "O", Target: "B", Weight: 3},
+				{Source: "O", Target: "C", Weight: 6},
+				{Source: "A", Target: "D", Weight: 3},
+				{Source: "A", Target: "C", Weight: 5},
+				{Source: "B", Target: "C", Weight: 4},
+				{Source: "B", Target: "E", Weight: 6},
+				{Source: "C", Target: "D", Weight: 2},
+				{Source: "C", Target: "F", Weight: 2},
+				{Source: "C", Target: "E", Weight: 5},
+				{Source: "D", Target: "G", Weight: 4},
+				{Source: "D", Target: "F", Weight: 2},
+				{Source: "E", Target: "F", Weight: 1},
+				{Source: "F", Target: "G", Weight: 2},
+				{Source: "F", Target: "H", Weight: 5},
+				{Source: "E", Target: "H", Weight: 2},
+				{Source: "E", Target: "I", Weight: 5},
+				{Source: "I", Target: "H", Weight: 3},
+				{Source: "G", Target: "H", Weight: 2},
+				{Source: "G", Target: "T", Weight: 7},
+				{Source: "H", Target: "T", Weight: 8},
+				{Source: "I", Target: "T", Weight: 4},
 			},
 			Origen:  "O",
 			Destino: "T",
@@ -215,16 +224,16 @@ func TestGrafos(t *testing.T) {
 	})
 
 	t.Run("Kruskal", func(t *testing.T) {
-		ejemplo := []methods.Vertice{
-			{"C", "B", 4},
-			{"A", "C", 3},
-			{"A", "B", 6},
-			{"B", "D", 2},
-			{"C", "D", 3},
-			{"S", "A", 7},
-			{"B", "T", 5},
-			{"D", "T", 2},
-			{"S", "C", 8},
+		ejemplo := []methods.Edge{
+			{Source: "C", Target: "B", Weight: 4},
+			{Source: "A", Target: "C", Weight: 3},
+			{Source: "A", Target: "B", Weight: 6},
+			{Source: "B", Target: "D", Weight: 2},
+			{Source: "C", Target: "D", Weight: 3},
+			{Source: "S", Target: "A", Weight: 7},
+			{Source: "B", Target: "T", Weight: 5},
+			{Source: "D", Target: "T", Weight: 2},
+			{Source: "S", Target: "C", Weight: 8},
 		}
 
 		sol := methods.ResuelveKruskal(ejemplo)

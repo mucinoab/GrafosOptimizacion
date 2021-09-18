@@ -1,8 +1,6 @@
 package methods
 
-import (
-	"math"
-)
+import "math"
 
 type Actividad struct {
 	Nombre    string   `json:"nombre"`
@@ -28,7 +26,7 @@ type RespuestaCPM struct {
 	DuracionTotal float64      `json:"duracionTotal"`
 }
 
-func ResuelveCPM(p []Vertice) RespuestaCPM {
+func ResuelveCPM(p []Edge) RespuestaCPM {
 	anterior := VerticesToAdjList(&p, true)
 
 	actividades := make(map[string]*Actividad, len(p))
@@ -38,13 +36,13 @@ func ResuelveCPM(p []Vertice) RespuestaCPM {
 	sn := Set()
 
 	for idx := 0; idx < len(p); idx += 1 {
-		actividades[p[idx].Origen] = NuevaActividad(p[idx].Origen, p[idx].Peso)
+		actividades[p[idx].Source] = NuevaActividad(p[idx].Source, p[idx].Weight)
 
-		s.Add(p[idx].Origen)
+		s.Add(p[idx].Source)
 		// Invertimos porque el formato de la tabla es distinto
-		p[idx].Origen, p[idx].Destino = p[idx].Destino, p[idx].Origen
-		s.Add(p[idx].Origen)
-		sn.Add(p[idx].Origen)
+		p[idx].Source, p[idx].Target = p[idx].Target, p[idx].Source
+		s.Add(p[idx].Source)
+		sn.Add(p[idx].Source)
 	}
 
 	siguientes := VerticesToAdjList(&p, true)

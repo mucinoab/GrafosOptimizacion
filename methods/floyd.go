@@ -1,9 +1,9 @@
 package methods
 
 type RespuestaFloydWarshall struct {
-	Cambios     []Cambio    `json:"cambios"`
-	Iteraciones [][]Vertice `json:"iteraciones"`
-	Nodos       []string    `json:"nodos"`
+	Cambios     []Cambio `json:"cambios"`
+	Iteraciones [][]Edge `json:"iteraciones"`
+	Nodos       []string `json:"nodos"`
 }
 
 // En qué iteración ocurrió una mejora
@@ -14,13 +14,13 @@ type Cambio struct {
 }
 
 // TODO matriz de cambios rara
-func ResuelveFloyWarshall(grafo *[]Vertice) RespuestaFloydWarshall {
+func ResuelveFloyWarshall(grafo *[]Edge) RespuestaFloydWarshall {
 	sol := VerticesToAdjList(grafo, false)
 	nodos := Set()
 
 	for _, v := range *grafo {
-		nodos.Add(v.Origen)
-		nodos.Add(v.Destino)
+		nodos.Add(v.Source)
+		nodos.Add(v.Target)
 	}
 
 	for origen := range nodos.m {
@@ -43,7 +43,7 @@ func ResuelveFloyWarshall(grafo *[]Vertice) RespuestaFloydWarshall {
 
 	var iteracion int64
 	var aux float64
-	iteraciones := make([][]Vertice, len(nodos.m)+1)
+	iteraciones := make([][]Edge, len(nodos.m)+1)
 	cambios := []Cambio{}
 
 	for puente := range nodos.m {
@@ -71,8 +71,8 @@ func ResuelveFloyWarshall(grafo *[]Vertice) RespuestaFloydWarshall {
 	// representar JavaScript
 	for _, iter := range iteraciones {
 		for idx, v := range iter {
-			if v.Peso == Inf {
-				iter[idx].Peso = jsMaxValue
+			if v.Weight == Inf {
+				iter[idx].Weight = jsMaxValue
 			}
 		}
 	}

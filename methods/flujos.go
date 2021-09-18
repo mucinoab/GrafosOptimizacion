@@ -6,17 +6,17 @@ import (
 )
 
 type FlujoMaximo struct {
-	Grafo    []Vertice `json:"data"`
-	Origen   string    `json:"origen"`
-	Destino  string    `json:"destino"`
-	Dirigido bool      `json:"dirigido"`
+	Grafo    []Edge `json:"data"`
+	Origen   string `json:"origen"`
+	Destino  string `json:"destino"`
+	Dirigido bool   `json:"dirigido"`
 }
 
 type RespuestaFlujoMaximo struct {
 	Flujo float64
 	Data  []struct {
-		V      []Vertice `json:"data"`
-		Camino string    `json:"camino"`
+		V      []Edge `json:"data"`
+		Camino string `json:"camino"`
 	}
 }
 
@@ -26,21 +26,21 @@ type Camino struct {
 
 func ResuelveFlujoMaximo(grafo FlujoMaximo) RespuestaFlujoMaximo {
 	var sol RespuestaFlujoMaximo
-	var vertices []Vertice
+	var vertices []Edge
 
 	m := VerticesToAdjList(&grafo.Grafo, grafo.Dirigido)
-	m_og := VerticesToAdjList(&grafo.Grafo, grafo.Dirigido)
+	mOg := VerticesToAdjList(&grafo.Grafo, grafo.Dirigido)
 
 	for _, a := range grafo.Grafo {
-		vertices = append(vertices, Vertice{a.Origen, a.Destino, a.Peso})
+		vertices = append(vertices, Edge{a.Source, a.Target, a.Weight})
 		if !grafo.Dirigido {
-			vertices = append(vertices, Vertice{a.Destino, a.Origen, a.Peso})
+			vertices = append(vertices, Edge{a.Target, a.Source, a.Weight})
 		}
 	}
 
 	sol.Data = append(sol.Data, struct {
-		V      []Vertice "json:\"data\""
-		Camino string    "json:\"camino\""
+		V      []Edge "json:\"data\""
+		Camino string "json:\"camino\""
 	}{
 		V:      vertices,
 		Camino: "Grafo Inicial",
@@ -49,17 +49,17 @@ func ResuelveFlujoMaximo(grafo FlujoMaximo) RespuestaFlujoMaximo {
 	marcados := make([]Camino, 0)
 	sol.Flujo = dfs(&sol, &marcados, m, grafo.Origen, grafo.Destino)
 
-	vertices = make([]Vertice, 0)
+	vertices = make([]Edge, 0)
 
 	for a, l := range m {
 		for b, p := range l {
-			vertices = append(vertices, Vertice{a, b, m_og[a][b] - p})
+			vertices = append(vertices, Edge{a, b, mOg[a][b] - p})
 		}
 	}
 
 	sol.Data = append(sol.Data, struct {
-		V      []Vertice "json:\"data\""
-		Camino string    "json:\"camino\""
+		V      []Edge "json:\"data\""
+		Camino string "json:\"camino\""
 	}{
 		V:      vertices,
 		Camino: "Patrón de Flujo",
@@ -89,17 +89,17 @@ func dfs(sol *RespuestaFlujoMaximo, marcado *[]Camino, grafo map[string]map[stri
 
 		camino = fmt.Sprint(strings.Trim(camino, " ,"), "} = ", flujo)
 
-		var vertices []Vertice
+		var vertices []Edge
 
 		for a, l := range grafo {
 			for b, p := range l {
-				vertices = append(vertices, Vertice{a, b, p})
+				vertices = append(vertices, Edge{a, b, p})
 			}
 		}
 
 		sol.Data = append(sol.Data, struct {
-			V      []Vertice "json:\"data\""
-			Camino string    "json:\"camino\""
+			V      []Edge "json:\"data\""
+			Camino string "json:\"camino\""
 		}{
 			V:      vertices,
 			Camino: camino,

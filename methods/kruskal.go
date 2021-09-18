@@ -7,14 +7,14 @@ import (
 )
 
 type RespuestaKruskal struct {
-	Grafo  []Vertice `json:"grafo"`
-	Arbol  []int     `json:"arbol"`
-	Peso   float64   `json:"peso"`
-	Graphs []string  `json:"graphs"`
+	Grafo  []Edge   `json:"grafo"`
+	Arbol  []int    `json:"arbol"`
+	Peso   float64  `json:"peso"`
+	Graphs []string `json:"graphs"`
 }
 
-func ResuelveKruskal(grafo []Vertice) RespuestaKruskal {
-	sort.Slice(grafo, func(i, j int) bool { return grafo[i].Peso < grafo[j].Peso })
+func ResuelveKruskal(grafo []Edge) RespuestaKruskal {
+	sort.Slice(grafo, func(i, j int) bool { return grafo[i].Weight < grafo[j].Weight })
 
 	links := make([]string, 0, len(grafo)+2)
 	camino := ""
@@ -27,14 +27,14 @@ func ResuelveKruskal(grafo []Vertice) RespuestaKruskal {
 
 	for idx, v := range grafo[:] {
 		ciclo := ""
-		if !uf.Cycle(v.Origen, v.Destino) {
-			uf.Union(v.Origen, v.Destino)
+		if !uf.Cycle(v.Source, v.Target) {
+			uf.Union(v.Source, v.Target)
 			arbol = append(arbol, idx)
-			peso += v.Peso
+			peso += v.Weight
 
-			camino += fmt.Sprintf("%s,%s,", v.Origen, v.Destino)
+			camino += fmt.Sprintf("%s,%s,", v.Source, v.Target)
 		} else {
-			ciclo = v.Origen + v.Destino
+			ciclo = v.Source + v.Target
 		}
 
 		links = append(links, GraphLink(grafo, camino, ciclo, false))
@@ -49,7 +49,7 @@ func ResuelveKruskal(grafo []Vertice) RespuestaKruskal {
 	return RespuestaKruskal{grafo, arbol, peso, links}
 }
 
-func GraphLink(nodos []Vertice, camino, ciclo string, dirigido bool) string {
+func GraphLink(nodos []Edge, camino, ciclo string, dirigido bool) string {
 	var link string
 	var sep string
 
@@ -69,12 +69,12 @@ func GraphLink(nodos []Vertice, camino, ciclo string, dirigido bool) string {
 	}
 
 	for _, n := range nodos[:] {
-		link += fmt.Sprintf("%s%s%s", n.Origen, sep, n.Destino)
-		link += fmt.Sprintf("[label=\"%.3f\"", n.Peso)
+		link += fmt.Sprintf("%s%s%s", n.Source, sep, n.Target)
+		link += fmt.Sprintf("[label=\"%.3f\"", n.Weight)
 
-		if s.Contains(n.Origen + n.Destino) {
+		if s.Contains(n.Source + n.Target) {
 			link += ",color=blue,penwidth=3.0];"
-		} else if (n.Origen + n.Destino) == ciclo {
+		} else if (n.Source + n.Target) == ciclo {
 			// Arista que forma un ciclo
 			link += ",color=red,penwidth=3.2];"
 		} else {

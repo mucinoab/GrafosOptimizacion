@@ -19,10 +19,10 @@ const NInf = -math.MaxFloat64
 const jsMaxValue = 1.7976931348623157e+308
 const Epsilon = 0.05
 
-type Vertice struct {
-	Origen  string  `json:"origen"`
-	Destino string  `json:"destino"`
-	Peso    float64 `json:"peso"`
+type Edge struct {
+	Source string  `json:"origen"`
+	Target string  `json:"destino"`
+	Weight float64 `json:"peso"`
 }
 
 type adjList map[string]map[string]float64
@@ -85,12 +85,12 @@ func (s *set) SymmetricDifference(sn *set) *set {
 
 type UnionFind map[string]string
 
-func NewUnionFind(g []Vertice) *UnionFind {
+func NewUnionFind(g []Edge) *UnionFind {
 	uf := make(UnionFind, len(g)*2)
 
 	for _, v := range g[:] {
-		uf[v.Origen] = v.Origen
-		uf[v.Destino] = v.Destino
+		uf[v.Source] = v.Source
+		uf[v.Target] = v.Target
 	}
 
 	return &uf
@@ -162,36 +162,36 @@ func Min_child(arr map[string]float64) string {
 	return nodo
 }
 
-func VerticesToAdjList(grafo *[]Vertice, dirigido bool) map[string]map[string]float64 {
+func VerticesToAdjList(grafo *[]Edge, dirigido bool) map[string]map[string]float64 {
 	adjList := make(map[string]map[string]float64)
 
 	for _, a := range *grafo {
-		if _, ok := adjList[a.Origen]; !ok {
-			adjList[a.Origen] = make(map[string]float64)
+		if _, ok := adjList[a.Source]; !ok {
+			adjList[a.Source] = make(map[string]float64)
 		}
 
-		adjList[a.Origen][a.Destino] = a.Peso
+		adjList[a.Source][a.Target] = a.Weight
 
 		if !dirigido {
-			if _, ok := adjList[a.Destino]; !ok {
-				adjList[a.Destino] = make(map[string]float64)
+			if _, ok := adjList[a.Target]; !ok {
+				adjList[a.Target] = make(map[string]float64)
 			}
-			adjList[a.Destino][a.Origen] = a.Peso
+			adjList[a.Target][a.Source] = a.Weight
 		}
 	}
 
 	return adjList
 }
 
-func AdjListToVertices(grafo map[string]map[string]float64, dirigido bool) *[]Vertice {
-	adjList := []Vertice{}
+func AdjListToVertices(grafo map[string]map[string]float64, dirigido bool) *[]Edge {
+	adjList := []Edge{}
 
 	for a, row := range grafo {
 		for b, p := range row {
-			adjList = append(adjList, Vertice{a, b, p})
+			adjList = append(adjList, Edge{a, b, p})
 
 			if !dirigido {
-				adjList = append(adjList, Vertice{b, a, p})
+				adjList = append(adjList, Edge{b, a, p})
 			}
 		}
 	}

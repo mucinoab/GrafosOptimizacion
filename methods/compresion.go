@@ -47,11 +47,11 @@ func ResuelveCompresion(c CompresionData) RespuesaCompresion {
 	actividadesComprimidas.Add("Fin")
 
 	actividades := transformVertex(c.Actividades)
-	actividades_cpy := Clone(actividades)
+	actividadesCpy := Clone(actividades)
 
 	resultadoCpm := ResuelveCPM(actividades)
 	iteracionesCPM = append(iteracionesCPM, resultadoCpm)
-	costoActual = append(costoActual, calculaCostoRuta(costos, actividades_cpy, actividadesComprimidas))
+	costoActual = append(costoActual, calculaCostoRuta(costos, actividadesCpy, actividadesComprimidas))
 
 	for {
 		actMin := Inf
@@ -66,12 +66,12 @@ func ResuelveCompresion(c CompresionData) RespuesaCompresion {
 			}
 		}
 
-		actividades = Clone(actividades_cpy)
+		actividades = Clone(actividadesCpy)
 
 		for idx, a := range actividades {
-			if a.Origen == actMinOrigen {
+			if a.Source == actMinOrigen {
 				// Cambiar peso normal por peso de compresión
-				actividades[idx].Peso = costos[actMinOrigen].PesoUrgente
+				actividades[idx].Weight = costos[actMinOrigen].PesoUrgente
 				actividadesComprimidas.Add(actMinOrigen)
 			}
 		}
@@ -84,11 +84,11 @@ func ResuelveCompresion(c CompresionData) RespuesaCompresion {
 		// Agrega actividad comprimida TODO
 		aComprimidas = append(aComprimidas, actMinOrigen)
 
-		actividades_cpy = Clone(actividades)
+		actividadesCpy = Clone(actividades)
 		resultadoCpm = ResuelveCPM(actividades)
 		iteracionesCPM = append(iteracionesCPM, resultadoCpm)
 
-		costoActual = append(costoActual, calculaCostoRuta(costos, actividades_cpy, actividadesComprimidas))
+		costoActual = append(costoActual, calculaCostoRuta(costos, actividadesCpy, actividadesComprimidas))
 	}
 
 	costoTiempo := make([]float64, len(c.Actividades))
@@ -136,36 +136,36 @@ func mapCostos(actividades []VerticeCompresion) map[string]Costos {
 }
 
 // Transforma un vértice de compresión a un vértice regular
-func transformVertex(v []VerticeCompresion) []Vertice {
-	actividades := make([]Vertice, len(v))
+func transformVertex(v []VerticeCompresion) []Edge {
+	actividades := make([]Edge, len(v))
 
 	for idx, a := range v {
-		actividades[idx] = Vertice{a.Actividad, a.Predecesora, a.PesoNormal}
+		actividades[idx] = Edge{a.Actividad, a.Predecesora, a.PesoNormal}
 	}
 
 	return actividades
 }
 
-func Clone(arre []Vertice) []Vertice {
-	cpy := make([]Vertice, len(arre))
+func Clone(arre []Edge) []Edge {
+	cpy := make([]Edge, len(arre))
 	copy(cpy, arre)
 
 	return cpy
 }
 
-func calculaCostoRuta(c map[string]Costos, act []Vertice, comprimidos *set) float64 {
+func calculaCostoRuta(c map[string]Costos, act []Edge, comprimidos *set) float64 {
 	vistos := Set()
 	costo := 0.0
 
 	for _, a := range act[:] {
 		// We use a set to avoid adding the same cost more than once
-		if !vistos.Contains(a.Origen) {
-			if comprimidos.Contains(a.Origen) {
-				costo += c[a.Origen].CostoUrgente
+		if !vistos.Contains(a.Source) {
+			if comprimidos.Contains(a.Source) {
+				costo += c[a.Source].CostoUrgente
 			} else {
-				costo += c[a.Origen].CostoNormal
+				costo += c[a.Source].CostoNormal
 			}
-			vistos.Add(a.Origen)
+			vistos.Add(a.Source)
 		}
 	}
 
