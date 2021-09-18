@@ -16,14 +16,13 @@ type RespuestaKruskal struct {
 func ResuelveKruskal(grafo []Edge) RespuestaKruskal {
 	sort.Slice(grafo, func(i, j int) bool { return grafo[i].Weight < grafo[j].Weight })
 
-	links := make([]string, 0, len(grafo)+2)
-	camino := ""
-
-	links = append(links, GraphLink(grafo, camino, "", false))
+	links := make([]string, 0, len(grafo)+8)
+	links = append(links, DotGraphGenerator(grafo, "", "", false))
 
 	uf := NewUnionFind(grafo)
 	arbol := make([]int, 0, len(grafo))
-	peso := 0.0
+	var peso float64
+	var camino strings.Builder
 
 	for idx, v := range grafo[:] {
 		ciclo := ""
@@ -32,16 +31,16 @@ func ResuelveKruskal(grafo []Edge) RespuestaKruskal {
 			arbol = append(arbol, idx)
 			peso += v.Weight
 
-			camino += fmt.Sprintf("%s,%s,", v.Source, v.Target)
+			fmt.Fprintf(&camino, "%s,%s,", v.Source, v.Target)
 		} else {
 			ciclo = v.Source + v.Target
 		}
 
-		links = append(links, GraphLink(grafo, camino, ciclo, false))
+		links = append(links, DotGraphGenerator(grafo, camino.String(), ciclo, false))
 	}
 
 	// This is to show the final graph more time.
-	finalGraph := GraphLink(grafo, camino, "", false)
+	finalGraph := DotGraphGenerator(grafo, camino.String(), "", false)
 	for i := 0; i < 5; i += 1 {
 		links = append(links, finalGraph)
 	}
@@ -49,15 +48,15 @@ func ResuelveKruskal(grafo []Edge) RespuestaKruskal {
 	return RespuestaKruskal{grafo, arbol, peso, links}
 }
 
-func GraphLink(nodos []Edge, camino, ciclo string, dirigido bool) string {
-	var link string
+func DotGraphGenerator(nodos []Edge, camino, ciclo string, dirigido bool) string {
+	var graph strings.Builder
 	var sep string
 
 	if dirigido {
-		link += "digraph{rankdir=LR;"
+		graph.WriteString("digraph{rankdir=LR;")
 		sep = "->"
 	} else {
-		link += "graph{rankdir=LR;"
+		graph.WriteString("graph{rankdir=LR;")
 		sep = "--"
 	}
 
@@ -65,24 +64,24 @@ func GraphLink(nodos []Edge, camino, ciclo string, dirigido bool) string {
 	caminos := strings.Split(camino, ",")
 
 	for idx, camino := range caminos[:len(caminos)-1] {
-		s.Add(fmt.Sprintf("%s%s", camino, caminos[idx+1]))
+		s.Add(camino + caminos[idx+1])
 	}
 
 	for _, n := range nodos[:] {
-		link += fmt.Sprintf("%s%s%s", n.Source, sep, n.Target)
-		link += fmt.Sprintf("[label=\"%.3f\"", n.Weight)
+		fmt.Fprintf(&graph, "%s%s%s", n.Source, sep, n.Target)
+		fmt.Fprintf(&graph, "[label=\"%.3f\"", n.Weight)
 
 		if s.Contains(n.Source + n.Target) {
-			link += ",color=blue,penwidth=3.0];"
+			graph.WriteString(",color=blue,penwidth=3.0];")
 		} else if (n.Source + n.Target) == ciclo {
 			// Arista que forma un ciclo
-			link += ",color=red,penwidth=3.2];"
+			graph.WriteString(",color=red,penwidth=3.2];")
 		} else {
-			link += "];"
+			graph.WriteString("];")
 		}
 	}
 
-	link += "}"
+	graph.WriteRune('}')
 
-	return link
+	return graph.String()
 }
