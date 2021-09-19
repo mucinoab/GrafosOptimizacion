@@ -100,6 +100,7 @@ func (u UnionFind) Parent(nodo string) string {
 	if u[nodo] != nodo {
 		u[nodo] = u.Parent(u[nodo])
 	}
+
 	return u[nodo]
 }
 
@@ -139,7 +140,7 @@ func Pop(alist *[]Camino) {
 	*alist = (*alist)[:f-1]
 }
 
-func Min(marcado *[]Camino, grafo map[string]map[string]float64) float64 {
+func Min(marcado *[]Camino, grafo adjList) float64 {
 	mini := Inf
 	for _, v := range *marcado {
 		e := grafo[v.izq][v.der]
@@ -148,9 +149,7 @@ func Min(marcado *[]Camino, grafo map[string]map[string]float64) float64 {
 	return mini
 }
 
-// TODO
-// hacer parametros variables para tener una sola funcion Min
-func Min_child(arr map[string]float64) string {
+func MinChild(arr map[string]float64) string {
 	mini := Inf
 	nodo := ""
 	for child, v := range arr {
@@ -163,7 +162,7 @@ func Min_child(arr map[string]float64) string {
 }
 
 func VerticesToAdjList(grafo *[]Edge, dirigido bool) map[string]map[string]float64 {
-	adjList := make(map[string]map[string]float64)
+	adjList := make(adjList)
 
 	for _, a := range *grafo {
 		if _, ok := adjList[a.Source]; !ok {
@@ -183,7 +182,7 @@ func VerticesToAdjList(grafo *[]Edge, dirigido bool) map[string]map[string]float
 	return adjList
 }
 
-func AdjListToVertices(grafo map[string]map[string]float64, dirigido bool) *[]Edge {
+func AdjListToVertices(grafo adjList, dirigido bool) *[]Edge {
 	adjList := []Edge{}
 
 	for a, row := range grafo {
@@ -232,26 +231,24 @@ func GzipHandler(h http.Handler) http.Handler {
 func ToBytes(someStruct interface{}) []byte {
 	s, err := json.Marshal(someStruct)
 
-	// TODO proper error handling
 	if err != nil {
-		log.Println(err)
-		return make([]byte, 0)
-	} else {
-		return s
+		log.Panic(someStruct, err)
 	}
+
+	return s
 }
 
 func Deserialize(rawData io.ReadCloser, v interface{}) {
-	// TODO proper error handling
 	d, err := ioutil.ReadAll(rawData)
+
 	if err != nil {
-		log.Print(err)
+		log.Panic(rawData, err)
 	}
 
 	err = json.Unmarshal(d, v)
 
 	if err != nil {
-		log.Print(err)
+		log.Panic(d, err)
 	}
 }
 

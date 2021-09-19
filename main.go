@@ -23,7 +23,7 @@ func main() {
 	http.HandleFunc("/kruskal", Kruskal)
 
 	log.Printf("http://localhost:%s", port)
-	log.Fatal(http.ListenAndServe(":"+port, methods.GzipHandler(http.DefaultServeMux)))
+	log.Panic(http.ListenAndServe(":"+port, methods.GzipHandler(http.DefaultServeMux)))
 }
 
 func flujoMaximo(rw http.ResponseWriter, req *http.Request) {
