@@ -6,14 +6,14 @@ import (
 	"strings"
 )
 
-type RespuestaKruskal struct {
-	Grafo  []Edge   `json:"grafo"`
-	Arbol  []int    `json:"arbol"`
-	Peso   float64  `json:"peso"`
+type Kruskal struct {
+	Graph  []Edge   `json:"graph"`
+	Tree   []int    `json:"tree"`
+	Weight float64  `json:"weight"`
 	Graphs []string `json:"graphs"`
 }
 
-func ResuelveKruskal(grafo []Edge) RespuestaKruskal {
+func ResuelveKruskal(grafo []Edge) Kruskal {
 	sort.Slice(grafo, func(i, j int) bool { return grafo[i].Weight < grafo[j].Weight })
 
 	links := make([]string, 0, len(grafo)+8)
@@ -45,7 +45,7 @@ func ResuelveKruskal(grafo []Edge) RespuestaKruskal {
 		links = append(links, finalGraph)
 	}
 
-	return RespuestaKruskal{grafo, arbol, peso, links}
+	return Kruskal{grafo, arbol, peso, links}
 }
 
 func DotGraphGenerator(nodos []Edge, camino, ciclo string, dirigido bool) string {

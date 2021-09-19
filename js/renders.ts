@@ -232,13 +232,13 @@ function renderResponseDijkstra(data: ResponseDijkstra) {
   respuesta.style.setProperty("display", "block", 'important');
 }
 
-function renderResponseKruskal(data: ResponseKruskal) {
+function renderResponseKruskal(data: Kruskal) {
   const respuesta = document.getElementById("respuestaKruskal");
 
   clearTimeout(KruskalTimeOut);
   clearElement(respuesta);
 
-  respuesta.appendChild(newTextElement(`Peso: ${data.peso}`, "h4"));
+  respuesta.appendChild(newTextElement(`Peso: ${data.weight}`, "h4"));
   respuesta.appendChild(newElement("div", "kruskal-graph", "grafo-svg"));
 
   const dots = data.graphs;

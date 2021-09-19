@@ -97,9 +97,9 @@ interface ResponseCompresion {
   costoActual: Array<number>,
 }
 
-interface ResponseKruskal {
-  grafo: Array<Vertices>,
-  arbol: Array<number>,
-  peso: number,
+interface Kruskal {
+  graph: Array<Vertices>,
+  tree: Array<number>,
+  weight: number,
   graphs: Array<string>,
 }

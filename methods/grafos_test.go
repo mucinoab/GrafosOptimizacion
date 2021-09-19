@@ -1,7 +1,6 @@
-package main
+package methods
 
 import (
-	"grafos/methods"
 	"reflect"
 	"sort"
 	"testing"
@@ -9,8 +8,8 @@ import (
 
 func TestGrafos(t *testing.T) {
 	t.Run("Flujo Máximo", func(t *testing.T) {
-		grafo := methods.FlujoMaximo{
-			Grafo: []methods.Edge{
+		grafo := FlujoMaximo{
+			Grafo: []Edge{
 				{Source: "bilbao", Target: "s1", Weight: 4},
 				{Source: "bilbao", Target: "s2", Weight: 1},
 				{Source: "barcelona", Target: "s1", Weight: 2},
@@ -35,7 +34,7 @@ func TestGrafos(t *testing.T) {
 			Dirigido: true,
 		}
 
-		sol := methods.ResuelveFlujoMaximo(grafo)
+		sol := ResuelveFlujoMaximo(grafo)
 
 		if sol.Flujo != 20.00 {
 			t.Errorf("Flujo máximo incorrecto, obtuve %.2f, esperaba 20.00", sol.Flujo)
@@ -43,7 +42,7 @@ func TestGrafos(t *testing.T) {
 	})
 
 	t.Run("Floyd-Warshall", func(t *testing.T) {
-		grafo := []methods.Edge{
+		grafo := []Edge{
 			{Source: "1", Target: "2", Weight: 700}, {Source: "1", Target: "3", Weight: 200},
 			{Source: "2", Target: "3", Weight: 300}, {Source: "2", Target: "4", Weight: 200},
 			{Source: "2", Target: "6", Weight: 400}, {Source: "3", Target: "4", Weight: 700},
@@ -60,8 +59,8 @@ func TestGrafos(t *testing.T) {
 			"6": {"1": 800, "2": 300, "3": 600, "4": 100, "5": 400, "6": 0},
 		}
 
-		solution := methods.ResuelveFloyWarshall(&grafo)
-		sol := methods.VerticesToAdjList(&solution.Iteraciones[len(solution.Iteraciones)-1], true)
+		solution := ResuelveFloyWarshall(&grafo)
+		sol := VerticesToAdjList(&solution.Iteraciones[len(solution.Iteraciones)-1], true)
 
 		if !reflect.DeepEqual(sol, correctSol) {
 			t.Error("Respuesa incorrecta", correctSol, sol)
@@ -72,7 +71,7 @@ func TestGrafos(t *testing.T) {
 		const duracion float64 = 20.0
 		ruta := []string{"D", "I", "J", "L", "M", "-", "Fin"}
 
-		clase := methods.ResuelveCPM([]methods.Edge{
+		clase := ResuelveCPM([]Edge{
 			{Source: "A", Target: "-", Weight: 2}, {Source: "B", Target: "A", Weight: 4},
 			{Source: "C", Target: "B", Weight: 1}, {Source: "C", Target: "H", Weight: 1},
 			{Source: "D", Target: "-", Weight: 6}, {Source: "E", Target: "G", Weight: 3},
@@ -94,7 +93,7 @@ func TestGrafos(t *testing.T) {
 			t.Error("Ruta Critica errónea.", clase.RutaCritica, ruta)
 		}
 
-		methods.ResuelveCPM([]methods.Edge{
+		ResuelveCPM([]Edge{
 			{Source: "A", Target: "-", Weight: 10}, {Source: "B", Target: "-", Weight: 7},
 			{Source: "C", Target: "A", Weight: 5}, {Source: "D", Target: "C", Weight: 3},
 			{Source: "E", Target: "D", Weight: 2}, {Source: "F", Target: "B", Weight: 1},
@@ -102,7 +101,7 @@ func TestGrafos(t *testing.T) {
 			{Source: "G", Target: "F", Weight: 14},
 		})
 
-		methods.ResuelveCPM([]methods.Edge{
+		ResuelveCPM([]Edge{
 			{Source: "A", Target: "-", Weight: 3}, {Source: "B", Target: "A", Weight: 14},
 			{Source: "C", Target: "A", Weight: 1}, {Source: "D", Target: "C", Weight: 3},
 			{Source: "E", Target: "C", Weight: 1}, {Source: "F", Target: "C", Weight: 2},
@@ -115,7 +114,7 @@ func TestGrafos(t *testing.T) {
 			{Source: "O", Target: "M", Weight: 3}, {Source: "O", Target: "N", Weight: 3},
 		})
 
-		methods.ResuelveCPM([]methods.Edge{
+		ResuelveCPM([]Edge{
 			{Source: "a", Target: "-", Weight: 5},
 			{Source: "b", Target: "-", Weight: 2},
 			{Source: "c", Target: "a", Weight: 2},
@@ -128,7 +127,7 @@ func TestGrafos(t *testing.T) {
 	})
 
 	t.Run("PERT", func(t *testing.T) {
-		ejemplo := []methods.VerticePert{
+		ejemplo := []VerticePert{
 			{Actividad: "A", Predecesora: "-", Optimista: 1, Probable: 2, Pesimista: 3},
 			{Actividad: "B", Predecesora: "A", Optimista: 2, Probable: 4, Pesimista: 6},
 			{Actividad: "C", Predecesora: "B", Optimista: 0, Probable: 1, Pesimista: 2},
@@ -147,21 +146,21 @@ func TestGrafos(t *testing.T) {
 			{Actividad: "M", Predecesora: "L", Optimista: 1, Probable: 2, Pesimista: 3},
 		}
 
-		clase := methods.ResuelvePERT(ejemplo)
+		clase := ResuelvePERT(ejemplo)
 
 		if clase.Media != 20.0 {
 			t.Error("Media total erronea.")
 		}
 
-		if clase.SumaVariazas-19.0/9.0 > methods.Epsilon {
+		if clase.SumaVariazas-19.0/9.0 > Epsilon {
 			t.Errorf("%f != %f", clase.SumaVariazas, 19.0/9.0)
 		}
 	})
 
 	t.Run("Compresion", func(t *testing.T) {
-		ejemplo := methods.CompresionData{
+		ejemplo := CompresionData{
 			TiempoObjetivo: -1,
-			Actividades: []methods.VerticeCompresion{
+			Actividades: []VerticeCompresion{
 				{Actividad: "A", Predecesora: "-", PesoNormal: 8, CostoNormal: 100, PesoUrgente: 6, CostoUrgente: 200},
 				{Actividad: "B", Predecesora: "-", PesoNormal: 4, CostoNormal: 150, PesoUrgente: 2, CostoUrgente: 350},
 				{Actividad: "C", Predecesora: "A", PesoNormal: 2, CostoNormal: 50, PesoUrgente: 1, CostoUrgente: 90},
@@ -171,16 +170,16 @@ func TestGrafos(t *testing.T) {
 				{Actividad: "F", Predecesora: "A", PesoNormal: 10, CostoNormal: 100, PesoUrgente: 5, CostoUrgente: 400},
 			}}
 
-		sol := methods.ResuelveCompresion(ejemplo)
+		sol := ResuelveCompresion(ejemplo)
 
-		if sol.CPMs[len(sol.CPMs)-1].DuracionTotal-11.0 > methods.Epsilon {
+		if sol.CPMs[len(sol.CPMs)-1].DuracionTotal-11.0 > Epsilon {
 			t.Error("Duración total incorrecta.")
 		}
 	})
 
 	t.Run("Dijkstra", func(t *testing.T) {
-		ejemplo := methods.Dijkstra{
-			Grafo: []methods.Edge{
+		ejemplo := Dijkstra{
+			Grafo: []Edge{
 				{Source: "O", Target: "A", Weight: 4},
 				{Source: "O", Target: "B", Weight: 3},
 				{Source: "O", Target: "C", Weight: 6},
@@ -208,9 +207,9 @@ func TestGrafos(t *testing.T) {
 			Destino: "T",
 		}
 
-		sol := methods.ResuelveDijkstra(ejemplo)
+		sol := ResuelveDijkstra(ejemplo)
 
-		if sol.Peso-17 > methods.Epsilon {
+		if sol.Peso-17 > Epsilon {
 			t.Errorf("Peso incorrecto, debería ser 17, se obtuvo %f", sol.Peso)
 		}
 
@@ -224,7 +223,7 @@ func TestGrafos(t *testing.T) {
 	})
 
 	t.Run("Kruskal", func(t *testing.T) {
-		ejemplo := []methods.Edge{
+		ejemplo := []Edge{
 			{Source: "C", Target: "B", Weight: 4},
 			{Source: "A", Target: "C", Weight: 3},
 			{Source: "A", Target: "B", Weight: 6},
@@ -236,13 +235,13 @@ func TestGrafos(t *testing.T) {
 			{Source: "S", Target: "C", Weight: 8},
 		}
 
-		sol := methods.ResuelveKruskal(ejemplo)
+		sol := ResuelveKruskal(ejemplo)
 
-		if len(sol.Arbol) != 5 {
+		if len(sol.Tree) != 5 {
 			t.Error()
 		}
 
-		if sol.Peso-17.0 > methods.Epsilon {
+		if sol.Weight-17.0 > Epsilon {
 			t.Error()
 		}
 	})
