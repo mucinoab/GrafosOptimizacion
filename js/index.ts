@@ -32,7 +32,7 @@ renderDotGraph("drawContainer", `digraph{rankdir=LR;${graphInput.value}}`);
 graphInput.addEventListener("input", debounce(() => {
   const dotGraph = `digraph{rankdir=LR;${graphInput.value}}`;
   renderDotGraph("drawContainer", dotGraph);
-}, 250));
+}, 400));
 
 function showTable() {
   if (form.checkValidity()) {

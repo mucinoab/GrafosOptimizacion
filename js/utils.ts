@@ -83,23 +83,31 @@ function debounce(func: () => void, timeout: number) {
 
 function renderDotGraph(containerId: string, dotGraph: string) {
   //Reference: https://www.graphviz.org/doc/info/lang.html
-  // TODO Directed an undirected graphs
+  // TODO Directed and undirected graphs
 
-  // HACK?
+  const graphContainer = document.getElementById(containerId);
+  const errMsg = document.getElementById("drawing-error");
   const narrow_screen = window.matchMedia('all and (max-width: 720px)');
+
+  if (graphContainer === null) return;
+
   if (narrow_screen.matches) {
     // Draw the graph form top to bottom instead of left to right
     dotGraph = dotGraph.replace("rankdir=LR;", "");
   }
 
-  const graphContainer = document.getElementById(containerId);
-  if (graphContainer === null) return;
-
   graphWasm.graphviz.dot(dotGraph, "svg").then((svg: string) => {
     graphContainer.innerHTML = svg;
 
     let graphSVG = <SVGElement>graphContainer.childNodes[6];
-    graphSVG.removeAttribute("height"); // To be resized by the parent container.
+
+    // Gain the ability to be resized by the parent container.
+    graphSVG.removeAttribute("height");
     graphSVG.removeAttribute("width");
-  }, (_: any) => { /* TODO: Report the error */ });
+
+    errMsg.style.setProperty("display", "none");
+  }, (err: string) => {
+      errMsg.innerText = err;
+      errMsg.style.setProperty("display", "block");
+    });
 }
