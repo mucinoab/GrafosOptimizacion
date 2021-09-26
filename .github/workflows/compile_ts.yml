@@ -27,7 +27,7 @@ jobs:
         with:
           default_author: github_actions
           branch: prod
-          add: 'js --force'
+          add: '. --force'
           message: 'Build and deploy'
           push: 'origin prod --force'
 
