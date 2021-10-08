@@ -242,19 +242,28 @@ function graphFromTable(id: string): Array<Vertices> {
   const pesos = document.querySelectorAll<HTMLInputElement>(`.pesos${id}`);
 
   let peso: number = 0;
+  let origen: string;
+  let destino: string;
   let grafo = []
 
   for (let idx = 0; idx < origenes.length; idx += 1) {
+    origen = origenes[idx].value.trim();
     peso = parseFloat(pesos[idx].value.trim());
+    destino = destinos[idx].value.trim();
 
     if (isNaN(peso)) {
       alert("Por favor verifica que los pesos ingresados sean números.")
       return;
     }
 
+    if (!origen || origen.length === 0 || !destino || destino.length === 0) {
+      alert("Por favor llena todos los orígenes/destinos.")
+      return;
+    }
+
     grafo.push({
-      origen: origenes[idx].value.trim(),
-      destino: destinos[idx].value.trim(),
+      origen: origen,
+      destino: destino,
       peso: peso
     });
   }
