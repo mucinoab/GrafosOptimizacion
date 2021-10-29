@@ -111,3 +111,56 @@ function renderDotGraph(containerId: string, dotGraph: string) {
       errMsg.style.setProperty("display", "block");
     });
 }
+
+function appendRow(table: HTMLTableElement, tableId: string, i: number, header: boolean) {
+  function pushCell(r: HTMLTableRowElement, e: number | string, placeholder="") {
+    let ele;
+
+    if (typeof e == "number") {
+      ele = document.createTextNode(String(e));
+    } else {
+      ele = newInputElement(e, placeholder);
+    }
+
+    r.insertCell().appendChild(ele);
+  }
+
+  let r = table.insertRow();
+
+  // #, origen, destino, peso, [probable, pesimista]
+  pushCell(r, i);
+  pushCell(r, `origenes${tableId}`);
+  pushCell(r, `destinos${tableId}`);
+  pushCell(r, `pesos${tableId}`, "0.0");
+
+  if (header) { // TODO name
+    if (tableId === "PERT") {
+      // special case PERT
+      pushCell(r, `probable${tableId}`, "0.0");
+      pushCell(r, `pesimista${tableId}`, "0.0");
+    } else {
+      // special case Compresion
+      pushCell(r, `costo${tableId}`, "0.0");
+      pushCell(r, `pesosUrgente${tableId}`, "0.0");
+      pushCell(r, `costosUrgente${tableId}`, "0.0");
+    }
+  }
+}
+
+function addRow(): void {
+  const tableId = Method[activeTab];
+  const nRows   = document.getElementById(`${tableId}Header`) != null;
+  let table     = <HTMLTableElement>document.getElementById(`innerTable${tableId}`);
+
+  appendRow(table, tableId, table.children.length, nRows);
+  vertices.value = String(table.children.length);
+}
+
+function removeRow(): void {
+  let table = document.getElementById(`innerTable${Method[activeTab]}`);
+
+  if (table.children.length == 1) return;
+
+  table.lastChild.remove();
+  vertices.value = String(table.children.length);
+}

@@ -51,34 +51,13 @@ function showTable() {
 }
 
 function generateTable(tableId: string, nvertices: number): void {
-  const nRows = <HTMLTableRowElement>document.getElementById(`${tableId}Header`);
+  const nRows = document.getElementById(`${tableId}Header`) != null;
   let table = <HTMLTableElement>document.getElementById(`innerTable${tableId}`);
-  let r: HTMLTableRowElement;
 
   clearElement(table);
 
-  // #, origen, destino, peso, [probable, pesimista]
   for (let i = 0; i < nvertices; i += 1) {
-    r = table.insertRow();
-    // TODO Refactor all this long lines
-
-    r.insertCell().appendChild(document.createTextNode(String(i)));
-    r.insertCell().appendChild(newInputElement(`origenes${tableId}`));
-    r.insertCell().appendChild(newInputElement(`destinos${tableId}`));
-    r.insertCell().appendChild(newInputElement(`pesos${tableId}`, "0.0"));
-
-    if (nRows != null) {
-      if (tableId === "PERT") {
-        // special case PERT
-        r.insertCell().appendChild(newInputElement(`probable${tableId}`, "0.0"));
-        r.insertCell().appendChild(newInputElement(`pesimista${tableId}`, "0.0"));
-      } else {
-        // special case Compresion
-        r.insertCell().appendChild(newInputElement(`costo${tableId}`, "0.0"));
-        r.insertCell().appendChild(newInputElement(`pesosUrgente${tableId}`, "0.0"));
-        r.insertCell().appendChild(newInputElement(`costosUrgente${tableId}`, "0.0"));
-      }
-    }
+    appendRow(table, tableId, i, nRows);
   }
 }
 
@@ -105,15 +84,14 @@ function flujoMaximo() {
 }
 
 function floydWarshall() {
-  const tablaId: string = "Floyd";
-  const tabla = <HTMLFormElement>document.getElementById(`Tabla${tablaId}`);
+  const tabla = <HTMLFormElement>document.getElementById(`TablaFloyd`);
 
   if (!tabla.checkValidity()) {
     tabla.reportValidity();
     return;
   }
 
-  postData('floydwarshall', graphFromTable(tablaId)) .then(data => {
+  postData('floydwarshall', graphFromTable("FloydWarshall")).then(data => {
     renderResponseFloyd(data);
   });
 }

@@ -61,8 +61,17 @@
       <div class="tab-pane show active" id="FlujoM" role="tabpanel" aria-labelledby="flujo-tab">
         <div id="FlujoMaximo" style="display: none;">
           <p>Ingresa todas las conexiones del grafo y su respectivo peso.</p>
+
           <form id="TablaFlujo">
-            <table class="table table-sm table-hover " style="max-width: 80%;">
+
+            <div class="btn-toolbar row-button">
+              <div class="btn-group-vertical me-2">
+                <button type="button" class="btn btn-outline-primary" onclick="removeRow()" title="Quitar fila">-</button>
+                <button type="button" class="btn btn-primary" onclick="addRow()" title="Añadir fila">+</button>
+              </div>
+            </div>
+
+            <table class="table table-sm table-hover " style="max-width: 85%;">
               <thead class="table-header">
                 <tr class="text-center">
                   <th scope="col">#</th>
@@ -74,11 +83,13 @@
               <tbody id="innerTableFlujoMaximo">
               </tbody>
             </table>
+
             <br> <label class="form-label">Nodo Origen</label>
             <input type="text" class="form-control pesos" id="origen" required style="max-width:10em;">
             <br> <label class="form-label">Nodo Destino</label>
-            <input type="text" class="form-control pesos" id="destino" required style="max-width: 15%;">
+            <input type="text" class="form-control pesos" id="destino" required style="max-width: 10em;">
             <br>
+
             <button type="button" class="btn btn-primary" onclick="flujoMaximo()">Resolver</button>
           </form>
         </div>
@@ -94,7 +105,16 @@
       <div class="tab-pane" id="FloydW" role="tabpanel" aria-labelledby="floyd-tab">
         <div id="FloydWarshall" style="display: none;">
           <p>Ingresa todas las conexiones del grafo y su respectivo peso.</p>
+
           <form id="TablaFloyd">
+
+            <div class="btn-toolbar row-button">
+              <div class="btn-group-vertical me-2">
+                <button type="button" class="btn btn-outline-primary" onclick="removeRow()" title="Quitar fila">-</button>
+                <button type="button" class="btn btn-primary" onclick="addRow()" title="Añadir fila">+</button>
+              </div>
+            </div>
+
             <table class="table table-sm table-hover " style="max-width: 80%;">
               <thead class="table-header">
                 <tr class="text-center">
@@ -107,7 +127,7 @@
               <tbody id="innerTableFloydWarshall">
               </tbody>
             </table>
-            <br>
+
             <button type="button" class="btn btn-primary" onclick="floydWarshall()">Resolver</button>
           </form>
         </div>
@@ -120,7 +140,16 @@
       <div class="tab-pane" id="contCPM" role="tabpanel" aria-labelledby="cpm-tab">
         <div id="CPM" style="display: none;">
           <p>Ingresa todas las actividades, sus predecesora y sus respectivas duraciones. Si una actividad no tiene predecesora, utiliza un guión medio ("-").</p>
+
           <form id="TablaCPM">
+
+            <div class="btn-toolbar row-button">
+              <div class="btn-group-vertical me-2">
+                <button type="button" class="btn btn-outline-primary" onclick="removeRow()" title="Quitar fila">-</button>
+                <button type="button" class="btn btn-primary" onclick="addRow()" title="Añadir fila">+</button>
+              </div>
+            </div>
+
             <table class="table table-sm table-hover " style="max-width: 80%;">
               <thead class="table-header">
                 <tr class="text-center">
@@ -150,6 +179,14 @@
           <p>Ingresa todas las actividades, sus predecesora y sus respectivas duraciones(optimista, más probable y pesimista). Si una actividad no tiene predecesora, utiliza un guión medio ("-").</p>
 
           <form id="TablaPERT">
+
+            <div class="btn-toolbar row-button">
+              <div class="btn-group-vertical me-2">
+                <button type="button" class="btn btn-outline-primary" onclick="removeRow()" title="Quitar fila">-</button>
+                <button type="button" class="btn btn-primary" onclick="addRow()" title="Añadir fila">+</button>
+              </div>
+            </div>
+
             <table class="table table-sm table-hover " style="max-width: 85%;">
               <thead class="table-header">
                 <tr id="PERTHeader" class="text-center">
@@ -187,6 +224,14 @@
           <p> Ingresa todas las actividades, sus predecesoras, su duración y costo (normal y urgente). <br> Si una actividad no tiene predecesora, utiliza un guión medio ("-").</p>
 
           <form id="TablaCompresion">
+
+            <div class="btn-toolbar row-button">
+              <div class="btn-group-vertical me-2">
+                <button type="button" class="btn btn-outline-primary" onclick="removeRow()" title="Quitar fila">-</button>
+                <button type="button" class="btn btn-primary" onclick="addRow()" title="Añadir fila">+</button>
+              </div>
+            </div>
+
             <table class="table table-sm table-hover " style="max-width: 80%;">
               <thead class="table-header">
                 <tr id="AceleracionHeader" class="text-center">
@@ -219,6 +264,14 @@
           <p>Ingresa todos los orígenes, sus destinos y sus respectivos pesos.</p>
 
           <form id="TablaDijkstra">
+
+            <div class="btn-toolbar row-button">
+              <div class="btn-group-vertical me-2">
+                <button type="button" class="btn btn-outline-primary" onclick="removeRow()" title="Quitar fila">-</button>
+                <button type="button" class="btn btn-primary" onclick="addRow()" title="Añadir fila">+</button>
+              </div>
+            </div>
+
             <table class="table table-sm table-hover " style="max-width: 80%;">
               <thead class="table-header">
                 <tr class="text-center">
@@ -255,6 +308,14 @@
           <p>Ingresa todos los orígenes, sus destinos y sus respectivos pesos.</p>
 
           <form id="TablaKruskal">
+
+            <div class="btn-toolbar row-button">
+              <div class="btn-group-vertical me-2">
+                <button type="button" class="btn btn-outline-primary" onclick="removeRow()" title="Quitar fila">-</button>
+                <button type="button" class="btn btn-primary" onclick="addRow()" title="Añadir fila">+</button>
+              </div>
+            </div>
+
             <table class="table table-sm table-hover " style="max-width: 80%;">
               <thead class="table-header">
                 <tr class="text-center">
