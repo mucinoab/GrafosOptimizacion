@@ -1,10 +1,17 @@
 package methods
 
 import (
+	"math"
 	"reflect"
 	"sort"
 	"testing"
 )
+
+func testAbsoluteError(v, e float64, t *testing.T) {
+	if math.Abs(v-e) > Epsilon {
+		t.Errorf("Wrong answer, expected: %f, got: %f", e, v)
+	}
+}
 
 func TestGrafos(t *testing.T) {
 	t.Run("Flujo Máximo", func(t *testing.T) {
@@ -34,11 +41,7 @@ func TestGrafos(t *testing.T) {
 			Dirigido: true,
 		}
 
-		sol := ResuelveFlujoMaximo(grafo)
-
-		if sol.Flujo != 20.00 {
-			t.Errorf("Flujo máximo incorrecto, obtuve %.2f, esperaba 20.00", sol.Flujo)
-		}
+		testAbsoluteError(ResuelveFlujoMaximo(grafo).Flujo, 20.00, t)
 	})
 
 	t.Run("Floyd-Warshall", func(t *testing.T) {
@@ -148,13 +151,8 @@ func TestGrafos(t *testing.T) {
 
 		clase := ResuelvePERT(ejemplo)
 
-		if clase.Media != 20.0 {
-			t.Error("Media total erronea.")
-		}
-
-		if clase.SumaVariazas-19.0/9.0 > Epsilon {
-			t.Errorf("%f != %f", clase.SumaVariazas, 19.0/9.0)
-		}
+		testAbsoluteError(clase.Media, 20.0, t)
+		testAbsoluteError(clase.SumaVariazas, 19.0/9.0, t)
 	})
 
 	t.Run("Compresion", func(t *testing.T) {
@@ -172,9 +170,7 @@ func TestGrafos(t *testing.T) {
 
 		sol := ResuelveCompresion(ejemplo)
 
-		if sol.CPMs[len(sol.CPMs)-1].DuracionTotal-11.0 > Epsilon {
-			t.Error("Duración total incorrecta.")
-		}
+		testAbsoluteError(sol.CPMs[len(sol.CPMs)-1].DuracionTotal, 11, t)
 	})
 
 	t.Run("Dijkstra", func(t *testing.T) {
@@ -209,17 +205,9 @@ func TestGrafos(t *testing.T) {
 
 		sol := ResuelveDijkstra(ejemplo)
 
-		if sol.Peso-17 > Epsilon {
-			t.Errorf("Peso incorrecto, debería ser 17, se obtuvo %f", sol.Peso)
-		}
-
-		if len(sol.Coords) != 10 {
-			t.Error()
-		}
-
-		if len(sol.Bases) != 11 {
-			t.Error()
-		}
+		testAbsoluteError(sol.Peso, 17.0, t)
+		testAbsoluteError(float64(len(sol.Coords)), 10.0, t)
+		testAbsoluteError(float64(len(sol.Bases)), 11.0, t)
 	})
 
 	t.Run("Kruskal", func(t *testing.T) {
@@ -237,12 +225,7 @@ func TestGrafos(t *testing.T) {
 
 		sol := ResuelveKruskal(ejemplo)
 
-		if len(sol.Tree) != 5 {
-			t.Error()
-		}
-
-		if sol.Weight-17.0 > Epsilon {
-			t.Error()
-		}
+		testAbsoluteError(float64(len(sol.Tree)), 5.0, t)
+		testAbsoluteError(sol.Weight, 17.0, t)
 	})
 }
