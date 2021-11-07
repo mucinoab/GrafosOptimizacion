@@ -9,6 +9,11 @@ import (
 
 func main() {
 	port := os.Getenv("PORT")
+
+	if len(port) == 0 {
+		log.Panic("No port given")
+	}
+
 	staticFiles := http.FileServer(http.Dir("./static"))
 	jsFiles := http.StripPrefix("/js/", http.FileServer(http.Dir("./js")))
 
