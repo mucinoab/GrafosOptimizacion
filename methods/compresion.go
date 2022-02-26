@@ -153,7 +153,7 @@ func Clone(arre []Edge) []Edge {
 	return cpy
 }
 
-func calculaCostoRuta(c map[string]Costos, act []Edge, comprimidos *set) float64 {
+func calculaCostoRuta(c map[string]Costos, act []Edge, comprimidos set) float64 {
 	vistos := Set()
 	costo := 0.0
 

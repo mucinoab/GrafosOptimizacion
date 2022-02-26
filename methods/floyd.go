@@ -23,8 +23,9 @@ func ResuelveFloyWarshall(grafo *[]Edge) RespuestaFloydWarshall {
 		nodos.Add(v.Target)
 	}
 
-	for origen := range nodos.m {
-		for destino := range nodos.m {
+	// TODO se puede solo inicializar con inf?
+	for origen := range nodos {
+		for destino := range nodos {
 			if origen == destino {
 				// Distancia a ti mismo
 				sol[origen][destino] = 0
@@ -43,10 +44,10 @@ func ResuelveFloyWarshall(grafo *[]Edge) RespuestaFloydWarshall {
 
 	var iteracion int64
 	var aux float64
-	iteraciones := make([][]Edge, len(nodos.m)+1)
+	iteraciones := make([][]Edge, len(nodos)+1)
 	cambios := []Cambio{}
 
-	for puente := range nodos.m {
+	for puente := range nodos {
 		// TODO grafos no dirigidos
 		iteraciones[iteracion] = *AdjListToVertices(sol, true)
 		iteracion += 1

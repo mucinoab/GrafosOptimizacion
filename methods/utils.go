@@ -28,32 +28,26 @@ type Edge struct {
 type adjList map[string]map[string]float64
 
 // Custom Hash Set
-type set struct {
-	m map[string]struct{}
+type set map[string]struct{}
+
+func Set() set {
+	return set{}
 }
 
-func Set() *set {
-	return &set{make(map[string]struct{})}
+func (s set) Add(k string) {
+	s[k] = struct{}{}
 }
 
-func (s *set) Len() int {
-	return len(s.m)
-}
-
-func (s *set) Add(k string) {
-	s.m[k] = struct{}{}
-}
-
-func (s *set) Contains(k string) bool {
-	_, c := s.m[k]
+func (s set) Contains(k string) bool {
+	_, c := s[k]
 
 	return c
 }
 
-func (s *set) toSlice() *[]string {
-	sl := make([]string, 0, len(s.m))
+func (s set) toSlice() *[]string {
+	sl := make([]string, 0, len(s))
 
-	for node := range s.m {
+	for node := range s {
 		sl = append(sl, node)
 	}
 
@@ -63,16 +57,16 @@ func (s *set) toSlice() *[]string {
 }
 
 // Values that are in s or in sn but not in both
-func (s *set) SymmetricDifference(sn *set) *set {
+func (s set) SymmetricDifference(sn set) set {
 	newS := Set()
 
-	for i := range s.m {
+	for i := range s {
 		if !sn.Contains(i) {
 			newS.Add(i)
 		}
 	}
 
-	for i := range sn.m {
+	for i := range sn {
 		if !s.Contains(i) {
 			newS.Add(i)
 		}

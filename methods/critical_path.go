@@ -49,7 +49,7 @@ func ResuelveCPM(p []Edge) RespuestaCPM {
 	recorridoIda("-", siguientes, actividades)
 
 	duracionTotal := NInf
-	aTerminales := s.SymmetricDifference(sn).m
+	aTerminales := s.SymmetricDifference(sn)
 
 	for k := range aTerminales {
 		duracionTotal = math.Max(duracionTotal, actividades[k].ProximoR)
