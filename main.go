@@ -11,7 +11,7 @@ func main() {
 	port := os.Getenv("PORT")
 
 	if len(port) == 0 {
-		log.Panic("No port given")
+		port = "8000"
 	}
 
 	staticFiles := http.FileServer(http.Dir("./static"))
