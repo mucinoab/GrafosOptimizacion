@@ -1,3 +1,4 @@
+// Package methods TODO
 package methods
 
 import (
@@ -26,14 +27,14 @@ func ResuelveKruskal(grafo []Edge) Kruskal {
 
 	for idx, v := range grafo[:] {
 		ciclo := ""
-		if !uf.Cycle(v.Source, v.Target) {
+		if uf.Cycle(v.Source, v.Target) {
+			ciclo = v.Source + v.Target
+		} else {
 			uf.Union(v.Source, v.Target)
 			arbol = append(arbol, idx)
 			peso += v.Weight
 
 			fmt.Fprintf(&camino, "%s,%s,", v.Source, v.Target)
-		} else {
-			ciclo = v.Source + v.Target
 		}
 
 		links = append(links, DotGraphGenerator(grafo, camino.String(), ciclo, false))
