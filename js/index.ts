@@ -80,7 +80,7 @@ function flujoMaximo() {
     dirigido: true, // HACK, for now
   };
 
-  postData('flujomaximo', payload).then(data => {renderResponseFlujo(data)});
+  postData('flujomaximo', payload).then(data => { renderResponseFlujo(data) });
 }
 
 function floydWarshall() {
@@ -102,7 +102,7 @@ function CPM() {
 
   if (act === undefined) return;
 
-  postData("cpm", act).then(data => {renderResponseCPM(data)});
+  postData("cpm", act).then(data => { renderResponseCPM(data) });
 }
 
 // Critical Path, PERT
@@ -136,7 +136,7 @@ function PERT() {
     actividaes.push(activida);
   }
 
-  postData("pert", actividaes).then(data => {renderResponsePERT(data)});
+  postData("pert", actividaes).then(data => { renderResponsePERT(data) });
 }
 
 function Compresion() {
@@ -187,7 +187,7 @@ function Compresion() {
     tiempoObjetivo: duracion,
   };
 
-  postData("compresion", data).then(data => {renderResponseCompresion(data)});
+  postData("compresion", data).then(data => { renderResponseCompresion(data) });
 }
 
 function Dijkstra() {
@@ -312,17 +312,17 @@ function graphButton(id: string): string {
       data-bs-toggle="collapse" data-bs-target="#${id}" aria-expanded="false"
       aria-controls="${id}">Visualizar</button>
         <div class="collapse" id="${id}"><br><br>
-          <div class="card card-body" style="padding:0px;">
-          <div id="imagen${id}" class="grafo-svg">
+        <div class="card card-body" style="padding:0px;">
+        <div id="imagen${id}" class="grafo-svg">
     </div></div>`;
 }
 
 function setOfTrajectory(trajectory: string): Set<string> {
-  const t: Set<string>=  new Set();
+  const t: Set<string> = new Set();
   const s = findStrip(trajectory, '|').split(",");
 
-  for(let i = 0; i < s.length - 1; i += 1) {
-    t.add(`${s[i]}${s[i+1]}`);
+  for (let i = 0; i < s.length - 1; i += 1) {
+    t.add(`${s[i]}${s[i + 1]}`);
   }
 
   return t;
@@ -341,16 +341,16 @@ function drawGraphLinkCritical(r: ResponseCPM): string {
   let link = "digraph{rankdir=LR;";
 
   for (const a of r.actividades) {
-    for (const s of a.sucesores){
+    for (const s of a.sucesores) {
       link += `${a.nombre}->${s}`;
       link += "[" + `label="${a.proximoL.toFixed(3)}, ${a.proximoR.toFixed(3)}\n${a.lejanoL.toFixed(3)}, ${a.lejanoR.toFixed(3)}"`;
 
-      if (rutaCritica.has(a.nombre) &&  rutaCritica.has(s)) {
-        link +=",color=red,penwidth=3.0]";
+      if (rutaCritica.has(a.nombre) && rutaCritica.has(s)) {
+        link += ",color=red,penwidth=3.0]";
       } else {
-        link +="]";
+        link += "]";
       }
-      link +=";";
+      link += ";";
     }
   }
 
@@ -395,8 +395,8 @@ tabs.forEach(tab => {
         break;
 
       default:
-      form.style.setProperty("display", "none");
-      activeTab = Method.None;
+        form.style.setProperty("display", "none");
+        activeTab = Method.None;
     }
   })
 });

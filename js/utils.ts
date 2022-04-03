@@ -1,10 +1,10 @@
 // Removes all the inner HTML of an element
 function clearElement(e: HTMLElement) {
-  while(e.firstChild && e.removeChild(e.firstChild));
+  while (e.firstChild && e.removeChild(e.firstChild));
 }
 
 // Creates new HTML element.
-function newElement(tagType: string, id: string="", className: string=""): HTMLElement {
+function newElement(tagType: string, id: string = "", className: string = ""): HTMLElement {
   const ele = document.createElement(tagType);
   ele.className = className;
   ele.id = id;
@@ -40,7 +40,7 @@ async function postData(url: string, data: { [key: string]: any }) {
   const response = await fetch(url, {
     method: 'POST',
     cache: 'no-cache',
-    headers: {'Content-Type': 'application/json'},
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
   });
 
@@ -61,13 +61,13 @@ function findStrip(str: string, needle: string): string {
 
 // By Ian H. from https://stackoverflow.com/a/59217784
 // Normal Cumulative Distribution
-function normalCDF(x: number, mean: number , variance: number): number {
+function normalCDF(x: number, mean: number, variance: number): number {
   const z = (x - mean) / Math.sqrt(variance);
   const t = 1 / (1 + .2315419 * Math.abs(z));
-  const d =.3989423 * Math.exp( -z * z / 2);
+  const d = .3989423 * Math.exp(-z * z / 2);
 
-  let prob = d * t * (.3193815 + t * ( -.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
-  if( z > 0 ) prob = 1 - prob;
+  let prob = d * t * (.3193815 + t * (-.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+  if (z > 0) prob = 1 - prob;
 
   return prob;
 }
@@ -107,13 +107,35 @@ function renderDotGraph(containerId: string, dotGraph: string) {
 
     errMsg.style.setProperty("display", "none");
   }, (err: string) => {
-      errMsg.innerText = err;
-      errMsg.style.setProperty("display", "block");
+    errMsg.innerText = err;
+    errMsg.style.setProperty("display", "block");
+  });
+}
+
+async function getDotGraphAscii(dotGraph: string): Promise<string> {
+  const url = "https://dot-to-ascii.ggerganov.com/dot-to-ascii.php?" + new URLSearchParams({
+    boxart: "1",
+    src: dotGraph,
+  });
+
+  console.log(url);
+
+  fetch(url, {
+    mode: "no-cors",
+  }).then(g => g.text()).then(g => console.log(g));
+
+  return fetch(url, {
+    mode: "no-cors",
+    method: "GET",
+  }).then(response => response.text())
+    .catch(error => {
+      console.error('There has been a problem with your fetch operation:', error);
+      return "";
     });
 }
 
 function appendRow(table: HTMLTableElement, tableId: string, i: number, header: boolean) {
-  function pushCell(r: HTMLTableRowElement, e: number | string, placeholder="") {
+  function pushCell(r: HTMLTableRowElement, e: number | string, placeholder = "") {
     let ele;
 
     if (typeof e == "number") {
@@ -149,8 +171,8 @@ function appendRow(table: HTMLTableElement, tableId: string, i: number, header: 
 
 function addRow(): void {
   const tableId = Method[activeTab];
-  const nRows   = document.getElementById(`${tableId}Header`) != null;
-  let table     = <HTMLTableElement>document.getElementById(`innerTable${tableId}`);
+  const nRows = document.getElementById(`${tableId}Header`) != null;
+  let table = <HTMLTableElement>document.getElementById(`innerTable${tableId}`);
 
   appendRow(table, tableId, table.children.length, nRows);
   vertices.value = String(table.children.length);

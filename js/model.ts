@@ -16,15 +16,15 @@ interface ResponseCPM {
 }
 
 interface coor {
-  row : number,
-  col : number,
+  row: number,
+  col: number,
 }
 
 interface ResponseDijkstra {
-  bases : Array<string>,
+  bases: Array<string>,
   destino: string,
   origen: string,
-  peso : number,
+  peso: number,
   tabla: Array<Array<string>>,
   coords: Array<coor>,
 }
@@ -74,12 +74,12 @@ interface Change {
   destino: string,
 }
 
-interface VerticeCompresion{
-  actividad:   string,
+interface VerticeCompresion {
+  actividad: string,
   predecesora: string,
 
   pesoNormal: number,
-  costoNormal:number,
+  costoNormal: number,
 
   pesoUrgente: number,
   costoUrgente: number,

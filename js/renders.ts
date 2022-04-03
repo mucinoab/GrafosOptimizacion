@@ -19,7 +19,7 @@ function renderResponsePERT(r: ResponsePERT) {
       row.removeChild(row.lastChild);
     }
 
-    const tdClass = (rutaC.has(activida) && rutaC.has(predecesora)) ? "cambio":"";
+    const tdClass = (rutaC.has(activida) && rutaC.has(predecesora)) ? "cambio" : "";
     putCell(row, r.estimaciones[idx].toFixed(3), tdClass);
     putCell(row, r.varianzas[idx].toFixed(3), tdClass);
 
@@ -104,7 +104,7 @@ function renderResponseFloyd(r: ResponseFloydW) {
           if (n.origen == a && n.destino == b) {
             const v: string = (n.peso == Number.MAX_VALUE) ? '∞' : String(n.peso);
 
-            if (cambios.has(JSON.stringify({iteracion:idx, origen: a, destino: b}))) {
+            if (cambios.has(JSON.stringify({ iteracion: idx, origen: a, destino: b }))) {
               // A change in value
               putCell(row, v, "cambio");
             } else {
@@ -133,7 +133,7 @@ function renderNormalCDF() {
   }
 
   let r = document.getElementById("normalCDF");
-  r.innerHTML = `${(normalCDF(tiempo, media, varianza)*100).toFixed(4)} %`;
+  r.innerHTML = `${(normalCDF(tiempo, media, varianza) * 100).toFixed(4)} %`;
 }
 
 function renderResponseCPM(r: ResponseCPM) {
@@ -204,16 +204,16 @@ function renderResponseDijkstra(data: ResponseDijkstra) {
   table.style.setProperty("max-width", "80%");
   table.insertAdjacentHTML("beforeend", nodesHeader);
 
-  let nodosBody: string= "<tbody>";
+  let nodosBody: string = "<tbody>";
 
-  for (let idx = 0 ; idx < data.tabla.length;idx++) {
-    if(data.tabla[idx]) {
+  for (let idx = 0; idx < data.tabla.length; idx++) {
+    if (data.tabla[idx]) {
       nodosBody += `<tr><th scope=\"row\">${data.bases[idx]}</th>`
 
-      for(let col = 0; col < data.tabla[idx].length; col += 1) {
+      for (let col = 0; col < data.tabla[idx].length; col += 1) {
 
         // Color the cell
-        if(data.coords.some(c => c.row === idx && c.col === col)) {
+        if (data.coords.some(c => c.row === idx && c.col === col)) {
           nodosBody += `<td class="cambio">${data.tabla[idx][col]}</td>`;
         } else {
           nodosBody += `<td>${data.tabla[idx][col]}</td>`;
