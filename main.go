@@ -19,6 +19,7 @@ func main() {
 
 	http.Handle("/", staticFiles)
 	http.Handle("/js/", jsFiles)
+
 	http.HandleFunc("/flujomaximo", flujoMaximo)
 	http.HandleFunc("/floydwarshall", floyWarshall)
 	http.HandleFunc("/cpm", cpm)
