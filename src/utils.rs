@@ -2,59 +2,67 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Deserialize, Serialize)]
-pub struct Graph {
-    pub edges: Vec<Edge>,
-}
-
-#[derive(Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Edge {
     pub source: String,
     pub target: String,
     pub weight: f64,
 }
 
-pub struct UnionFind {
-    inner: HashMap<String, String>, // TODO name
+impl Edge {
+    pub fn new(s: &str, t: &str, weight: f64) -> Self {
+        Self {
+            source: s.to_owned(),
+            target: t.to_owned(),
+            weight,
+        }
+    }
 }
 
-impl UnionFind {
-    pub fn new(edges: &[Edge]) -> Self {
-        let inner: HashMap<String, String> = edges
+pub struct UnionFind<'e> {
+    // TODO name
+    inner: HashMap<&'e str, &'e str>,
+}
+
+impl<'e> UnionFind<'e> {
+    pub fn new(edges: &'e [Edge]) -> Self {
+        let inner = edges
             .iter()
-            .flat_map(|Edge { source, target, .. }| [(source, target), (target, source)])
-            .map(|(k, v)| (k.into(), v.into()))
+            .flat_map(|Edge { source, target, .. }| [(source, source), (target, target)])
+            .map(|(k, v)| (k.as_str(), v.as_str()))
             .collect();
 
         Self { inner }
     }
 
-    pub fn union(&mut self, a: &str, b: &str) {
-        let a = self.parent(a);
-        let b = self.parent(b);
+    pub fn union(&mut self, mut a: &'e str, mut b: &'e str) {
+        a = self.parent(a);
+        b = self.parent(b);
 
         if a != b {
-            // Euristic to insert 50/50
+            // Heuristic to try to insert 50/50
             if ((a.len() + b.len()) % 2) == 0 {
-                self.inner.entry(a).insert_entry(b);
+                self.inner.insert(a, b);
             } else {
-                self.inner.entry(b).insert_entry(a);
+                self.inner.insert(b, a);
             }
         }
     }
 
-    fn parent(&mut self, child: &str) -> String {
-        // TODO do less accesses to inner
-
-        if self.inner[child] != child {
-            let p = self.parent(child);
-            self.inner.insert(child.to_string(), p);
-        }
-
-        self.inner[child].to_owned()
+    pub fn exists_cycle(&mut self, a: &'e str, b: &'e str) -> bool {
+        self.parent(a) == self.parent(b)
     }
 
-    pub fn exists_cycle(&mut self, a: &str, b: &str) -> bool {
-        self.parent(a) == self.parent(b)
+    fn parent(&mut self, child: &'e str) -> &'e str {
+        let parent = self.inner[child];
+
+        if parent != child {
+            let new_parent = self.parent(parent);
+            self.inner.insert(child, new_parent);
+
+            new_parent
+        } else {
+            parent
+        }
     }
 }
