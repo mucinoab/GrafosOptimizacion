@@ -1,11 +1,9 @@
-#![feature(entry_insert)]
-
 mod kruskal;
 mod utils;
 
-use std::{io, net::SocketAddr, sync::Arc};
+use utils::Edge;
 
-use utils::Graph;
+use std::{io, net::SocketAddr, sync::Arc};
 
 use axum::{
     http::StatusCode,
@@ -13,7 +11,6 @@ use axum::{
     routing::{get, get_service, post},
     Extension, Json, Router,
 };
-use tokio::task;
 use tower_http::{compression::CompressionLayer, services::ServeDir, trace::TraceLayer};
 
 #[tokio::main]
@@ -37,12 +34,8 @@ async fn main() {
         .unwrap();
 }
 
-async fn kruskal(Json(payload): Json<Graph>) -> impl IntoResponse {
-    task::spawn_blocking(|| kruskal::solve(payload))
-        .await
-        .unwrap();
-
-    (StatusCode::OK, "")
+async fn kruskal(Json(payload): Json<Vec<Edge>>) -> impl IntoResponse {
+    Json(kruskal::solve(payload))
 }
 
 async fn handle_error(err: io::Error) -> impl IntoResponse {
