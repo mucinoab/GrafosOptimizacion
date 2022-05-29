@@ -1,6 +1,6 @@
 interface ResponseFloydW {
   cambios: Array<Change>,
-  iteraciones: Array<Array<Vertices>>,
+  iteraciones: Array<Array<Vertice>>,
   nodos: Array<string>,
 }
 
@@ -49,15 +49,14 @@ interface Actividad {
 }
 
 interface Path {
-  data: Array<Vertices>,
+  data: Array<Vertice>,
   camino: string,
 }
 
-// TODO  Vertices -> Vertice
-interface Vertices {
-  origen: string,
-  destino: string,
-  peso: number,
+interface Vertice {
+  source: string,
+  target: string,
+  weight: number,
 }
 
 interface VerticePERT {
@@ -98,8 +97,6 @@ interface ResponseCompresion {
 }
 
 interface Kruskal {
-  graph: Array<Vertices>,
-  tree: Array<number>,
-  weight: number,
-  graphs: Array<string>,
+  tree_weight: number,
+  dot_graph_frames: Array<string>,
 }

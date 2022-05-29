@@ -61,9 +61,9 @@ function renderResponseFlujo(r: ResponseFlujoMaximo) {
 
     for (const v of e.data) {
       respHTML += `
-        <tr><td>${v.origen}</td>
-        <td>${v.destino}</td>
-        <td>${v.peso}</td></tr> `;
+        <tr><td>${v.source}</td>
+        <td>${v.target}</td>
+        <td>${v.weight}</td></tr> `;
     }
     iter += 1;
   }
@@ -101,8 +101,8 @@ function renderResponseFloyd(r: ResponseFloydW) {
 
       for (const b of r.nodos) {
         for (const n of iteracion) {
-          if (n.origen == a && n.destino == b) {
-            const v: string = (n.peso == Number.MAX_VALUE) ? '∞' : String(n.peso);
+          if (n.source == a && n.target == b) {
+            const v: string = (n.weight == Number.MAX_VALUE) ? '∞' : String(n.weight);
 
             if (cambios.has(JSON.stringify({ iteracion: idx, origen: a, destino: b }))) {
               // A change in value
@@ -237,19 +237,18 @@ function renderResponseKruskal(data: Kruskal) {
 
   clearTimeout(KruskalTimeOut);
   clearElement(respuesta);
-
-  respuesta.appendChild(newTextElement(`Peso: ${data.weight}`, "h4"));
+  respuesta.appendChild(newTextElement(`Peso: ${data.tree_weight}`, "h4"));
   respuesta.appendChild(newElement("div", "kruskal-graph", "grafo-svg"));
 
-  const dots = data.graphs;
+  const frames = data.dot_graph_frames;
   let dotIndex = 1;
 
-  renderDotGraph("kruskal-graph", dots[0]);
+  renderDotGraph("kruskal-graph", frames[0]);
 
   function renderAnimation() {
     KruskalTimeOut = setTimeout(() => {
-      renderDotGraph("kruskal-graph", dots[dotIndex]);
-      dotIndex = (dotIndex + 1) % dots.length;
+      renderDotGraph("kruskal-graph", frames[dotIndex]);
+      dotIndex = (dotIndex + 1) % frames.length;
       renderAnimation();
     }, 750);
   }

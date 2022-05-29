@@ -126,9 +126,9 @@ function PERT() {
     }
 
     let activida: VerticePERT = {
-      origen: a.origen,
-      destino: a.destino,
-      optimista: a.peso,
+      origen: a.source,
+      destino: a.target,
+      optimista: a.weight,
       probable: probable,
       pesimista: pesimista,
     };
@@ -161,9 +161,9 @@ function Compresion() {
     }
 
     let activida: VerticeCompresion = {
-      actividad: a.origen,
-      predecesora: a.destino,
-      pesoNormal: a.peso,
+      actividad: a.source,
+      predecesora: a.target,
+      pesoNormal: a.weight,
       costoNormal: costoN,
       pesoUrgente: pUrgente,
       costoUrgente: cUrgente,
@@ -214,7 +214,7 @@ function Kruskal() {
   });
 }
 
-function graphFromTable(id: string): Array<Vertices> {
+function graphFromTable(id: string): Array<Vertice> {
   const origenes = document.querySelectorAll<HTMLInputElement>(`.origenes${id}`);
   const destinos = document.querySelectorAll<HTMLInputElement>(`.destinos${id}`);
   const pesos = document.querySelectorAll<HTMLInputElement>(`.pesos${id}`);
@@ -240,9 +240,9 @@ function graphFromTable(id: string): Array<Vertices> {
     }
 
     grafo.push({
-      origen: origen,
-      destino: destino,
-      peso: peso
+      source: origen,
+      target: destino,
+      weight: peso
     });
   }
 
@@ -261,8 +261,8 @@ function fillTable(id: string, d: Array<any>) {
   let costosU = document.querySelectorAll<HTMLInputElement>(`.costosUrgente${id}`);
 
   for (let idx = 0; idx < d.length; idx += 1) {
-    origenes[idx].value = d[idx].origen;
-    destinos[idx].value = d[idx].destino;
+    origenes[idx].value = d[idx].source;
+    destinos[idx].value = d[idx].target;
 
     if (id === "Aceleracion") {
       origenes[idx].value = d[idx].actividad;
@@ -276,12 +276,12 @@ function fillTable(id: string, d: Array<any>) {
       probables[idx].value = String(d[idx].probable);
       pesimistas[idx].value = String(d[idx].pesimista);
     } else {
-      pesos[idx].value = String(d[idx].peso);
+      pesos[idx].value = String(d[idx].weight);
     }
   }
 }
 
-function createGraph(nodes: Array<Vertices>, camino: string, dirigido: boolean): string {
+function createGraph(nodes: Array<Vertice>, camino: string, dirigido: boolean): string {
   let graph = "";
 
   let sep: string;
@@ -296,11 +296,11 @@ function createGraph(nodes: Array<Vertices>, camino: string, dirigido: boolean):
   const s = setOfTrajectory(camino);
 
   for (const v of nodes) {
-    if (s.has(`${v.origen}${v.destino}`)) {
+    if (s.has(`${v.source}${v.target}`)) {
       // Fue parte de la trayectoria que se tomó
-      graph += `${v.origen}${sep}${v.destino}[label=\"${v.peso}\",color=red,penwidth=3.0];`;
+      graph += `${v.source}${sep}${v.target}[label=\"${v.weight}\",color=red,penwidth=3.0];`;
     } else {
-      graph += `${v.origen}${sep}${v.destino}[label=\"${v.peso}\"];`;
+      graph += `${v.source}${sep}${v.target}[label=\"${v.weight}\"];`;
     }
   }
 

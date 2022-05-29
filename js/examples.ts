@@ -77,7 +77,7 @@ function ejemploDijkstra() {
 }
 
 function ejemploKruskal() {
-  const ejemplo = [{ "origen": "C", "destino": "B", "peso": 4 }, { "origen": "A", "destino": "C", "peso": 3 }, { "origen": "A", "destino": "B", "peso": 6 }, { "origen": "B", "destino": "D", "peso": 2 }, { "origen": "C", "destino": "D", "peso": 3 }, { "origen": "S", "destino": "A", "peso": 7 }, { "origen": "B", "destino": "T", "peso": 5 }, { "origen": "D", "destino": "T", "peso": 2 }, { "origen": "S", "destino": "C", "peso": 8 }];
+  const ejemplo = [{ "source": "C", "target": "B", "weight": 4 }, { "source": "A", "target": "C", "weight": 3 }, { "source": "A", "target": "B", "weight": 6 }, { "source": "B", "target": "D", "weight": 2 }, { "source": "C", "target": "D", "weight": 3 }, { "source": "S", "target": "A", "weight": 7 }, { "source": "B", "target": "T", "weight": 5 }, { "source": "D", "target": "T", "weight": 2 }, { "source": "S", "target": "C", "weight": 8 }];
   fillTableExample("Kruskal", ejemplo);
   Kruskal();
 }
