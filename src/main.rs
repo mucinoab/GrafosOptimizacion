@@ -1,15 +1,15 @@
+mod handles;
 mod kruskal;
+mod max_flow;
 mod utils;
 
-use utils::Edge;
+use handles::*;
 
-use std::{io, net::SocketAddr, sync::Arc};
+use std::{net::SocketAddr, sync::Arc};
 
 use axum::{
-    http::StatusCode,
-    response::IntoResponse,
     routing::{get, get_service, post},
-    Extension, Json, Router,
+    Extension, Router,
 };
 use tower_http::{compression::CompressionLayer, services::ServeDir, trace::TraceLayer};
 
@@ -19,6 +19,7 @@ async fn main() {
 
     let app = Router::new()
         .route("/kruskal", post(kruskal))
+        .route("/flujomaximo", post(flujo_maximo))
         .route("/dijkstra", get(not_found))
         .fallback(get_service(ServeDir::new(".")).handle_error(handle_error))
         .layer(Extension(Arc::new(())))
@@ -32,17 +33,4 @@ async fn main() {
         .serve(app.into_make_service())
         .await
         .unwrap();
-}
-
-async fn kruskal(Json(payload): Json<Vec<Edge>>) -> impl IntoResponse {
-    Json(kruskal::solve(payload))
-}
-
-async fn handle_error(err: io::Error) -> impl IntoResponse {
-    tracing::warn!("{err}");
-    (StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong...")
-}
-
-async fn not_found() -> impl IntoResponse {
-    (StatusCode::NOT_FOUND, "Not found")
 }

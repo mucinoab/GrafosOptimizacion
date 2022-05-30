@@ -4,13 +4,13 @@ use std::{collections::HashSet, fmt::Write};
 
 /// Kruskal’s Minimum Spanning Tree
 #[derive(Debug, serde::Serialize)]
-pub struct Kruskal {
+pub struct KruskalSolution {
     tree_weight: f64,
     dot_graph_frames: Vec<String>,
     // TODO edges that make the tree
 }
 
-pub(crate) fn solve(mut graph: Vec<Edge>) -> Kruskal {
+pub(crate) fn solve(mut graph: Vec<Edge>) -> KruskalSolution {
     graph.sort_unstable_by(|a, b| a.weight.total_cmp(&b.weight));
 
     let mut uf = UnionFind::new(&graph);
@@ -43,7 +43,7 @@ pub(crate) fn solve(mut graph: Vec<Edge>) -> Kruskal {
     let final_graph = dot_graph_generator(&graph, &tree, None, false);
     graphs.extend(vec![final_graph; 5]);
 
-    Kruskal {
+    KruskalSolution {
         tree_weight: total_weight,
         dot_graph_frames: graphs,
     }

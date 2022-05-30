@@ -1,8 +1,11 @@
-use std::collections::HashMap;
+use std::{
+    collections::HashMap,
+    ops::{Index, IndexMut},
+};
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Edge {
     pub source: String,
     pub target: String,
@@ -21,6 +24,7 @@ impl Edge {
 
 pub struct UnionFind<'e> {
     // TODO name
+    // TODO implement indx and indxmut
     inner: HashMap<&'e str, &'e str>,
 }
 
@@ -64,5 +68,54 @@ impl<'e> UnionFind<'e> {
         } else {
             parent
         }
+    }
+}
+
+// TODO use type system to express directed and undirected graphs
+#[derive(Debug, Clone)]
+pub struct AdjList<'e> {
+    pub inner: HashMap<&'e str, HashMap<&'e str, f64>>,
+}
+
+impl<'e> Index<&str> for AdjList<'e> {
+    type Output = HashMap<&'e str, f64>;
+
+    fn index(&self, idx: &str) -> &Self::Output {
+        &self.inner[idx]
+    }
+}
+
+impl<'e> IndexMut<&str> for AdjList<'e> {
+    fn index_mut(&mut self, idx: &str) -> &mut Self::Output {
+        self.inner.get_mut(idx).unwrap()
+    }
+}
+
+impl<'e> AdjList<'e> {
+    pub fn new(graph: &'e [Edge], directed: bool) -> Self {
+        let mut inner: HashMap<&'e str, HashMap<&'e str, f64>> = HashMap::new();
+
+        for Edge {
+            source,
+            target,
+            weight,
+        } in graph
+        {
+            inner
+                .entry(source)
+                .or_default()
+                .entry(target)
+                .or_insert(*weight);
+
+            if !directed {
+                inner
+                    .entry(target)
+                    .or_default()
+                    .entry(source)
+                    .or_insert(*weight);
+            }
+        }
+
+        Self { inner }
     }
 }
