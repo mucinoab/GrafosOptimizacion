@@ -4,9 +4,9 @@ interface ResponseFloydW {
   nodos: Array<string>,
 }
 
-interface ResponseFlujoMaximo {
-  Flujo: number,
-  Data: Array<Path>,
+interface MaxFlowSolution {
+  flow: number,
+  steps: Array<Path>,
 }
 
 interface ResponseCPM {
@@ -49,8 +49,8 @@ interface Actividad {
 }
 
 interface Path {
-  data: Array<Vertice>,
-  camino: string,
+  graph: Array<Vertice>,
+  path_used: string,
 }
 
 interface Vertice {

@@ -37,11 +37,11 @@ function fillTableExample(method: string, ejemplo: any) {
 }
 
 function ejemploFlujo() {
-  const ejemplo = { "data": [{ "origen": "Bilbao", "destino": "S1", "peso": 4 }, { "origen": "Bilbao", "destino": "S2", "peso": 1 }, { "origen": "Barcelona", "destino": "S1", "peso": 2 }, { "origen": "Barcelona", "destino": "S2", "peso": 3 }, { "origen": "Sevilla", "destino": "S1", "peso": 2 }, { "origen": "Sevilla", "destino": "S2", "peso": 2 }, { "origen": "Sevilla", "destino": "S3", "peso": 3 }, { "origen": "Valencia", "destino": "S2", "peso": 2 }, { "origen": "Zaragoza", "destino": "S2", "peso": 3 }, { "origen": "Zaragoza", "destino": "S3", "peso": 1 }, { "origen": "Origen", "destino": "Bilbao", "peso": 7 }, { "origen": "Origen", "destino": "Barcelona", "peso": 5 }, { "origen": "Origen", "destino": "Sevilla", "peso": 7 }, { "origen": "Origen", "destino": "Zaragoza", "peso": 6 }, { "origen": "Origen", "destino": "Valencia", "peso": 2 }, { "origen": "S1", "destino": "Madrid", "peso": 8 }, { "origen": "S2", "destino": "Madrid", "peso": 8 }, { "origen": "S3", "destino": "Madrid", "peso": 8 }], "origen": "Origen", "destino": "Madrid", "dirigido": true };
-  (<HTMLInputElement>document.getElementById("origen")).value = ejemplo.origen;
-  (<HTMLInputElement>document.getElementById("destino")).value = ejemplo.destino;
-  fillTableExample("FlujoMaximo", ejemplo.data);
-  postData('flujomaximo', ejemplo).then(data => { renderResponseFlujo(data); });
+  const ejemplo = { "graph": [{ "source": "Bilbao", "target": "S1", "weight": 4 }, { "source": "Bilbao", "target": "S2", "weight": 1 }, { "source": "Barcelona", "target": "S1", "weight": 2 }, { "source": "Barcelona", "target": "S2", "weight": 3 }, { "source": "Sevilla", "target": "S1", "weight": 2 }, { "source": "Sevilla", "target": "S2", "weight": 2 }, { "source": "Sevilla", "target": "S3", "weight": 3 }, { "source": "Valencia", "target": "S2", "weight": 2 }, { "source": "Zaragoza", "target": "S2", "weight": 3 }, { "source": "Zaragoza", "target": "S3", "weight": 1 }, { "source": "Origen", "target": "Bilbao", "weight": 7 }, { "source": "Origen", "target": "Barcelona", "weight": 5 }, { "source": "Origen", "target": "Sevilla", "weight": 7 }, { "source": "Origen", "target": "Zaragoza", "weight": 6 }, { "source": "Origen", "target": "Valencia", "weight": 2 }, { "source": "S1", "target": "Madrid", "weight": 8 }, { "source": "S2", "target": "Madrid", "weight": 8 }, { "source": "S3", "target": "Madrid", "weight": 8 }], "source": "Origen", "target": "Madrid", "directed": true };
+  (<HTMLInputElement>document.getElementById("origen")).value = ejemplo.source;
+  (<HTMLInputElement>document.getElementById("destino")).value = ejemplo.target;
+  fillTableExample("FlujoMaximo", ejemplo.graph);
+  postData('flujomaximo', ejemplo).then(data => { renderResponseMaxFlow(data); });
 }
 
 function ejemploFloyd() {

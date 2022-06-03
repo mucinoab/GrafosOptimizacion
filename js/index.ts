@@ -80,7 +80,7 @@ function flujoMaximo() {
     dirigido: true, // HACK, for now
   };
 
-  postData('flujomaximo', payload).then(data => { renderResponseFlujo(data) });
+  postData('flujomaximo', payload).then(data => { renderResponseMaxFlow(data) });
 }
 
 function floydWarshall() {

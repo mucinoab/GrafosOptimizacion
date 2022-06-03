@@ -37,11 +37,11 @@ function renderResponsePERT(r: ResponsePERT) {
   response.scrollIntoView(true);
 }
 
-function renderResponseFlujo(r: ResponseFlujoMaximo) {
+function renderResponseMaxFlow(r: MaxFlowSolution) {
   let respuesta = document.getElementById("respuestaFlujo");
   const dirigido = true;
 
-  let respHTML: string = `<p>Flujo Máximo: ${r.Flujo}</p><br>
+  let respHTML: string = `<p>Flujo Máximo: ${r.flow}</p><br>
     <table class="table table-hover" style="max-width: 80%;">
     <thead class="thead-light table-header"><tr>
     <th scope="col">Origen</th>
@@ -52,14 +52,14 @@ function renderResponseFlujo(r: ResponseFlujoMaximo) {
   let graphs = [];
 
   let iter = 0;
-  for (const e of r.Data) {
+  for (const e of r.steps) {
     respHTML += `<tr class="table-primary"><td class="success">
-      ${e.camino}</td><td colspan="2">${graphButton(`flujo_${iter}`)}
+      ${e.path_used}</td><td colspan="2">${graphButton(`flujo_${iter}`)}
       </td></tr>`;
 
-    graphs.push([`imagenflujo_${iter}`, createGraph(e.data, e.camino, dirigido)]);
+    graphs.push([`imagenflujo_${iter}`, createGraph(e.graph, e.path_used, dirigido)]);
 
-    for (const v of e.data) {
+    for (const v of e.graph) {
       respHTML += `
         <tr><td>${v.source}</td>
         <td>${v.target}</td>

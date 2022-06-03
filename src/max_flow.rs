@@ -8,17 +8,17 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Deserialize)]
 pub struct MaxFlow {
     pub graph: Vec<Edge>,
-    pub origin: String,
+    pub source: String,
     pub target: String,
     pub directed: bool,
 }
 
 impl MaxFlow {
     #[cfg(test)]
-    pub fn new(graph: Vec<Edge>, origin: &str, target: &str, directed: bool) -> Self {
+    pub fn new(graph: Vec<Edge>, source: &str, target: &str, directed: bool) -> Self {
         Self {
             graph,
-            origin: origin.into(),
+            source: source.into(),
             target: target.into(),
             directed,
         }
@@ -70,7 +70,7 @@ impl Step {
 pub(crate) fn solve(
     MaxFlow {
         graph,
-        origin,
+        source,
         target,
         directed,
     }: MaxFlow,
@@ -93,7 +93,7 @@ pub(crate) fn solve(
 
     let mut visited = IndexSet::new();
     solution.flow =
-        trace_cheapest_path(&mut solution, &mut visited, &mut network, &origin, &target);
+        trace_cheapest_path(&mut solution, &mut visited, &mut network, &source, &target);
 
     // Update network weights with max flow
     original_network.inner.iter_mut().for_each(|(_, n)| {
