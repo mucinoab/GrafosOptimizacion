@@ -209,7 +209,7 @@ mod tests {
         let input = MaxFlow::new(
             vec![
                 Edge::new("0", "1", 16.0),
-                Edge::new("0", "1", 13.0),
+                Edge::new("0", "2", 13.0),
                 Edge::new("1", "2", 10.0),
                 Edge::new("1", "3", 12.0),
                 Edge::new("2", "1", 4.0),
@@ -247,8 +247,3 @@ mod tests {
         assert_eq!(solve(input).flow, 6.0);
     }
 }
-
-// https://en.wikipedia.org/wiki/Count%E2%80%93min_sketch
-// https://www.programiz.com/dsa/ford-fulkerson-algorithm
-// https://web.stanford.edu/class/cs97si/08-network-flow-problems.pdf
-// https://www.geeksforgeeks.org/ford-fulkerson-algorithm-for-maximum-flow-problem/
