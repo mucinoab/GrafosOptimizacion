@@ -1,9 +1,9 @@
+use crate::utils::{AdjList, Edge};
+
 use std::fmt::Write;
 
 use indexmap::IndexSet;
 use serde::{Deserialize, Serialize};
-
-use crate::utils::{AdjList, Edge};
 
 #[derive(Debug, Deserialize)]
 pub struct MaxFlow {
@@ -14,6 +14,7 @@ pub struct MaxFlow {
 }
 
 impl MaxFlow {
+    #[cfg(test)]
     pub fn new(graph: Vec<Edge>, origin: &str, target: &str, directed: bool) -> Self {
         Self {
             graph,
@@ -37,6 +38,18 @@ impl MaxFlowSolution {
             steps: Vec::new(),
         }
     }
+
+    fn add_step<'e>(&mut self, network: &AdjList<'e>, path: impl Into<String>) {
+        let mut updated_network = Vec::new();
+
+        for (source, neighbours) in network.inner.iter() {
+            for (target, weight) in neighbours {
+                updated_network.push(Edge::new(source, target, *weight));
+            }
+        }
+
+        self.steps.push(Step::new(updated_network, path));
+    }
 }
 
 #[derive(Debug, Serialize)]
@@ -46,114 +59,120 @@ struct Step {
 }
 
 impl Step {
-    fn new(graph: &mut Vec<Edge>, path_used: impl Into<String>) -> Self {
+    fn new(graph: Vec<Edge>, path_used: impl Into<String>) -> Self {
         Self {
-            graph: graph.drain(..).collect(),
+            graph,
             path_used: path_used.into(),
         }
     }
 }
 
-pub(crate) fn solve(inp: MaxFlow) -> MaxFlowSolution {
-    let mut solution = MaxFlowSolution::new();
-    let mut edges = inp.graph.clone();
+pub(crate) fn solve(
+    MaxFlow {
+        graph,
+        origin,
+        target,
+        directed,
+    }: MaxFlow,
+) -> MaxFlowSolution {
+    let mut edges = graph.clone();
 
-    if inp.directed {
+    if !directed {
         edges.extend(
-            inp.graph
+            graph
                 .iter()
                 .map(|e| Edge::new(&e.target, &e.source, e.weight)),
         );
     }
 
-    solution.steps.push(Step::new(&mut edges, "Grafo Inicial"));
+    let mut solution = MaxFlowSolution::new();
+    solution.steps.push(Step::new(edges, "Grafo Inicial"));
 
-    let mut m = AdjList::new(&inp.graph, inp.directed);
-    let m_og = m.clone();
+    let mut network = AdjList::new(&graph, directed);
+    let mut original_network = network.clone();
 
-    let mut marcados = IndexSet::new();
+    let mut visited = IndexSet::new();
+    solution.flow =
+        trace_cheapest_path(&mut solution, &mut visited, &mut network, &origin, &target);
 
-    solution.flow = trace_path(
-        &mut solution,
-        &mut marcados,
-        &mut m,
-        &inp.origin,
-        &inp.target,
-    );
+    // Update network weights with max flow
+    original_network.inner.iter_mut().for_each(|(_, n)| {
+        n.iter_mut().for_each(|(_, w)| {
+            *w -= solution.flow;
+            //assert!(*w >= 0.0)
+        })
+    });
+
+    solution.add_step(&original_network, "Patrón de Flujo");
 
     solution
 }
 
-fn trace_path<'e>(
-    sol: &mut MaxFlowSolution,
-    marcados: &mut IndexSet<(&'e str, &'e str)>,
+fn trace_cheapest_path<'e>(
+    solution: &mut MaxFlowSolution,
+    visited: &mut IndexSet<(&'e str, &'e str)>,
     graph: &mut AdjList<'e>,
     current: &'e str,
     target: &'e str,
 ) -> f64 {
-    let mut flujo = 0.0;
+    let mut flow = 0.0;
 
     if current != target {
         let vecinos = graph[current].clone();
 
         for (node, _) in vecinos {
-            let v = (current, node);
-            let p = graph[current][node];
+            let path = (current, node);
+            let path_weight = graph[current][node];
 
-            if p > 0.0 && !marcados.contains(&v) {
-                marcados.insert(v);
-                flujo += trace_path(sol, marcados, graph, node, target);
-                marcados.remove(&v);
+            if path_weight > 0.0 && !visited.contains(&path) {
+                visited.insert(path);
+                flow += trace_cheapest_path(solution, visited, graph, node, target);
+                visited.remove(&path);
+                //dbg!(current, target, flow);
             }
         }
 
-        return flujo;
+        return flow;
     }
 
+    // If we are on the target node, we trace the path used to reach this node.
     let mut path = String::new();
-    for (l, _) in marcados.iter() {
-        write!(&mut path, "{l},").unwrap();
+
+    // The nodes that make up the route.
+    for (node, _) in visited.iter() {
+        write!(&mut path, "{node},").unwrap();
     }
 
     path.push_str(target);
-    path.push_str("|c* = Mín{"); // TODO
+    path.push_str("|c* = Mín{"); // TODO put this in a const variable
 
-    let cheapest_in_path = marcados
+    let cheapest_in_path = visited
         .iter()
         .map(|(l, r)| graph[l][r])
         .min_by(|a, b| a.total_cmp(b))
         .unwrap();
 
-    for (l, r) in marcados.iter() {
-        let weight = graph[l].get_mut(r).unwrap();
+    // Record and update the weights in the route.
+    for (l_node, r_node) in visited.iter() {
+        let weight = graph[l_node].get_mut(r_node).unwrap();
         write!(&mut path, "{:.2},", weight).unwrap();
-        *weight -= cheapest_in_path;
+        *weight -= cheapest_in_path; // Update weights
     }
 
     path.pop();
     write!(&mut path, "}} = {}", cheapest_in_path).unwrap();
-
-    let mut algo = Vec::new();
-
-    for (source, nes) in graph.inner.iter() {
-        for (target, weight) in nes {
-            algo.push(Edge::new(source, target, *weight));
-        }
-    }
-
-    sol.steps.push(Step::new(&mut algo, path));
+    solution.add_step(graph, path);
 
     cheapest_in_path
 }
 
 #[cfg(test)]
 mod tests {
+    use super::solve;
     use crate::{max_flow::MaxFlow, utils::Edge};
 
-    use super::solve;
-
     #[test]
-    fn solve_simple() {
+    fn solve_1() {
         let input = MaxFlow::new(
             vec![
                 Edge::new("bilbao", "s1", 4.0),
@@ -180,8 +199,56 @@ mod tests {
             true,
         );
 
-        let solution = solve(input);
-        dbg!(&solution);
-        assert_eq!(solution.flow, 20.0)
+        // Note, given the random nature of the algorithm, the number of steps is
+        // non-deterministic, so we can't test that.
+        assert_eq!((solve(input)).flow, 20.0);
+    }
+
+    #[test]
+    fn solve_2() {
+        let input = MaxFlow::new(
+            vec![
+                Edge::new("0", "1", 16.0),
+                Edge::new("0", "1", 13.0),
+                Edge::new("1", "2", 10.0),
+                Edge::new("1", "3", 12.0),
+                Edge::new("2", "1", 4.0),
+                Edge::new("2", "4", 14.0),
+                Edge::new("3", "2", 9.0),
+                Edge::new("3", "5", 20.0),
+                Edge::new("4", "3", 7.0),
+                Edge::new("4", "5", 4.0),
+            ],
+            "0",
+            "5",
+            true,
+        );
+
+        assert_eq!((solve(input)).flow, 23.0);
+    }
+
+    #[test]
+    fn solve_3() {
+        let input = MaxFlow::new(
+            vec![
+                Edge::new("s", "a", 8.0),
+                Edge::new("s", "d", 3.0),
+                Edge::new("a", "b", 9.0),
+                Edge::new("d", "b", 7.0),
+                Edge::new("d", "c", 4.0),
+                Edge::new("b", "t", 2.0),
+                Edge::new("c", "t", 5.0),
+            ],
+            "s",
+            "t",
+            false,
+        );
+
+        assert_eq!(solve(input).flow, 6.0);
     }
 }
+
+// https://en.wikipedia.org/wiki/Count%E2%80%93min_sketch
+// https://www.programiz.com/dsa/ford-fulkerson-algorithm
+// https://web.stanford.edu/class/cs97si/08-network-flow-problems.pdf
+// https://www.geeksforgeeks.org/ford-fulkerson-algorithm-for-maximum-flow-problem/
