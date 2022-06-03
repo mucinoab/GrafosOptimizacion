@@ -1,3 +1,5 @@
+const MAX_F64 = 1.7976931348623157e308;
+
 // Removes all the inner HTML of an element
 function clearElement(e: HTMLElement) {
   while (e.firstChild && e.removeChild(e.firstChild));

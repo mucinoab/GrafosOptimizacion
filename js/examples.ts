@@ -45,9 +45,16 @@ function ejemploFlujo() {
 }
 
 function ejemploFloyd() {
-  const ejemplo = [{ "origen": "1", "destino": "2", "peso": 700 }, { "origen": "1", "destino": "3", "peso": 200 }, { "origen": "2", "destino": "3", "peso": 300 }, { "origen": "2", "destino": "4", "peso": 200 }, { "origen": "2", "destino": "6", "peso": 400 }, { "origen": "3", "destino": "4", "peso": 700 }, { "origen": "3", "destino": "5", "peso": 600 }, { "origen": "4", "destino": "6", "peso": 100 }, { "origen": "4", "destino": "5", "peso": 300 }, { "origen": "6", "destino": "5", "peso": 500 }];
+  const ejemplo = [
+    { source: "1", target: "2", weight: 3.0 },
+    { source: "1", target: "4", weight: 5.0 },
+    { source: "2", target: "1", weight: 2.0 },
+    { source: "2", target: "4", weight: 4.0 },
+    { source: "3", target: "2", weight: 1.0 },
+    { source: "4", target: "3", weight: 2.0 },
+  ];
   fillTableExample("FloydWarshall", ejemplo);
-  postData('floydwarshall', ejemplo).then(data => { renderResponseFloyd(data); });
+  postData('floydwarshall', ejemplo).then(data => { renderResponseFloydWarshall(data); });
 }
 
 function ejemploCPM() {

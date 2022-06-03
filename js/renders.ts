@@ -76,15 +76,15 @@ function renderResponseMaxFlow(r: MaxFlowSolution) {
   graphs.forEach(g => renderDotGraph(g[0], g[1]));
 }
 
-function renderResponseFloyd(r: ResponseFloydW) {
+function renderResponseFloydWarshall(r: FloydWarshallSolution) {
   const cambios = new Set();
 
-  for (const cambio of r.cambios) {
+  for (const cambio of r.changes) {
     cambios.add(JSON.stringify(cambio));
   }
 
   let nodesHeader = "";
-  for (const n of r.nodos) {
+  for (const n of r.nodes) {
     nodesHeader += `<td style="font-weight:bold;">${n}</td>`;
   }
 
@@ -92,19 +92,19 @@ function renderResponseFloyd(r: ResponseFloydW) {
   table.className = "table table-hover";
   table.style.setProperty("max-width", "80%");
 
-  for (const [idx, iteracion] of r.iteraciones.entries()) {
+  for (const [idx, iteracion] of r.iterations.entries()) {
     table.insertAdjacentHTML("beforeend", `<tr class="table-header"><td class="table-primary">Iteración ${idx}</td>${nodesHeader}<tr>`);
 
-    for (const a of r.nodos) {
+    for (const a of r.nodes) {
       let row = table.insertRow();
       putCell(row, a, "table_nodes");
 
-      for (const b of r.nodos) {
+      for (const b of r.nodes) {
         for (const n of iteracion) {
           if (n.source == a && n.target == b) {
-            const v: string = (n.weight == Number.MAX_VALUE) ? '∞' : String(n.weight);
+            const v: string = (n.weight == MAX_F64) ? '∞' : String(n.weight);
 
-            if (cambios.has(JSON.stringify({ iteracion: idx, origen: a, destino: b }))) {
+            if (cambios.has(JSON.stringify({ iteration: idx, source: a, target: b }))) {
               // A change in value
               putCell(row, v, "cambio");
             } else {

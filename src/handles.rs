@@ -1,7 +1,7 @@
 use std::io;
 
 use crate::{
-    kruskal as Kruskal,
+    floyd_warshall as Floyd_warshall, kruskal as Kruskal,
     max_flow::{self, MaxFlow},
     utils::Edge,
 };
@@ -14,6 +14,10 @@ pub(crate) async fn kruskal(Json(payload): Json<Vec<Edge>>) -> impl IntoResponse
 
 pub(crate) async fn flujo_maximo(Json(payload): Json<MaxFlow>) -> impl IntoResponse {
     Json(max_flow::solve(payload))
+}
+
+pub(crate) async fn floyd_warshall(Json(payload): Json<Vec<Edge>>) -> impl IntoResponse {
+    Json(Floyd_warshall::solve(payload))
 }
 
 pub(crate) async fn handle_error(err: io::Error) -> impl IntoResponse {

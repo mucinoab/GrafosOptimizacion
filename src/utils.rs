@@ -75,6 +75,7 @@ impl<'e> UnionFind<'e> {
 #[derive(Debug, Clone)]
 pub struct AdjList<'e> {
     pub inner: HashMap<&'e str, HashMap<&'e str, f64>>,
+    pub directed: bool,
 }
 
 impl<'e> Index<&str> for AdjList<'e> {
@@ -88,6 +89,30 @@ impl<'e> Index<&str> for AdjList<'e> {
 impl<'e> IndexMut<&str> for AdjList<'e> {
     fn index_mut(&mut self, idx: &str) -> &mut Self::Output {
         self.inner.get_mut(idx).unwrap()
+    }
+}
+
+impl<'e> AsRef<AdjList<'e>> for AdjList<'e> {
+    fn as_ref(&self) -> &AdjList<'e> {
+        self
+    }
+}
+
+impl<'e> From<&AdjList<'e>> for Vec<Edge> {
+    fn from(list: &AdjList) -> Self {
+        let mut edges = Vec::new();
+
+        for (source, neighbours) in list.inner.iter() {
+            for (target, weight) in neighbours {
+                edges.push(Edge::new(source, target, *weight));
+
+                if !list.directed {
+                    edges.push(Edge::new(target, source, *weight));
+                }
+            }
+        }
+
+        edges
     }
 }
 
@@ -116,6 +141,25 @@ impl<'e> AdjList<'e> {
             }
         }
 
-        Self { inner }
+        Self { inner, directed }
+    }
+
+    pub fn assign(&mut self, source: &'e str, target: &'e str, value: f64) {
+        // TODO is this correct?
+        let _ = *self
+            .inner
+            .entry(source)
+            .or_default()
+            .entry(target)
+            .and_modify(|e| *e = value)
+            .or_insert(value);
+    }
+
+    pub fn exists_path(&self, source: &str, target: &str) -> bool {
+        if let Some(inner) = self.inner.get(source) {
+            inner.get(target).is_some()
+        } else {
+            false
+        }
     }
 }

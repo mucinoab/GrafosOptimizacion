@@ -1,3 +1,4 @@
+mod floyd_warshall;
 mod handles;
 mod kruskal;
 mod max_flow;
@@ -20,6 +21,7 @@ async fn main() {
     let app = Router::new()
         .route("/kruskal", post(kruskal))
         .route("/flujomaximo", post(flujo_maximo))
+        .route("/floydwarshall", post(floyd_warshall))
         .route("/dijkstra", get(not_found))
         .fallback(get_service(ServeDir::new(".")).handle_error(handle_error))
         .layer(Extension(Arc::new(())))

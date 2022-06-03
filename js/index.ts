@@ -92,7 +92,7 @@ function floydWarshall() {
   }
 
   postData('floydwarshall', graphFromTable("FloydWarshall")).then(data => {
-    renderResponseFloyd(data);
+    renderResponseFloydWarshall(data);
   });
 }
 

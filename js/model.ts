@@ -1,7 +1,7 @@
-interface ResponseFloydW {
-  cambios: Array<Change>,
-  iteraciones: Array<Array<Vertice>>,
-  nodos: Array<string>,
+interface FloydWarshallSolution {
+  changes: Array<Change>,
+  iterations: Array<Array<Vertice>>,
+  nodes: Array<string>,
 }
 
 interface MaxFlowSolution {
@@ -68,7 +68,7 @@ interface VerticePERT {
 }
 
 interface Change {
-  iteracion: number,
+  iteration: number,
   origen: string,
   destino: string,
 }
