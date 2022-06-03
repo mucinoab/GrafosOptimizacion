@@ -112,28 +112,6 @@ function renderDotGraph(containerId: string, dotGraph: string) {
   });
 }
 
-async function getDotGraphAscii(dotGraph: string): Promise<string> {
-  const url = "https://dot-to-ascii.ggerganov.com/dot-to-ascii.php?" + new URLSearchParams({
-    boxart: "1",
-    src: dotGraph,
-  });
-
-  console.log(url);
-
-  fetch(url, {
-    mode: "no-cors",
-  }).then(g => g.text()).then(g => console.log(g));
-
-  return fetch(url, {
-    mode: "no-cors",
-    method: "GET",
-  }).then(response => response.text())
-    .catch(error => {
-      console.error('There has been a problem with your fetch operation:', error);
-      return "";
-    });
-}
-
 function appendRow(table: HTMLTableElement, tableId: string, i: number, header: boolean) {
   function pushCell(r: HTMLTableRowElement, e: number | string, placeholder = "") {
     let ele;
