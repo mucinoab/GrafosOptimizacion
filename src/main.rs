@@ -4,7 +4,7 @@ mod kruskal;
 mod max_flow;
 mod utils;
 
-use handles::*;
+use crate::handles::{critical_path, floyd_warshall, handle_error, kruskal, max_flow, not_found};
 
 use std::{net::SocketAddr, sync::Arc};
 
@@ -20,7 +20,7 @@ async fn main() {
 
     let app = Router::new()
         .route("/kruskal", post(kruskal))
-        .route("/flujomaximo", post(flujo_maximo))
+        .route("/flujomaximo", post(max_flow))
         .route("/floydwarshall", post(floyd_warshall))
         .route("/dijkstra", get(not_found))
         .fallback(get_service(ServeDir::new(".")).handle_error(handle_error))

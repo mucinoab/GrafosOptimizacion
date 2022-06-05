@@ -22,14 +22,14 @@ impl Edge {
     }
 }
 
-pub struct UnionFind<'e> {
+pub struct UnionFind<'graph> {
     // TODO name
     // TODO implement indx and indxmut
-    inner: HashMap<&'e str, &'e str>,
+    inner: HashMap<&'graph str, &'graph str>,
 }
 
-impl<'e> UnionFind<'e> {
-    pub fn new(edges: &'e [Edge]) -> Self {
+impl<'graph> UnionFind<'graph> {
+    pub fn new(edges: &'graph [Edge]) -> Self {
         let inner = edges
             .iter()
             .flat_map(|Edge { source, target, .. }| [(source, source), (target, target)])
@@ -39,7 +39,7 @@ impl<'e> UnionFind<'e> {
         Self { inner }
     }
 
-    pub fn union(&mut self, mut a: &'e str, mut b: &'e str) {
+    pub fn union(&mut self, mut a: &'graph str, mut b: &'graph str) {
         a = self.parent(a);
         b = self.parent(b);
 
@@ -53,56 +53,56 @@ impl<'e> UnionFind<'e> {
         }
     }
 
-    pub fn exists_cycle(&mut self, a: &'e str, b: &'e str) -> bool {
+    pub fn exists_cycle(&mut self, a: &'graph str, b: &'graph str) -> bool {
         self.parent(a) == self.parent(b)
     }
 
-    fn parent(&mut self, child: &'e str) -> &'e str {
+    fn parent(&mut self, child: &'graph str) -> &'graph str {
         let parent = self.inner[child];
 
-        if parent != child {
+        if parent == child {
+            parent
+        } else {
             let new_parent = self.parent(parent);
             self.inner.insert(child, new_parent);
 
             new_parent
-        } else {
-            parent
         }
     }
 }
 
 // TODO use type system to express directed and undirected graphs
 #[derive(Debug, Clone)]
-pub struct AdjList<'e> {
-    pub inner: HashMap<&'e str, HashMap<&'e str, f64>>,
+pub struct AdjList<'graph> {
+    pub inner: HashMap<&'graph str, HashMap<&'graph str, f64>>,
     pub directed: bool,
 }
 
-impl<'e> Index<&str> for AdjList<'e> {
-    type Output = HashMap<&'e str, f64>;
+impl<'graph> Index<&str> for AdjList<'graph> {
+    type Output = HashMap<&'graph str, f64>;
 
     fn index(&self, idx: &str) -> &Self::Output {
         &self.inner[idx]
     }
 }
 
-impl<'e> IndexMut<&str> for AdjList<'e> {
+impl<'graph> IndexMut<&str> for AdjList<'graph> {
     fn index_mut(&mut self, idx: &str) -> &mut Self::Output {
         self.inner.get_mut(idx).unwrap()
     }
 }
 
-impl<'e> AsRef<AdjList<'e>> for AdjList<'e> {
-    fn as_ref(&self) -> &AdjList<'e> {
+impl<'graph> AsRef<AdjList<'graph>> for AdjList<'graph> {
+    fn as_ref(&self) -> &AdjList<'graph> {
         self
     }
 }
 
-impl<'e> From<&AdjList<'e>> for Vec<Edge> {
+impl<'graph> From<&AdjList<'graph>> for Vec<Edge> {
     fn from(list: &AdjList) -> Self {
-        let mut edges = Vec::new();
+        let mut edges = Self::new();
 
-        for (source, neighbours) in list.inner.iter() {
+        for (source, neighbours) in &list.inner {
             for (target, weight) in neighbours {
                 edges.push(Edge::new(source, target, *weight));
 
@@ -116,9 +116,9 @@ impl<'e> From<&AdjList<'e>> for Vec<Edge> {
     }
 }
 
-impl<'e> AdjList<'e> {
-    pub fn new(graph: &'e [Edge], directed: bool) -> Self {
-        let mut inner: HashMap<&'e str, HashMap<&'e str, f64>> = HashMap::new();
+impl<'graph> AdjList<'graph> {
+    pub fn new(graph: &'graph [Edge], directed: bool) -> Self {
+        let mut inner: HashMap<&'graph str, HashMap<&'graph str, f64>> = HashMap::new();
 
         for Edge {
             source,
@@ -144,7 +144,7 @@ impl<'e> AdjList<'e> {
         Self { inner, directed }
     }
 
-    pub fn assign(&mut self, source: &'e str, target: &'e str, value: f64) {
+    pub fn assign(&mut self, source: &'graph str, target: &'graph str, value: f64) {
         // TODO is this correct?
         let _ = *self
             .inner

@@ -10,7 +10,7 @@ pub struct KruskalSolution {
     // TODO edges that make the tree
 }
 
-pub(crate) fn solve(mut graph: Vec<Edge>) -> KruskalSolution {
+pub fn solve(mut graph: Vec<Edge>) -> KruskalSolution {
     graph.sort_unstable_by(|a, b| a.weight.total_cmp(&b.weight));
 
     let mut uf = UnionFind::new(&graph);

@@ -39,10 +39,10 @@ impl MaxFlowSolution {
         }
     }
 
-    fn add_step<'e>(&mut self, network: &AdjList<'e>, path: impl Into<String>) {
+    fn add_step<'graph>(&mut self, network: &AdjList<'graph>, path: impl Into<String>) {
         let mut updated_network = Vec::new();
 
-        for (source, neighbours) in network.inner.iter() {
+        for (source, neighbours) in &network.inner {
             for (target, weight) in neighbours {
                 updated_network.push(Edge::new(source, target, *weight));
             }
@@ -67,7 +67,7 @@ impl Step {
     }
 }
 
-pub(crate) fn solve(
+pub fn solve(
     MaxFlow {
         graph,
         source,
@@ -108,12 +108,12 @@ pub(crate) fn solve(
     solution
 }
 
-fn trace_cheapest_path<'e>(
+fn trace_cheapest_path<'graph>(
     solution: &mut MaxFlowSolution,
-    visited: &mut IndexSet<(&'e str, &'e str)>,
-    graph: &mut AdjList<'e>,
-    current: &'e str,
-    target: &'e str,
+    visited: &mut IndexSet<(&'graph str, &'graph str)>,
+    graph: &mut AdjList<'graph>,
+    current: &'graph str,
+    target: &'graph str,
 ) -> f64 {
     let mut flow = 0.0;
 
@@ -149,7 +149,7 @@ fn trace_cheapest_path<'e>(
     let cheapest_in_path = visited
         .iter()
         .map(|(l, r)| graph[l][r])
-        .min_by(|a, b| a.total_cmp(b))
+        .min_by(f64::total_cmp)
         .unwrap();
 
     // Record and update the weights in the route.

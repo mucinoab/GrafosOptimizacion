@@ -26,7 +26,7 @@ impl Change {
     }
 }
 
-pub(crate) fn solve(graph: Vec<Edge>) -> FloydWarshallSolution {
+pub fn solve(graph: Vec<Edge>) -> FloydWarshallSolution {
     let mut network = AdjList::new(&graph, true);
     let nodes: HashSet<_> = graph
         .iter()

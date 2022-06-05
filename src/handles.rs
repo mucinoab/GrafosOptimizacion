@@ -1,30 +1,34 @@
 use std::io;
 
 use crate::{
-    floyd_warshall as Floyd_warshall, kruskal as Kruskal,
+    critical_path as Critical_path, floyd_warshall as Floyd_warshall, kruskal as Kruskal,
     max_flow::{self, MaxFlow},
     utils::Edge,
 };
 
 use axum::{http::StatusCode, response::IntoResponse, Json};
 
-pub(crate) async fn kruskal(Json(payload): Json<Vec<Edge>>) -> impl IntoResponse {
+pub async fn kruskal(Json(payload): Json<Vec<Edge>>) -> impl IntoResponse {
     Json(Kruskal::solve(payload))
 }
 
-pub(crate) async fn flujo_maximo(Json(payload): Json<MaxFlow>) -> impl IntoResponse {
+pub async fn max_flow(Json(payload): Json<MaxFlow>) -> impl IntoResponse {
     Json(max_flow::solve(payload))
 }
 
-pub(crate) async fn floyd_warshall(Json(payload): Json<Vec<Edge>>) -> impl IntoResponse {
+pub async fn floyd_warshall(Json(payload): Json<Vec<Edge>>) -> impl IntoResponse {
     Json(Floyd_warshall::solve(payload))
 }
 
-pub(crate) async fn handle_error(err: io::Error) -> impl IntoResponse {
-    tracing::warn!("{err}");
+pub async fn critical_path(Json(payload): Json<Vec<Edge>>) -> impl IntoResponse {
+    Json(Critical_path::solve(payload))
+}
+
+pub async fn handle_error(err: io::Error) -> impl IntoResponse {
+    tracing::error!("{err}");
     (StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong...")
 }
 
-pub(crate) async fn not_found() -> impl IntoResponse {
+pub async fn not_found() -> impl IntoResponse {
     (StatusCode::NOT_FOUND, "Not found")
 }
