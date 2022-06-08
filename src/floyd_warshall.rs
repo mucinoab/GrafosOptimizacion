@@ -180,7 +180,6 @@ mod tests {
             Edge::new("6", "5", 500.0),
         ];
         let sol = solve(input);
-        dbg!(AdjList::new(&sol.iterations.first().unwrap(), true));
         let sol = AdjList::new(&sol.iterations.last().unwrap(), true);
 
         assert_eq!(sol.inner, correct_sol);
@@ -206,7 +205,6 @@ mod tests {
             Edge::new("3", "2", 1.0),
             Edge::new("4", "3", 2.0),
         ];
-        dbg!(&input);
         let sol = solve(input);
         let sol = AdjList::new(&sol.iterations.last().unwrap(), true);
 

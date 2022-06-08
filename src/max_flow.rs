@@ -128,7 +128,6 @@ fn trace_cheapest_path<'graph>(
                 visited.insert(path);
                 flow += trace_cheapest_path(solution, visited, graph, node, target);
                 visited.remove(&path);
-                //dbg!(current, target, flow);
             }
         }
 

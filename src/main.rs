@@ -1,3 +1,4 @@
+mod critical_path;
 mod floyd_warshall;
 mod handles;
 mod kruskal;
@@ -22,6 +23,7 @@ async fn main() {
         .route("/kruskal", post(kruskal))
         .route("/flujomaximo", post(max_flow))
         .route("/floydwarshall", post(floyd_warshall))
+        .route("/cpm", post(critical_path))
         .route("/dijkstra", get(not_found))
         .fallback(get_service(ServeDir::new(".")).handle_error(handle_error))
         .layer(Extension(Arc::new(())))
