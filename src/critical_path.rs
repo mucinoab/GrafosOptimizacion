@@ -38,8 +38,8 @@ impl Activity {
             succesors: Vec::new(),
             closest_lhs: f64::NEG_INFINITY,
             closest_rhs: f64::NEG_INFINITY,
-            farthest_lhs: f64::NEG_INFINITY,
-            farthest_rhs: f64::NEG_INFINITY,
+            farthest_lhs: f64::INFINITY,
+            farthest_rhs: f64::INFINITY,
         }
     }
 }
@@ -76,7 +76,6 @@ pub fn solve(graph: Vec<Edge>) -> CriticalPathSolution {
 
     let actividades_terminales: Vec<String> = s.difference(&sn).map(|&at| at.to_owned()).collect();
 
-    // eprintln!("{:?}", &graph);
     // TODO we invert the table because the format of the table is different(?)
     let graph_reversed: Vec<_> = graph
         .iter()
@@ -89,23 +88,24 @@ pub fn solve(graph: Vec<Edge>) -> CriticalPathSolution {
         )
         .collect();
 
-    //eprintln!("{:?}", &graph_reversed);
     let mut siguientes = AdjList::new(&graph_reversed, true);
 
     traverse_from_source_to_target("-", &mut siguientes, &mut actividades);
-    let total_duration = actividades_terminales
-        .iter()
-        .max_by(|&a, &b| {
-            let a = actividades[a].closest_rhs;
-            let b = actividades[b].closest_rhs;
+    let total_duration = actividades_terminales.iter().max_by(|&a, &b| {
+        let a = actividades[a].closest_rhs;
+        let b = actividades[b].closest_rhs;
 
-            a.total_cmp(&b)
-        })
-        .unwrap();
-    let total_duration = actividades[total_duration].closest_rhs;
-    dbg!(total_duration);
+        a.total_cmp(&b)
+    });
 
     let mut anterior = AdjList::new(&graph, true /* TODO */);
+    let total_duration = if let Some(td) = total_duration {
+        actividades[td].closest_rhs
+    } else {
+        // It is an empty graph, or there are no terminal activities.
+        0.0
+    };
+
     // Actividades terminales
     for t in &actividades_terminales {
         let ad = actividades[t].duration;
@@ -132,7 +132,7 @@ pub fn solve(graph: Vec<Edge>) -> CriticalPathSolution {
 
         activities.push(acts);
 
-        if (v.closest_rhs - v.farthest_rhs) < 0.005 {
+        if (v.closest_rhs - v.farthest_rhs).abs() < 0.005 {
             critical_path.push(k);
         }
     }
@@ -183,14 +183,9 @@ fn traverse_from_target_to_source<'graph>(
         return;
     };
 
-    // TODO XXX error seems to be over here : (
-
-    dbg!(previous);
-
     let duration = n[previous].farthest_lhs;
 
     for neighbour in neighbours {
-        dbg!(neighbour);
         let mm = n.get_mut(neighbour).unwrap();
 
         if mm.farthest_rhs > duration {
@@ -228,10 +223,98 @@ mod tests {
             Edge::new("M", "C", 2.0),
             Edge::new("M", "L", 2.0),
         ];
-        let real_duration = 20.0;
-        let real_critical_path = ["D", "I", "J", "L", "M", "-", "Fin"];
 
-        let solution = solve(graph);
+        let real_duration = 20.0;
+        let mut real_critical_path = ["D", "I", "J", "L", "M", "-", "Fin"];
+        real_critical_path.sort();
+
+        let mut solution = solve(graph);
+        solution.critical_path.sort();
+
+        assert_eq!(solution.total_duration, real_duration);
+        assert_eq!(solution.critical_path, real_critical_path);
+    }
+
+    #[test]
+    fn solve_2() {
+        let graph = vec![
+            Edge::new("B", "-", 7.0),
+            Edge::new("D", "C", 3.0),
+            Edge::new("F", "B", 1.0),
+            Edge::new("G", "E", 1.0),
+            Edge::new("A", "-", 10.0),
+            Edge::new("C", "A", 5.0),
+            Edge::new("E", "D", 2.0),
+            Edge::new("F", "E", 1.0),
+            Edge::new("G", "F", 14.0),
+        ];
+
+        let real_duration = 35.0;
+        let mut real_critical_path = ["-", "A", "D", "E", "F", "C", "G", "Fin"];
+        real_critical_path.sort();
+
+        let mut solution = solve(graph);
+        solution.critical_path.sort();
+
+        assert_eq!(solution.total_duration, real_duration);
+        assert_eq!(solution.critical_path, real_critical_path);
+    }
+
+    #[test]
+    fn solve_3() {
+        let graph = vec![
+            Edge::new("A", "-", 3.0),
+            Edge::new("B", "A", 14.0),
+            Edge::new("C", "A", 1.0),
+            Edge::new("D", "C", 3.0),
+            Edge::new("E", "C", 1.0),
+            Edge::new("F", "C", 2.0),
+            Edge::new("G", "D", 1.0),
+            Edge::new("G", "E", 1.0),
+            Edge::new("G", "F", 1.0),
+            Edge::new("H", "G", 1.0),
+            Edge::new("I", "H", 3.0),
+            Edge::new("J", "H", 2.0),
+            Edge::new("K", "I", 2.0),
+            Edge::new("K", "J", 2.0),
+            Edge::new("L", "K", 2.0),
+            Edge::new("M", "L", 4.0),
+            Edge::new("N", "L", 1.0),
+            Edge::new("O", "B", 3.0),
+            Edge::new("O", "M", 3.0),
+            Edge::new("O", "N", 3.0),
+        ];
+
+        let real_duration = 23.0;
+        let mut real_critical_path = ["L", "G", "I", "H", "M", "-", "D", "C", "K", "O", "A", "Fin"];
+        real_critical_path.sort();
+
+        let mut solution = solve(graph);
+        solution.critical_path.sort();
+
+        assert_eq!(solution.total_duration, real_duration);
+        assert_eq!(solution.critical_path, real_critical_path);
+    }
+
+    #[test]
+    fn solve_4() {
+        let graph = vec![
+            Edge::new("A", "-", 5.0),
+            Edge::new("B", "-", 2.0),
+            Edge::new("C", "A", 2.0),
+            Edge::new("D", "A", 3.0),
+            Edge::new("E", "B", 1.0),
+            Edge::new("F", "C", 1.0),
+            Edge::new("F", "D", 1.0),
+            Edge::new("G", "E", 4.0),
+        ];
+
+        let real_duration = 9.0;
+        let mut real_critical_path = ["A", "D", "F", "-", "Fin"];
+        real_critical_path.sort();
+
+        let mut solution = solve(graph);
+        solution.critical_path.sort();
 
         assert_eq!(solution.total_duration, real_duration);
         assert_eq!(solution.critical_path, real_critical_path);
