@@ -58,7 +58,16 @@ function ejemploFloyd() {
 }
 
 function ejemploCPM() {
-  const ejemplo = [{ "origen": "A", "destino": "-", "peso": 2 }, { "origen": "B", "destino": "A", "peso": 4 }, { "origen": "C", "destino": "B", "peso": 1 }, { "origen": "C", "destino": "H", "peso": 1 }, { "origen": "D", "destino": "-", "peso": 6 }, { "origen": "E", "destino": "G", "peso": 3 }, { "origen": "F", "destino": "E", "peso": 5 }, { "origen": "G", "destino": "D", "peso": 2 }, { "origen": "H", "destino": "G", "peso": 2 }, { "origen": "I", "destino": "D", "peso": 3 }, { "origen": "J", "destino": "I", "peso": 4 }, { "origen": "K", "destino": "D", "peso": 3 }, { "origen": "L", "destino": "J", "peso": 5 }, { "origen": "L", "destino": "K", "peso": 5 }, { "origen": "M", "destino": "C", "peso": 2 }, { "origen": "M", "destino": "L", "peso": 2 }];
+  const ejemplo = [
+    { source: "A", target: "-", weight: 2 }, { source: "B", target: "A", weight: 4 },
+    { source: "C", target: "B", weight: 1 }, { source: "C", target: "H", weight: 1 },
+    { source: "D", target: "-", weight: 6 }, { source: "E", target: "G", weight: 3 },
+    { source: "F", target: "E", weight: 5 }, { source: "G", target: "D", weight: 2 },
+    { source: "H", target: "G", weight: 2 }, { source: "I", target: "D", weight: 3 },
+    { source: "J", target: "I", weight: 4 }, { source: "K", target: "D", weight: 3 },
+    { source: "L", target: "J", weight: 5 }, { source: "L", target: "K", weight: 5 },
+    { source: "M", target: "C", weight: 2 }, { source: "M", target: "L", weight: 2 }
+  ];
   fillTableExample("CPM", ejemplo);
   postData('cpm', ejemplo).then(data => { renderResponseCPM(data); });
 }

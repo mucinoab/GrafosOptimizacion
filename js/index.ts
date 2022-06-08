@@ -328,24 +328,25 @@ function setOfTrajectory(trajectory: string): Set<string> {
   return t;
 }
 
-function drawGraphLinkCritical(r: ResponseCPM): string {
-  for (let a of r.actividades) {
-    if (a.nombre === "-") {
-      a.nombre = "Inicio";
+function drawGraphLinkCritical(r: CriticalPathSolution): string {
+  // TODO maybe compute this in the server
+  for (let a of r.activities) {
+    if (a.name === "-") {
+      a.name = "Inicio";
     }
   }
 
-  const rutaCritica: Set<string> = new Set(r.rutaCritica);
+  const rutaCritica: Set<string> = new Set(r.critical_path);
   rutaCritica.add("Inicio");
 
   let link = "digraph{rankdir=LR;";
 
-  for (const a of r.actividades) {
-    for (const s of a.sucesores) {
-      link += `${a.nombre}->${s}`;
-      link += "[" + `label="${a.proximoL.toFixed(3)}, ${a.proximoR.toFixed(3)}\n${a.lejanoL.toFixed(3)}, ${a.lejanoR.toFixed(3)}"`;
+  for (const a of r.activities) {
+    for (const s of a.succesors) {
+      link += `${a.name}->${s}`;
+      link += "[" + `label="${a.closest_lhs.toFixed(3)}, ${a.closest_rhs.toFixed(3)}\n${a.farthest_lhs.toFixed(3)}, ${a.farthest_rhs.toFixed(3)}"`;
 
-      if (rutaCritica.has(a.nombre) && rutaCritica.has(s)) {
+      if (rutaCritica.has(a.name) && rutaCritica.has(s)) {
         link += ",color=red,penwidth=3.0]";
       } else {
         link += "]";

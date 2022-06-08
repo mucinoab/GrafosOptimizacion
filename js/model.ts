@@ -9,10 +9,10 @@ interface MaxFlowSolution {
   steps: Array<Path>,
 }
 
-interface ResponseCPM {
-  actividades: Array<Actividad>,
-  rutaCritica: Array<string>,
-  duracionTotal: number,
+interface CriticalPathSolution {
+  activities: Array<Activity>,
+  critical_path: Array<string>,
+  total_duration: number,
 }
 
 interface coor {
@@ -35,17 +35,17 @@ interface ResponsePERT {
   varianzas: Array<number>,
   sumaVariazas: number,
   media: number,
-  cpm: ResponseCPM,
+  cpm: CriticalPathSolution,
 }
 
-interface Actividad {
-  nombre: string,
-  duracion: number,
-  sucesores: Array<string>,
-  proximoL: number,
-  proximoR: number,
-  lejanoL: number,
-  lejanoR: number,
+interface Activity {
+  name: string,
+  duration: number,
+  succesors: Array<string>,
+  closest_lhs: number,
+  closest_rhs: number,
+  farthest_lhs: number,
+  farthest_rhs: number,
 }
 
 interface Path {
@@ -91,7 +91,7 @@ interface CompresionData {
 
 interface ResponseCompresion {
   costoTiempo: Array<number>,
-  iteraciones: Array<ResponseCPM>,
+  iteraciones: Array<CriticalPathSolution>,
   actividadesComprimidas: Array<string>,
   costoActual: Array<number>,
 }

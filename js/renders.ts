@@ -136,11 +136,11 @@ function renderNormalCDF() {
   r.innerHTML = `${(normalCDF(tiempo, media, varianza) * 100).toFixed(4)} %`;
 }
 
-function renderResponseCPM(r: ResponseCPM) {
+function renderResponseCPM(r: CriticalPathSolution) {
   renderDotGraph("imagenCPM", drawGraphLinkCritical(r));
 
   const respuesta = document.getElementById("respuestaCPM");
-  respuesta.innerText = `Duración Total: ${r.duracionTotal}`;
+  respuesta.innerText = `Duración Total: ${r.total_duration}`;
   respuesta.scrollIntoView(true);
 }
 
@@ -163,10 +163,10 @@ function renderResponseCompresion(r: ResponseCompresion) {
 
   let rh = document.createElement("div");
   const newLine = document.createElement("br");
-  let graphs: Array<[string, ResponseCPM]> = [];
+  let graphs: Array<[string, CriticalPathSolution]> = [];
 
   for (const [idx, iter] of r.iteraciones.entries()) {
-    rh.appendChild(newTextElement(`Duración: ${iter.duracionTotal}`, "h4"));
+    rh.appendChild(newTextElement(`Duración: ${iter.total_duration}`, "h4"));
     rh.appendChild(newTextElement(`Costo: $${r.costoActual[idx].toFixed(2)}`, "h4"));
     rh.appendChild(newLine.cloneNode());
 
