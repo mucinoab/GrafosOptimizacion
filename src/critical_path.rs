@@ -6,9 +6,9 @@ use serde::Serialize;
 
 #[derive(Debug, Serialize)]
 pub struct CriticalPathSolution {
-    activities: Vec<Activity>,
-    critical_path: Vec<String>,
-    total_duration: f64,
+    pub activities: Vec<Activity>,
+    pub critical_path: Vec<String>,
+    pub total_duration: f64,
 }
 
 #[derive(Debug, Serialize, Clone)]
@@ -84,6 +84,7 @@ pub fn solve(graph: Vec<Edge>) -> CriticalPathSolution {
                  source,
                  target,
                  weight,
+                 ..
              }| Edge::new(target, source, *weight),
         )
         .collect();
@@ -186,13 +187,13 @@ fn traverse_from_target_to_source<'graph>(
     let duration = n[previous].farthest_lhs;
 
     for neighbour in neighbours {
-        let mm = n.get_mut(neighbour).unwrap();
+        if let Some(mm) = n.get_mut(neighbour) {
+            if mm.farthest_rhs > duration {
+                mm.farthest_rhs = duration;
+                mm.farthest_lhs = duration - mm.duration;
 
-        if mm.farthest_rhs > duration {
-            mm.farthest_rhs = duration;
-            mm.farthest_lhs = duration - mm.duration;
-
-            traverse_from_target_to_source(neighbour, s, n);
+                traverse_from_target_to_source(neighbour, s, n);
+            }
         }
     }
 }

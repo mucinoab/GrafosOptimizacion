@@ -3,9 +3,12 @@ mod floyd_warshall;
 mod handles;
 mod kruskal;
 mod max_flow;
+mod pert;
 mod utils;
 
-use crate::handles::{critical_path, floyd_warshall, handle_error, kruskal, max_flow, not_found};
+use crate::handles::{
+    critical_path, floyd_warshall, handle_error, kruskal, max_flow, not_found, pert,
+};
 
 use std::{net::SocketAddr, sync::Arc};
 
@@ -24,6 +27,7 @@ async fn main() {
         .route("/flujomaximo", post(max_flow))
         .route("/floydwarshall", post(floyd_warshall))
         .route("/cpm", post(critical_path))
+        .route("/pert", post(pert))
         .route("/dijkstra", get(not_found))
         .fallback(get_service(ServeDir::new(".")).handle_error(handle_error))
         .layer(Extension(Arc::new(())))

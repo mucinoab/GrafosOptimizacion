@@ -26,6 +26,7 @@ pub fn solve(mut graph: Vec<Edge>) -> KruskalSolution {
         source,
         target,
         weight,
+        ..
     } in &graph
     {
         if uf.exists_cycle(source, target) {
@@ -75,6 +76,7 @@ fn dot_graph_generator(
         source,
         target,
         weight,
+        ..
     } in edges
     {
         write!(

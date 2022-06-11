@@ -3,6 +3,7 @@ use std::io;
 use crate::{
     critical_path as Critical_path, floyd_warshall as Floyd_warshall, kruskal as Kruskal,
     max_flow::{self, MaxFlow},
+    pert as Pert,
     utils::Edge,
 };
 
@@ -22,6 +23,10 @@ pub async fn floyd_warshall(Json(payload): Json<Vec<Edge>>) -> impl IntoResponse
 
 pub async fn critical_path(Json(payload): Json<Vec<Edge>>) -> impl IntoResponse {
     Json(Critical_path::solve(payload))
+}
+
+pub async fn pert(Json(payload): Json<Vec<Edge>>) -> impl IntoResponse {
+    Json(Pert::solve(payload))
 }
 
 pub async fn handle_error(err: io::Error) -> impl IntoResponse {

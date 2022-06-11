@@ -1,3 +1,4 @@
+use core::fmt::{self, Debug};
 use std::{
     collections::HashMap,
     ops::{Index, IndexMut},
@@ -5,11 +6,15 @@ use std::{
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize)]
 pub struct Edge {
     pub source: String,
     pub target: String,
     pub weight: f64,
+
+    // Only used in the PERT method
+    pub optimistic_weight: Option<f64>,
+    pub pessimistic_weight: Option<f64>,
 }
 
 impl Edge {
@@ -18,7 +23,25 @@ impl Edge {
             source: s.to_owned(),
             target: t.to_owned(),
             weight,
+            optimistic_weight: None,
+            pessimistic_weight: None,
         }
+    }
+
+    pub fn new_pert(s: &str, t: &str, optimistic: f64, weight: f64, pessimistic: f64) -> Self {
+        Self {
+            source: s.to_owned(),
+            target: t.to_owned(),
+            weight,
+            optimistic_weight: Some(optimistic),
+            pessimistic_weight: Some(pessimistic),
+        }
+    }
+}
+
+impl Debug for Edge {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{{ {} {} {} }}", self.source, self.target, self.weight)
     }
 }
 
@@ -124,6 +147,7 @@ impl<'graph> AdjList<'graph> {
             source,
             target,
             weight,
+            ..
         } in graph
         {
             inner
