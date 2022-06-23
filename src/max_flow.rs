@@ -1,8 +1,7 @@
 use crate::utils::{AdjList, Edge};
 
-use std::fmt::Write;
+use std::{collections::HashSet, fmt::Write};
 
-use indexmap::IndexSet;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize)]
@@ -67,6 +66,7 @@ impl Step {
     }
 }
 
+#[tracing::instrument]
 pub fn solve(
     MaxFlow {
         graph,
@@ -91,7 +91,7 @@ pub fn solve(
     let mut network = AdjList::new(&graph, directed);
     let mut original_network = network.clone();
 
-    let mut visited = IndexSet::new();
+    let mut visited = HashSet::new();
     solution.flow =
         trace_cheapest_path(&mut solution, &mut visited, &mut network, &source, &target);
 
@@ -110,7 +110,7 @@ pub fn solve(
 
 fn trace_cheapest_path<'graph>(
     solution: &mut MaxFlowSolution,
-    visited: &mut IndexSet<(&'graph str, &'graph str)>,
+    visited: &mut HashSet<(&'graph str, &'graph str)>,
     graph: &mut AdjList<'graph>,
     current: &'graph str,
     target: &'graph str,

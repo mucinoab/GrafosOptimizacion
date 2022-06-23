@@ -29,11 +29,13 @@ pub async fn pert(Json(payload): Json<Vec<Edge>>) -> impl IntoResponse {
     Json(Pert::solve(payload))
 }
 
+#[tracing::instrument]
 pub async fn handle_error(err: io::Error) -> impl IntoResponse {
     tracing::error!("{err}");
     (StatusCode::INTERNAL_SERVER_ERROR, "Something went wrong...")
 }
 
+#[tracing::instrument]
 pub async fn not_found() -> impl IntoResponse {
     (StatusCode::NOT_FOUND, "Not found")
 }

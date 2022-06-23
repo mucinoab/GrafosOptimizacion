@@ -44,6 +44,7 @@ impl Activity {
     }
 }
 
+#[tracing::instrument]
 pub fn solve(graph: Vec<Edge>) -> CriticalPathSolution {
     let mut actividades: HashMap<String, Activity> = graph
         .iter()

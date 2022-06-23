@@ -17,12 +17,13 @@ pub struct PertSolution {
     cpm: CriticalPathSolution,
 }
 
+#[tracing::instrument]
 pub fn solve(graph: Vec<Edge>) -> PertSolution {
     let activities: Vec<Edge> = graph
         .iter()
         .map(|n| {
             let mut m = n.clone();
-            m.weight = estimated_duration(&n);
+            m.weight = estimated_duration(n);
             //std::mem::swap(&mut m.source, &mut m.target);
 
             m

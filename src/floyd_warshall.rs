@@ -26,6 +26,7 @@ impl Change {
     }
 }
 
+#[tracing::instrument]
 pub fn solve(graph: Vec<Edge>) -> FloydWarshallSolution {
     let mut network = AdjList::new(&graph, true);
     let nodes: HashSet<_> = graph
