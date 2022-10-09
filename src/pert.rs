@@ -1,15 +1,15 @@
+//! Program Evaluation and Review Technique, PERT
 use crate::{
     critical_path::{self, CriticalPathSolution},
     utils::Edge,
 };
 
-use std::collections::HashMap;
+use std::{collections::HashMap, ops::Deref};
 
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
 pub struct PertSolution {
-    critical_path: Vec<String>,
     estimates: Vec<f64>,
     variances: Vec<f64>,
     sum_of_variances: f64,
@@ -19,62 +19,45 @@ pub struct PertSolution {
 
 #[tracing::instrument]
 pub fn solve(graph: Vec<Edge>) -> PertSolution {
+    // Calculate the estimated duration for each edge.
     let activities: Vec<Edge> = graph
         .iter()
-        .map(|n| {
-            let mut m = n.clone();
-            m.weight = estimated_duration(n);
-            //std::mem::swap(&mut m.source, &mut m.target);
+        .map(|n| Edge::new(&n.source, &n.target, estimated_duration(n)))
+        .collect();
 
-            m
-        })
-        .collect();
-    let m_actividades: HashMap<_, _> = graph
-        .iter()
-        .map(|n| (n.target.as_str(), n.clone()))
-        .collect();
-    let variances = activities.iter().map(variance).collect();
-    let estimates = activities.iter().map(|n| n.weight).collect();
-    eprintln!("{:?}", &activities);
+    let variances = graph.iter().map(variance).collect();
+    let estimates = activities.iter().map(|e| e.weight).collect();
+
+    let m_actividades: HashMap<&str, &Edge> =
+        graph.iter().map(|e| (e.source.as_str(), e)).collect();
+
     let cpm = critical_path::solve(activities);
-    eprintln!("{:?}", &cpm.critical_path);
-    dbg!(&cpm.total_duration);
-
     let sum_of_variances = cpm
         .critical_path
         .iter()
         .filter_map(|n| m_actividades.get(n.as_str()))
-        .map(variance)
+        .map(Deref::deref)
+        .map(variance) // TODO: Avoid calling variance twice, we already hace in variances.
         .sum();
 
     PertSolution {
         estimates,
         variances,
         sum_of_variances,
-        critical_path: cpm.critical_path.clone(),
         mean: cpm.total_duration,
         cpm,
     }
 }
 
 pub fn estimated_duration(node: &Edge) -> f64 {
-    // We are sure this is safe because these are only used in this method
+    let probable = node.weight;
     let optimistic = node.optimistic_weight.unwrap();
     let pessimistic = node.pessimistic_weight.unwrap();
 
-    eprintln!(
-        "{} {} {} {}",
-        optimistic,
-        node.weight,
-        pessimistic,
-        (optimistic + 4.0 * node.weight + pessimistic) / 6.0
-    );
-
-    (optimistic + 4.0 * node.weight + pessimistic) / 6.0
+    (optimistic + 4.0 * probable + pessimistic) / 6.0
 }
 
 pub fn variance(node: &Edge) -> f64 {
-    // We are sure this is safe because these are only used in this method
     let optimistic = node.optimistic_weight.unwrap();
     let pessimistic = node.pessimistic_weight.unwrap();
 
@@ -107,9 +90,46 @@ mod tests {
             Edge::new_pert("M", "L", 1.0, 2.0, 3.0),
         ];
 
-        let sol = solve(grafo);
+        let mut sol = solve(grafo);
+        sol.cpm.critical_path.sort();
 
         assert_eq!(sol.sum_of_variances, 19.0 / 9.0);
         assert_eq!(sol.mean, 20.0);
+        assert_eq!(
+            sol.cpm.critical_path,
+            vec!["-", "D", "Fin", "I", "J", "L", "M"]
+        );
+    }
+
+    #[test]
+    fn solve_2() {
+        let grafo = vec![
+            Edge::new_pert("A", "-", 12.0, 15.0, 18.0),
+            Edge::new_pert("B", "-", 6.0, 9.0, 12.0),
+            Edge::new_pert("C", "A", 9.0, 12.0, 15.0),
+            Edge::new_pert("D", "B", 6.0, 9.0, 18.0),
+            Edge::new_pert("E", "B", 18.0, 30.0, 36.0),
+            Edge::new_pert("F", "A", 9.0, 12.0, 15.0),
+            Edge::new_pert("G", "C", 36.0, 36.0, 42.0),
+            Edge::new_pert("H", "D", 42.0, 48.0, 54.0),
+            Edge::new_pert("I", "A", 6.0, 12.0, 18.0),
+            Edge::new_pert("J", "H", 3.0, 6.0, 9.0),
+            Edge::new_pert("J", "G", 3.0, 6.0, 9.0),
+            Edge::new_pert("J", "E", 3.0, 6.0, 9.0),
+            Edge::new_pert("K", "F", 3.0, 6.0, 9.0),
+            Edge::new_pert("K", "J", 3.0, 6.0, 9.0),
+            Edge::new_pert("K", "I", 3.0, 6.0, 9.0),
+        ];
+
+        let mut sol = solve(grafo);
+        sol.cpm.critical_path.sort();
+
+        assert_eq!(sol.mean, 79.0);
+        assert_eq!(sol.sum_of_variances, 11.0);
+
+        assert_eq!(
+            sol.cpm.critical_path,
+            vec!["-", "B", "D", "Fin", "H", "J", "K"]
+        );
     }
 }

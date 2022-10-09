@@ -6,7 +6,7 @@ use std::{
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, PartialEq)]
 pub struct Edge {
     pub source: String,
     pub target: String,
@@ -41,7 +41,19 @@ impl Edge {
 
 impl Debug for Edge {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{{ {} {} {} }}", self.source, self.target, self.weight)
+        if self.optimistic_weight.is_some() || self.pessimistic_weight.is_some() {
+            write!(
+                f,
+                "{{ {} {} {} {} {} }}",
+                self.source,
+                self.target,
+                self.weight,
+                self.optimistic_weight.unwrap(),
+                self.pessimistic_weight.unwrap()
+            )
+        } else {
+            write!(f, "{{ {} {} {} }}", self.source, self.target, self.weight)
+        }
     }
 }
 
