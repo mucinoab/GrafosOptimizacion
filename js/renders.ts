@@ -1,5 +1,5 @@
 function renderResponsePERT(r: ResponsePERT) {
-  const rutaC = new Set(r.rutaCritica);
+  const rutaC = new Set(r.cpm.critical_path);
 
   let header = <HTMLTableRowElement>document.getElementById("PERTHeader");
   if (header.cells.length === 6) {
@@ -20,20 +20,20 @@ function renderResponsePERT(r: ResponsePERT) {
     }
 
     const tdClass = (rutaC.has(activida) && rutaC.has(predecesora)) ? "cambio" : "";
-    putCell(row, r.estimaciones[idx].toFixed(3), tdClass);
-    putCell(row, r.varianzas[idx].toFixed(3), tdClass);
+    putCell(row, r.estimates[idx].toFixed(3), tdClass);
+    putCell(row, r.variances[idx].toFixed(3), tdClass);
 
     idx += 1;
   }
 
   renderDotGraph("imagenPERT", drawGraphLinkCritical(r.cpm));
 
-  varianza = r.sumaVariazas;
-  media = r.media;
+  varianza = r.sum_of_variances;
+  media = r.mean;
 
   const response = document.getElementById("respuestasPERT");
 
-  response.innerText = `μ = ${r.media.toFixed(3)}, σ² = ${r.sumaVariazas.toFixed(3)}`;
+  response.innerText = `μ = ${r.mean.toFixed(3)}, σ² = ${r.sum_of_variances.toFixed(3)}`;
   response.scrollIntoView(true);
 }
 

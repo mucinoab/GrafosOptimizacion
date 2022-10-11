@@ -73,7 +73,24 @@ function ejemploCPM() {
 }
 
 function ejemploPERT() {
-  const ejemplo = [{ "origen": "A", "destino": "-", "optimista": 1, "probable": 2, "pesimista": 3 }, { "origen": "B", "destino": "A", "optimista": 2, "probable": 4, "pesimista": 6 }, { "origen": "C", "destino": "B", "optimista": 0, "probable": 1, "pesimista": 2 }, { "origen": "C", "destino": "H", "optimista": 0, "probable": 1, "pesimista": 2 }, { "origen": "D", "destino": "-", "optimista": 3, "probable": 6, "pesimista": 9 }, { "origen": "E", "destino": "G", "optimista": 2, "probable": 3, "pesimista": 4 }, { "origen": "F", "destino": "E", "optimista": 3, "probable": 5, "pesimista": 7 }, { "origen": "G", "destino": "D", "optimista": 1, "probable": 2, "pesimista": 3 }, { "origen": "H", "destino": "G", "optimista": 1, "probable": 2, "pesimista": 3 }, { "origen": "I", "destino": "D", "optimista": 1, "probable": 3, "pesimista": 5 }, { "origen": "J", "destino": "I", "optimista": 3, "probable": 4, "pesimista": 5 }, { "origen": "K", "destino": "D", "optimista": 2, "probable": 3, "pesimista": 4 }, { "origen": "L", "destino": "J", "optimista": 3, "probable": 5, "pesimista": 7 }, { "origen": "L", "destino": "K", "optimista": 3, "probable": 5, "pesimista": 7 }, { "origen": "M", "destino": "C", "optimista": 1, "probable": 2, "pesimista": 3 }, { "origen": "M", "destino": "L", "optimista": 1, "probable": 2, "pesimista": 3 }];
+  const ejemplo = [
+    { source: "A", target: "-", optimistic_weight: 1, weight: 2, pessimistic_weight: 3 },
+    { source: "B", target: "A", optimistic_weight: 2, weight: 4, pessimistic_weight: 6 },
+    { source: "C", target: "B", optimistic_weight: 0, weight: 1, pessimistic_weight: 2 },
+    { source: "C", target: "H", optimistic_weight: 0, weight: 1, pessimistic_weight: 2 },
+    { source: "D", target: "-", optimistic_weight: 3, weight: 6, pessimistic_weight: 9 },
+    { source: "E", target: "G", optimistic_weight: 2, weight: 3, pessimistic_weight: 4 },
+    { source: "F", target: "E", optimistic_weight: 3, weight: 5, pessimistic_weight: 7 },
+    { source: "G", target: "D", optimistic_weight: 1, weight: 2, pessimistic_weight: 3 },
+    { source: "H", target: "G", optimistic_weight: 1, weight: 2, pessimistic_weight: 3 },
+    { source: "I", target: "D", optimistic_weight: 1, weight: 3, pessimistic_weight: 5 },
+    { source: "J", target: "I", optimistic_weight: 3, weight: 4, pessimistic_weight: 5 },
+    { source: "K", target: "D", optimistic_weight: 2, weight: 3, pessimistic_weight: 4 },
+    { source: "L", target: "J", optimistic_weight: 3, weight: 5, pessimistic_weight: 7 },
+    { source: "L", target: "K", optimistic_weight: 3, weight: 5, pessimistic_weight: 7 },
+    { source: "M", target: "C", optimistic_weight: 1, weight: 2, pessimistic_weight: 3 },
+    { source: "M", target: "L", optimistic_weight: 1, weight: 2, pessimistic_weight: 3 }
+  ];
   fillTableExample("PERT", ejemplo);
   postData('pert', ejemplo).then(data => { renderResponsePERT(data); });
 }

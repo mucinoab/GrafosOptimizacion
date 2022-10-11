@@ -30,11 +30,10 @@ interface ResponseDijkstra {
 }
 
 interface ResponsePERT {
-  rutaCritica: Array<string>,
-  estimaciones: Array<number>,
-  varianzas: Array<number>,
-  sumaVariazas: number,
-  media: number,
+  estimates: Array<number>,
+  variances: Array<number>,
+  sum_of_variances: number,
+  mean: number,
   cpm: CriticalPathSolution,
 }
 
@@ -60,11 +59,11 @@ interface Vertice {
 }
 
 interface VerticePERT {
-  origen: string,
-  destino: string,
-  optimista: number,
-  probable: number,
-  pesimista: number,
+  source: string,
+  target: string,
+  weight: number,
+  optimistic_weight: number,
+  pessimistic_weight: number,
 }
 
 interface Change {

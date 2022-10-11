@@ -40,7 +40,7 @@ function showTable() {
     const nvertices = parseInt(vertices.value, 10);
 
     if (isNaN(nvertices) || nvertices <= 0) {
-      alert("Número de vértices NO valido.");
+      alert("Número de vértices NO válido.");
     } else {
       generateTable(method, nvertices);
       document.getElementById(method).style.setProperty("display", "block");
@@ -126,11 +126,11 @@ function PERT() {
     }
 
     let activida: VerticePERT = {
-      origen: a.source,
-      destino: a.target,
-      optimista: a.weight,
-      probable: probable,
-      pesimista: pesimista,
+      source: a.source,
+      target: a.target,
+      weight: probable,
+      optimistic_weight: a.weight,
+      pessimistic_weight: pesimista,
     };
 
     actividaes.push(activida);
@@ -272,9 +272,9 @@ function fillTable(id: string, d: Array<any>) {
       pesosU[idx].value = String(d[idx].pesoUrgente);
       costosU[idx].value = String(d[idx].costoUrgente);
     } else if (id === "PERT") {
-      pesos[idx].value = String(d[idx].optimista);
-      probables[idx].value = String(d[idx].probable);
-      pesimistas[idx].value = String(d[idx].pesimista);
+      pesos[idx].value = String(d[idx].optimistic_weight);
+      probables[idx].value = String(d[idx].weight);
+      pesimistas[idx].value = String(d[idx].pessimistic_weight);
     } else {
       pesos[idx].value = String(d[idx].weight);
     }
