@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 pub struct Edge {
     pub source: String,
     pub target: String,
-    pub weight: f64,
+    pub weight: f64, // Most probable in PERT
 
     // Only used in the PERT method
     pub optimistic_weight: Option<f64>,
@@ -41,7 +41,7 @@ impl Edge {
 
 impl Debug for Edge {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if self.optimistic_weight.is_some() || self.pessimistic_weight.is_some() {
+        if self.optimistic_weight.is_some() && self.pessimistic_weight.is_some() {
             write!(
                 f,
                 "{{ {} {} {} {} {} }}",

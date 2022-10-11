@@ -132,4 +132,41 @@ mod tests {
             vec!["-", "B", "D", "Fin", "H", "J", "K"]
         );
     }
+
+    #[test]
+    #[ignore] // TODO
+    fn solve_3() {
+        let grafo = vec![
+            Edge::new_pert("A", "-", 1.0, 2.0, 3.0),
+            Edge::new_pert("B", "A", 2.0, 4.0, 6.0),
+            Edge::new_pert("C", "B", 0.0, 1.0, 2.0),
+            Edge::new_pert("C", "H", 0.0, 1.0, 2.0),
+            Edge::new_pert("D", "-", 3.0, 6.0, 9.0),
+            Edge::new_pert("E", "G", 2.0, 3.0, 4.0),
+            Edge::new_pert("F", "E", 3.0, 5.0, 7.0),
+            Edge::new_pert("G", "D", 1.0, 2.0, 3.0),
+            Edge::new_pert("H", "G", 1.0, 2.0, 3.0),
+            Edge::new_pert("I", "D", 1.0, 3.0, 5.0),
+            Edge::new_pert("J", "I", 3.0, 4.0, 5.0),
+            Edge::new_pert("K", "D", 2.0, 3.0, 4.0),
+            Edge::new_pert("L", "J", 3.0, 5.0, 7.0),
+            Edge::new_pert("L", "K", 3.0, 5.0, 7.0),
+            Edge::new_pert("M", "C", 1.0, 2.0, 3.0),
+            Edge::new_pert("M", "L", 1.0, 2.0, 3.0),
+            Edge::new_pert("G", "B", 1.0, 10.0, 10.0),
+        ];
+
+        let mut sol = solve(grafo);
+        sol.cpm.critical_path.sort();
+
+        assert_eq!(sol.sum_of_variances, 4.361111111111111);
+        assert_eq!(sol.mean, 22.5);
+        // TODO
+        // In this example when you plot the critical path it appears that there are two solutions.
+        // Is this correct or what is happening?
+        assert_eq!(
+            sol.cpm.critical_path,
+            vec!["-", "D", "Fin", "I", "J", "L", "M"]
+        );
+    }
 }
