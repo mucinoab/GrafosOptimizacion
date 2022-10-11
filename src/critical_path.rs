@@ -46,13 +46,13 @@ impl Activity {
 
 #[tracing::instrument]
 pub fn solve(graph: Vec<Edge>) -> CriticalPathSolution {
-    let mut actividades: HashMap<String, Activity> = graph
+    let mut actividades: HashMap<&str, Activity> = graph
         .iter()
-        .map(|Edge { source, weight, .. }| (source.into(), Activity::new(source, *weight)))
+        .map(|Edge { source, weight, .. }| (source.as_str(), Activity::new(source, *weight)))
         .collect();
 
     actividades.insert(
-        "-".into(),
+        "-",
         Activity {
             name: "-".into(),
             duration: 0.0,
@@ -64,18 +64,15 @@ pub fn solve(graph: Vec<Edge>) -> CriticalPathSolution {
         },
     );
 
-    // TODO names
-    let s: HashSet<&str> = graph
+    // TODO proper variable names
+    let s: HashSet<_> = graph
         .iter()
-        .flat_map(|Edge { source, target, .. }| [source.as_str(), target.as_str()])
+        .flat_map(|Edge { source, target, .. }| [source, target])
         .collect();
 
-    let sn: HashSet<&str> = graph
-        .iter()
-        .map(|Edge { target, .. }| target.as_str())
-        .collect();
+    let sn: HashSet<_> = graph.iter().map(|Edge { target, .. }| target).collect();
 
-    let actividades_terminales: Vec<String> = s.difference(&sn).map(|&at| at.to_owned()).collect();
+    let actividades_terminales: Vec<&str> = s.difference(&sn).map(|a| a.as_str()).collect();
 
     // TODO we invert the table because the format of the table is different(?)
     let graph_reversed: Vec<_> = graph
@@ -126,7 +123,7 @@ pub fn solve(graph: Vec<Edge>) -> CriticalPathSolution {
     for (k, v) in actividades {
         let mut acts = v.clone();
 
-        if let Some(n) = siguientes.inner.get(k.as_str()) {
+        if let Some(n) = siguientes.inner.get(k) {
             acts.succesors.extend(n.keys().map(|k| k.to_string()));
         } else {
             acts.succesors.push("Fin".into());
@@ -140,11 +137,11 @@ pub fn solve(graph: Vec<Edge>) -> CriticalPathSolution {
     }
 
     activities.push(Activity::new("Fin", total_duration));
-    critical_path.push("Fin".into());
+    critical_path.push("Fin");
 
     CriticalPathSolution {
         activities,
-        critical_path,
+        critical_path: critical_path.iter().map(ToString::to_string).collect(),
         total_duration,
     }
 }
@@ -152,10 +149,10 @@ pub fn solve(graph: Vec<Edge>) -> CriticalPathSolution {
 fn traverse_from_source_to_target<'graph>(
     previous: &str,
     s: &mut AdjList<'graph>,
-    n: &mut HashMap<String, Activity>,
+    n: &mut HashMap<&str, Activity>,
 ) {
-    let neighbours: Vec<_> = if let Some(n) = s.inner.get(previous) {
-        n.keys().map(|k| k.to_owned()).collect()
+    let neighbours: Vec<&str> = if let Some(n) = s.inner.get(previous) {
+        n.keys().copied().collect()
     } else {
         return;
     };
@@ -177,10 +174,10 @@ fn traverse_from_source_to_target<'graph>(
 fn traverse_from_target_to_source<'graph>(
     previous: &str,
     s: &mut AdjList<'graph>,
-    n: &mut HashMap<String, Activity>,
+    n: &mut HashMap<&str, Activity>,
 ) {
-    let neighbours: Vec<_> = if let Some(n) = s.inner.get(previous) {
-        n.keys().map(|k| k.to_owned()).collect()
+    let neighbours: Vec<&str> = if let Some(n) = s.inner.get(previous) {
+        n.keys().copied().collect()
     } else {
         return;
     };
