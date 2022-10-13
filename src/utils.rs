@@ -18,20 +18,26 @@ pub struct Edge {
 }
 
 impl Edge {
-    pub fn new(s: &str, t: &str, weight: f64) -> Self {
+    pub fn new(s: impl Into<String>, t: impl Into<String>, weight: f64) -> Self {
         Self {
-            source: s.to_owned(),
-            target: t.to_owned(),
+            source: s.into(),
+            target: t.into(),
             weight,
             optimistic_weight: None,
             pessimistic_weight: None,
         }
     }
 
-    pub fn new_pert(s: &str, t: &str, optimistic: f64, weight: f64, pessimistic: f64) -> Self {
+    pub fn new_pert(
+        s: impl Into<String>,
+        t: impl Into<String>,
+        optimistic: f64,
+        weight: f64,
+        pessimistic: f64,
+    ) -> Self {
         Self {
-            source: s.to_owned(),
-            target: t.to_owned(),
+            source: s.into(),
+            target: t.into(),
             weight,
             optimistic_weight: Some(optimistic),
             pessimistic_weight: Some(pessimistic),
@@ -137,12 +143,12 @@ impl<'graph> From<&AdjList<'graph>> for Vec<Edge> {
     fn from(list: &AdjList) -> Self {
         let mut edges = Self::new();
 
-        for (source, neighbours) in &list.inner {
-            for (target, weight) in neighbours {
-                edges.push(Edge::new(source, target, *weight));
+        for (&source, neighbours) in &list.inner {
+            for (&target, &weight) in neighbours {
+                edges.push(Edge::new(source, target, weight));
 
                 if !list.directed {
-                    edges.push(Edge::new(target, source, *weight));
+                    edges.push(Edge::new(target, source, weight));
                 }
             }
         }

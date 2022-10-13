@@ -1,6 +1,7 @@
 package methods
 
 import (
+	"fmt"
 	"math"
 )
 
@@ -47,11 +48,17 @@ func ResuelveCompresion(c CompresionData) RespuesaCompresion {
 	actividadesComprimidas.Add("Fin")
 
 	actividades := transformVertex(c.Actividades)
+
+	fmt.Printf("%v\n", costos)
+	panic("")
+
 	actividadesCpy := Clone(actividades)
 
 	resultadoCpm := ResuelveCPM(actividades)
 	iteracionesCPM = append(iteracionesCPM, resultadoCpm)
-	costoActual = append(costoActual, calculaCostoRuta(costos, actividadesCpy, actividadesComprimidas))
+	costoActual =
+		append(costoActual,
+			calculaCostoRuta(costos, actividadesCpy, actividadesComprimidas))
 
 	for {
 		actMin := Inf

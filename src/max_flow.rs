@@ -41,9 +41,9 @@ impl MaxFlowSolution {
     fn add_step<'graph>(&mut self, network: &AdjList<'graph>, path: impl Into<String>) {
         let mut updated_network = Vec::new();
 
-        for (source, neighbours) in &network.inner {
-            for (target, weight) in neighbours {
-                updated_network.push(Edge::new(source, target, *weight));
+        for (&source, neighbours) in &network.inner {
+            for (&target, &weight) in neighbours {
+                updated_network.push(Edge::new(source, target, weight));
             }
         }
 

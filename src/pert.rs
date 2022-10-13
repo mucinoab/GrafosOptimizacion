@@ -134,7 +134,7 @@ mod tests {
     }
 
     #[test]
-    #[ignore] // TODO
+    #[ignore = "We are missing an edge case, maybe"]
     fn solve_3() {
         let grafo = vec![
             Edge::new_pert("A", "-", 1.0, 2.0, 3.0),

@@ -1,7 +1,8 @@
 use std::io;
 
 use crate::{
-    critical_path as Critical_path, floyd_warshall as Floyd_warshall, kruskal as Kruskal,
+    compression as Compression, critical_path as Critical_path, floyd_warshall as Floyd_warshall,
+    kruskal as Kruskal,
     max_flow::{self, MaxFlow},
     pert as Pert,
     utils::Edge,
@@ -27,6 +28,10 @@ pub async fn critical_path(Json(payload): Json<Vec<Edge>>) -> impl IntoResponse 
 
 pub async fn pert(Json(payload): Json<Vec<Edge>>) -> impl IntoResponse {
     Json(Pert::solve(payload))
+}
+
+pub async fn compression(Json(payload): Json<Compression::Compression>) -> impl IntoResponse {
+    Json(Compression::solve(payload))
 }
 
 #[tracing::instrument]

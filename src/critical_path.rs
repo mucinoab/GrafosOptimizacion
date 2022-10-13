@@ -4,7 +4,7 @@ use std::collections::{HashMap, HashSet};
 
 use serde::Serialize;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct CriticalPathSolution {
     pub activities: Vec<Activity>,
     pub critical_path: Vec<String>,

@@ -1,3 +1,4 @@
+mod compression;
 mod critical_path;
 mod floyd_warshall;
 mod handles;
@@ -7,7 +8,7 @@ mod pert;
 mod utils;
 
 use crate::handles::{
-    critical_path, floyd_warshall, handle_error, kruskal, max_flow, not_found, pert,
+    compression, critical_path, floyd_warshall, handle_error, kruskal, max_flow, not_found, pert,
 };
 
 use std::{net::SocketAddr, sync::Arc};
@@ -28,6 +29,7 @@ async fn main() {
         .route("/floydwarshall", post(floyd_warshall))
         .route("/cpm", post(critical_path))
         .route("/pert", post(pert))
+        .route("/compression", post(compression))
         .route("/dijkstra", get(not_found))
         .fallback(get_service(ServeDir::new(".")).handle_error(handle_error))
         .layer(Extension(Arc::new(())))
