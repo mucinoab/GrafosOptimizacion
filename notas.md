@@ -31,6 +31,7 @@
   - [ ] Hacer los ejemplos más simples, pequeños y concisos.
   - [ ] Distributed tracing. or more specific spans
   - [ ] Dejar claro que el api rest es publica, se puede utilizar, tal vez agregar una colección de postman
+  - [ ] Compilar typescript en container para poder hacer el deploy desde GitHub actions
 
   - [ ] Perma links a una solución específica, url query string
     - [ ] al picarle que solucione, solucionar de manera normal pero en un gorutine

@@ -11,7 +11,7 @@ use crate::handles::{
     compression, critical_path, floyd_warshall, handle_error, kruskal, max_flow, not_found, pert,
 };
 
-use std::{net::SocketAddr, sync::Arc};
+use std::sync::Arc;
 
 use axum::{
     routing::{get, get_service, post},
@@ -36,7 +36,7 @@ async fn main() {
         .layer(TraceLayer::new_for_http())
         .layer(CompressionLayer::new());
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    let addr = "[::]:8080".parse().unwrap();
     tracing::info!("listening on http://{addr}");
 
     axum::Server::bind(&addr)
