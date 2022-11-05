@@ -1,6 +1,6 @@
 //! Program Evaluation and Review Technique, PERT
 use crate::{
-    critical_path::{self, CriticalPathSolution},
+    critical_path::{self, Solution as CriticalPathSolution},
     utils::Edge,
 };
 
@@ -9,7 +9,7 @@ use std::{collections::HashMap, ops::Deref};
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
-pub struct PertSolution {
+pub struct Solution {
     estimates: Vec<f64>,
     variances: Vec<f64>,
     sum_of_variances: f64,
@@ -18,7 +18,7 @@ pub struct PertSolution {
 }
 
 #[tracing::instrument]
-pub fn solve(graph: Vec<Edge>) -> PertSolution {
+pub fn solve(graph: Vec<Edge>) -> Solution {
     // Calculate the estimated duration for each edge.
     let activities: Vec<Edge> = graph
         .iter()
@@ -40,7 +40,7 @@ pub fn solve(graph: Vec<Edge>) -> PertSolution {
         .map(variance) // TODO: Avoid calling variance twice, we already hace in variances.
         .sum();
 
-    PertSolution {
+    Solution {
         estimates,
         variances,
         sum_of_variances,

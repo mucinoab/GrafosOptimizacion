@@ -3,7 +3,7 @@ use crate::utils::{AdjList, Edge};
 use std::collections::HashSet;
 
 #[derive(Debug, serde::Serialize)]
-pub struct FloydWarshallSolution {
+pub struct Solution {
     changes: Vec<Change>,
     iterations: Vec<Vec<Edge>>,
     nodes: Vec<String>,
@@ -27,12 +27,12 @@ impl Change {
 }
 
 #[tracing::instrument]
-pub fn solve(graph: Vec<Edge>) -> FloydWarshallSolution {
+pub fn solve(graph: Vec<Edge>) -> Solution {
     let mut network = AdjList::new(&graph, true);
     let nodes: HashSet<_> = graph
         .iter()
         .flat_map(|Edge { source, target, .. }| [source, target])
-        .map(|n| n.as_str())
+        .map(String::as_str)
         .collect();
 
     for source in &nodes {
@@ -81,7 +81,7 @@ pub fn solve(graph: Vec<Edge>) -> FloydWarshallSolution {
     let mut nodes: Vec<String> = nodes.iter().map(|&n| n.to_owned()).collect();
     nodes.sort_unstable();
 
-    FloydWarshallSolution {
+    Solution {
         changes,
         iterations,
         nodes,

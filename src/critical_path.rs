@@ -5,7 +5,7 @@ use std::collections::{HashMap, HashSet};
 use serde::Serialize;
 
 #[derive(Debug, Clone, Serialize)]
-pub struct CriticalPathSolution {
+pub struct Solution {
     pub activities: Vec<Activity>,
     pub critical_path: Vec<String>,
     pub total_duration: f64,
@@ -45,7 +45,7 @@ impl Activity {
 }
 
 #[tracing::instrument]
-pub fn solve(graph: Vec<Edge>) -> CriticalPathSolution {
+pub fn solve(graph: Vec<Edge>) -> Solution {
     let mut actividades: HashMap<&str, Activity> = graph
         .iter()
         .map(|Edge { source, weight, .. }| (source.as_str(), Activity::new(source, *weight)))
@@ -124,7 +124,7 @@ pub fn solve(graph: Vec<Edge>) -> CriticalPathSolution {
         let mut acts = v.clone();
 
         if let Some(n) = siguientes.inner.get(k) {
-            acts.succesors.extend(n.keys().map(|k| k.to_string()));
+            acts.succesors.extend(n.keys().map(|&k| k.to_string()));
         } else {
             acts.succesors.push("Fin".into());
         }
@@ -139,7 +139,7 @@ pub fn solve(graph: Vec<Edge>) -> CriticalPathSolution {
     activities.push(Activity::new("Fin", total_duration));
     critical_path.push("Fin");
 
-    CriticalPathSolution {
+    Solution {
         activities,
         critical_path: critical_path.iter().map(ToString::to_string).collect(),
         total_duration,

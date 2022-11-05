@@ -39,8 +39,10 @@ async fn main() {
     let addr = "[::]:8080".parse().unwrap();
     tracing::info!("listening on http://{addr}");
 
-    axum::Server::bind(&addr)
+    if let Err(e) = axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await
-        .unwrap();
+    {
+        tracing::error!("Could not start the server: {e}");
+    }
 }

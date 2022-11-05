@@ -1,6 +1,6 @@
 //! Compression, project acceleration
 use crate::{
-    critical_path::{self, CriticalPathSolution},
+    critical_path::{self, Solution as CriticalPathSolution},
     utils,
 };
 
@@ -60,7 +60,7 @@ impl Edge {
 }
 
 #[derive(Debug, Serialize)]
-pub struct CompressionSolution {
+pub struct Solution {
     time_cost: Vec<f64>,
     iterations: Vec<CriticalPathSolution>,
     compressed_activities: Vec<String>,
@@ -68,9 +68,9 @@ pub struct CompressionSolution {
 }
 
 #[tracing::instrument]
-pub fn solve(mut c: Compression) -> CompressionSolution {
+pub fn solve(mut c: Compression) -> Solution {
     // Compute the time-cost for all the nodes.
-    c.activities.iter_mut().for_each(|a| a.compute_time_cost());
+    c.activities.iter_mut().for_each(Edge::compute_time_cost);
 
     // A quick "cache" to quickly access all the costs for any given node.
     let costs: HashMap<&str, &Edge> = c
@@ -125,7 +125,7 @@ pub fn solve(mut c: Compression) -> CompressionSolution {
         }
 
         // Agrega actividad comprimida
-        a_comprimidas.push(act_min_origen.to_owned());
+        a_comprimidas.push(act_min_origen.clone());
 
         //actividadesCpy = activities.clone();
         //resultadoCPM = critical_path::solve(activities);
@@ -138,7 +138,7 @@ pub fn solve(mut c: Compression) -> CompressionSolution {
         ));
     }
 
-    CompressionSolution {
+    Solution {
         iterations,
         compressed_activities: a_comprimidas,
         actual_cost: costo_actual,
@@ -196,8 +196,7 @@ mod tests {
         let sol = solve(compession_payload);
         dbg!(&sol.iterations);
         assert_eq!(sol.iterations.last().unwrap().total_duration, 11.0);
-        // TODO we need to double check that more of the reported fields in sol are correct because
-        // I suspect that some are wrong.
+        // TODO we need to double check that more of the reported fields in sol are correct.
         panic!()
     }
 

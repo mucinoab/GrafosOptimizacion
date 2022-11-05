@@ -25,12 +25,12 @@ impl MaxFlow {
 }
 
 #[derive(Debug, Serialize)]
-pub struct MaxFlowSolution {
+pub struct Solution {
     flow: f64,
     steps: Vec<Step>,
 }
 
-impl MaxFlowSolution {
+impl Solution {
     pub fn new() -> Self {
         Self {
             flow: 0.0,
@@ -74,7 +74,7 @@ pub fn solve(
         target,
         directed,
     }: MaxFlow,
-) -> MaxFlowSolution {
+) -> Solution {
     let mut edges = graph.clone();
 
     if !directed {
@@ -85,7 +85,7 @@ pub fn solve(
         );
     }
 
-    let mut solution = MaxFlowSolution::new();
+    let mut solution = Solution::new();
     solution.steps.push(Step::new(edges, "Grafo Inicial"));
 
     let mut network = AdjList::new(&graph, directed);
@@ -97,10 +97,10 @@ pub fn solve(
 
     // Update network weights with max flow
     original_network.inner.iter_mut().for_each(|(_, n)| {
-        n.iter_mut().for_each(|(_, w)| {
+        for (_, w) in n.iter_mut() {
+            // assert!(*w >= 0.0); Debug This should be true?
             *w -= solution.flow;
-            //assert!(*w >= 0.0)
-        })
+        }
     });
 
     solution.add_step(&original_network, "Patrón de Flujo");
@@ -109,7 +109,7 @@ pub fn solve(
 }
 
 fn trace_cheapest_path<'graph>(
-    solution: &mut MaxFlowSolution,
+    solution: &mut Solution,
     visited: &mut HashSet<(&'graph str, &'graph str)>,
     graph: &mut AdjList<'graph>,
     current: &'graph str,
@@ -154,12 +154,12 @@ fn trace_cheapest_path<'graph>(
     // Record and update the weights in the route.
     for (l_node, r_node) in visited.iter() {
         let weight = graph[l_node].get_mut(r_node).unwrap();
-        write!(&mut path, "{:.2},", weight).unwrap();
+        write!(&mut path, "{weight:.2},").unwrap();
         *weight -= cheapest_in_path; // Update weights
     }
 
     path.pop();
-    write!(&mut path, "}} = {}", cheapest_in_path).unwrap();
+    write!(&mut path, "}} = {cheapest_in_path}").unwrap();
     solution.add_step(graph, path);
 
     cheapest_in_path
