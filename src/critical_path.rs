@@ -146,9 +146,9 @@ pub fn solve(graph: Vec<Edge>) -> Solution {
     }
 }
 
-fn traverse_from_source_to_target<'graph>(
+fn traverse_from_source_to_target(
     previous: &str,
-    s: &mut AdjList<'graph>,
+    s: &mut AdjList,
     n: &mut HashMap<&str, Activity>,
 ) {
     let neighbours: Vec<&str> = if let Some(n) = s.inner.get(previous) {
@@ -171,9 +171,9 @@ fn traverse_from_source_to_target<'graph>(
     }
 }
 
-fn traverse_from_target_to_source<'graph>(
+fn traverse_from_target_to_source(
     previous: &str,
-    s: &mut AdjList<'graph>,
+    s: &mut AdjList,
     n: &mut HashMap<&str, Activity>,
 ) {
     let neighbours: Vec<&str> = if let Some(n) = s.inner.get(previous) {

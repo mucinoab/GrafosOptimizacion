@@ -93,7 +93,7 @@ pub fn solve(mut c: Compression) -> Solution {
     let mut iterations: Vec<CriticalPathSolution> = vec![critical_path::solve(activities.clone())];
     let mut costo_actual = vec![calcula_costo_ruta(
         &costs,
-        &activities.clone(),
+        &activities,
         &compressed_activities,
     )];
 

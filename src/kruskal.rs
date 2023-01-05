@@ -83,8 +83,7 @@ fn dot_graph_generator(
     {
         write!(
             &mut graph,
-            "{}{separator}{}[label=\"{:.3}\"",
-            source, target, weight
+            "{source}{separator}{target}[label=\"{weight:.3}\""
         )
         .unwrap();
 

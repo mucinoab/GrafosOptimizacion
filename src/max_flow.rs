@@ -38,7 +38,7 @@ impl Solution {
         }
     }
 
-    fn add_step<'graph>(&mut self, network: &AdjList<'graph>, path: impl Into<String>) {
+    fn add_step(&mut self, network: &AdjList, path: impl Into<String>) {
         let mut updated_network = Vec::new();
 
         for (&source, neighbours) in &network.inner {
