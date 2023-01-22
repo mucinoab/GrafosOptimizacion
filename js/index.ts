@@ -23,6 +23,9 @@ var activeTab: Method = Method.FlujoMaximo;
 const form = <HTMLFormElement>document.getElementById("generalForm");
 const vertices = <HTMLInputElement>document.getElementById("generalNvertices");
 
+// Add event for theme toggle.
+document.getElementById("theme-switcher").addEventListener("click", e => toggleTheme(e));
+
 // @ts-ignore
 const graphWasm = window["@hpcc-js/wasm"];
 
@@ -401,3 +404,27 @@ tabs.forEach(tab => {
     }
   })
 });
+
+function toggleTheme(e: Event) {
+  e.preventDefault();
+
+  const button = <HTMLElement>document.getElementById("theme-switcher");
+
+  if (button.classList.contains("light")) { // force dark mode
+    button.classList.remove("light");
+    button.classList.add("dark");
+
+    document.body.classList.remove("theme-light");
+    document.body.classList.remove("theme-device");
+
+    document.body.classList.add("theme-dark");
+  } else { // force light mode
+    button.classList.remove("dark");
+    button.classList.add("light");
+
+    document.body.classList.remove("theme-dark");
+    document.body.classList.remove("theme-device");
+
+    document.body.classList.add("theme-light");
+  }
+}

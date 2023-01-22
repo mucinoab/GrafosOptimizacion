@@ -117,3 +117,18 @@ img:hover {
   height: 0; 
   width: 0;
 }
+
+#theme-switcher .sun svg, #theme-switcher .moon svg {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+#theme-switcher .sun        { display: none; }
+#theme-switcher .moon       { display: none; }
+#theme-switcher.light .moon { display: block; }
+#theme-switcher.dark .sun   { display: block; }
+
+body.theme-dark {
+  background: #2a2a2a;
+  color: #fafafa;
+}
