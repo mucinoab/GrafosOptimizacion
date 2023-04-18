@@ -166,3 +166,13 @@ function removeRow(): void {
   table.lastChild.remove();
   vertices.value = String(table.children.length);
 }
+
+function openSvgInNewTab(svg: SVGAElement): void {
+  const blob = new Blob([svg.outerHTML], { type: "image/svg+xml;charset=utf-8" });
+  const image = new Image();
+  image.src = window.URL.createObjectURL(blob);
+
+  const newWindow = window.open("");
+  newWindow.document.write(image.outerHTML);
+  newWindow.document.title = "grafo.svg";
+}

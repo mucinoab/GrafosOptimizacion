@@ -33,6 +33,7 @@ const graphWasm = window["@hpcc-js/wasm"];
 const graphInput = <HTMLTextAreaElement>document.getElementById("graphInput");
 renderDotGraph("drawContainer", `digraph{rankdir=LR;${graphInput.value}}`);
 graphInput.addEventListener("input", debounce(() => {
+  // TODO draw graphs or digraphs based on radio element.
   const dotGraph = `digraph{rankdir=LR;${graphInput.value}}`;
   renderDotGraph("drawContainer", dotGraph);
 }, 400));
