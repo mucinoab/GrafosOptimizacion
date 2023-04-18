@@ -8,7 +8,7 @@ mod pert;
 mod utils;
 
 use crate::handles::{
-    compression, critical_path, floyd_warshall, handle_error, kruskal, max_flow, not_found, pert,
+    compression, critical_path, floyd_warshall, kruskal, max_flow, not_found, pert,
 };
 
 use std::sync::Arc;
@@ -31,7 +31,7 @@ async fn main() {
         .route("/pert", post(pert))
         .route("/compression", post(compression))
         .route("/dijkstra", get(not_found))
-        .fallback_service(get_service(ServeDir::new(".")).handle_error(handle_error))
+        .fallback_service(get_service(ServeDir::new(".")))
         .layer(Extension(Arc::new(())))
         .layer(TraceLayer::new_for_http())
         .layer(CompressionLayer::new());
