@@ -73,26 +73,26 @@ interface Change {
 }
 
 interface VerticeCompresion {
-  actividad: string,
-  predecesora: string,
+  target: string,
+  source: string,
 
-  pesoNormal: number,
-  costoNormal: number,
+  normal_weight: number,
+  normal_cost: number,
 
-  pesoUrgente: number,
-  costoUrgente: number,
+  urgent_weight: number,
+  urgent_cost: number,
 }
 
-interface CompresionData {
-  tiempoObjetivo: number,
-  actividades: Array<VerticeCompresion>,
+interface Compression {
+  target_time: number,
+  activities: Array<VerticeCompresion>,
 }
 
-interface ResponseCompresion {
-  costoTiempo: Array<number>,
-  iteraciones: Array<CriticalPathSolution>,
-  actividadesComprimidas: Array<string>,
-  costoActual: Array<number>,
+interface ResponseCompression {
+  time_cost: Array<number>,
+  iterations: Array<CriticalPathSolution>,
+  compressed_activities: Array<string>,
+  actual_cost: Array<number>,
 }
 
 interface Kruskal {

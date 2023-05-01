@@ -96,8 +96,20 @@ function ejemploPERT() {
 }
 
 function ejemploCompresion() {
-  const ejemplo = { "actividades": [{ "actividad": "A", "predecesora": "-", "pesoNormal": 8, "costoNormal": 100, "pesoUrgente": 6, "costoUrgente": 200 }, { "actividad": "B", "predecesora": "-", "pesoNormal": 4, "costoNormal": 150, "pesoUrgente": 2, "costoUrgente": 350 }, { "actividad": "C", "predecesora": "A", "pesoNormal": 2, "costoNormal": 50, "pesoUrgente": 1, "costoUrgente": 90 }, { "actividad": "D", "predecesora": "B", "pesoNormal": 5, "costoNormal": 100, "pesoUrgente": 1, "costoUrgente": 200 }, { "actividad": "E", "predecesora": "C", "pesoNormal": 3, "costoNormal": 80, "pesoUrgente": 1, "costoUrgente": 100 }, { "actividad": "E", "predecesora": "D", "pesoNormal": 3, "costoNormal": 80, "pesoUrgente": 1, "costoUrgente": 100 }, { "actividad": "F", "predecesora": "A", "pesoNormal": 10, "costoNormal": 100, "pesoUrgente": 5, "costoUrgente": 400 }], "tiempoObjetivo": -10 };
-  fillTableExample("Aceleracion", ejemplo.actividades);
+  const ejemplo: Compression = {
+    activities: [
+      { target: "A", source: "-", normal_weight: 8, normal_cost: 100, urgent_weight: 6, urgent_cost: 200 },
+      { target: "B", source: "-", normal_weight: 4, normal_cost: 150, urgent_weight: 2, urgent_cost: 350 },
+      { target: "C", source: "A", normal_weight: 2, normal_cost: 50, urgent_weight: 1, urgent_cost: 90 },
+      { target: "D", source: "B", normal_weight: 5, normal_cost: 100, urgent_weight: 1, urgent_cost: 200 },
+      { target: "E", source: "C", normal_weight: 3, normal_cost: 80, urgent_weight: 1, urgent_cost: 100 },
+      { target: "E", source: "D", normal_weight: 3, normal_cost: 80, urgent_weight: 1, urgent_cost: 100 },
+      { target: "F", source: "A", normal_weight: 10, normal_cost: 100, urgent_weight: 5, urgent_cost: 400 }
+    ],
+    target_time: -10
+  };
+
+  fillTableExample("Aceleracion", ejemplo.activities);
   postData('compresion', ejemplo).then(data => { renderResponseCompresion(data); });
 }
 

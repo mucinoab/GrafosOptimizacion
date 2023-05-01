@@ -165,12 +165,13 @@ function Compresion() {
     }
 
     let activida: VerticeCompresion = {
-      actividad: a.source,
-      predecesora: a.target,
-      pesoNormal: a.weight,
-      costoNormal: costoN,
-      pesoUrgente: pUrgente,
-      costoUrgente: cUrgente,
+      // TODO What is the deal here. Target-source?
+      target: a.source,
+      source: a.target,
+      normal_weight: a.weight,
+      normal_cost: costoN,
+      urgent_weight: pUrgente,
+      urgent_cost: cUrgente,
     };
 
     actividades.push(activida);
@@ -186,12 +187,12 @@ function Compresion() {
     }
   }
 
-  const data: CompresionData = {
-    actividades: actividades,
-    tiempoObjetivo: duracion,
+  const data: Compression = {
+    activities: actividades,
+    target_time: duracion,
   };
 
-  postData("compresion", data).then(data => { renderResponseCompresion(data) });
+  postData("compression", data).then(data => { renderResponseCompresion(data) });
 }
 
 function Dijkstra() {
@@ -253,7 +254,7 @@ function graphFromTable(id: string): Array<Vertice> {
   return grafo
 }
 
-function fillTable(id: string, d: Array<any>) {
+function fillTable(id: string, d: Array<any | Compression>) {
   let origenes = document.querySelectorAll<HTMLInputElement>(`.origenes${id}`);
   let destinos = document.querySelectorAll<HTMLInputElement>(`.destinos${id}`);
   let pesos = document.querySelectorAll<HTMLInputElement>(`.pesos${id}`);
@@ -269,12 +270,12 @@ function fillTable(id: string, d: Array<any>) {
     destinos[idx].value = d[idx].target;
 
     if (id === "Aceleracion") {
-      origenes[idx].value = d[idx].actividad;
-      destinos[idx].value = d[idx].predecesora;
-      pesos[idx].value = String(d[idx].pesoNormal);
-      costos[idx].value = String(d[idx].costoNormal);
-      pesosU[idx].value = String(d[idx].pesoUrgente);
-      costosU[idx].value = String(d[idx].costoUrgente);
+      origenes[idx].value = d[idx].target;
+      destinos[idx].value = d[idx].source;
+      pesos[idx].value = String(d[idx].normal_weight);
+      costos[idx].value = String(d[idx].normal_cost);
+      pesosU[idx].value = String(d[idx].urgent_weight);
+      costosU[idx].value = String(d[idx].urgent_cost);
     } else if (id === "PERT") {
       pesos[idx].value = String(d[idx].optimistic_weight);
       probables[idx].value = String(d[idx].weight);

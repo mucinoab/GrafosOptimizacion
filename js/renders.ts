@@ -144,7 +144,7 @@ function renderResponseCPM(r: CriticalPathSolution) {
   respuesta.scrollIntoView(true);
 }
 
-function renderResponseCompresion(r: ResponseCompresion) {
+function renderResponseCompresion(r: ResponseCompression) {
   let tableHeader = <HTMLTableRowElement>document.getElementById("AceleracionHeader");
   if (tableHeader.cells.length === 7) {
     tableHeader.insertAdjacentHTML("beforeend", '<th scope="col">P<sub>ij</sub></th>');
@@ -157,7 +157,7 @@ function renderResponseCompresion(r: ResponseCompresion) {
     if (row.cells.length != 7) {
       row.removeChild(row.lastChild);
     }
-    putCell(row, r.costoTiempo[idx].toFixed(3));
+    putCell(row, r.time_cost[idx].toFixed(3));
     idx += 1;
   }
 
@@ -165,9 +165,9 @@ function renderResponseCompresion(r: ResponseCompresion) {
   const newLine = document.createElement("br");
   let graphs: Array<[string, CriticalPathSolution]> = [];
 
-  for (const [idx, iter] of r.iteraciones.entries()) {
+  for (const [idx, iter] of r.iterations.entries()) {
     rh.appendChild(newTextElement(`Duración: ${iter.total_duration}`, "h4"));
-    rh.appendChild(newTextElement(`Costo: $${r.costoActual[idx].toFixed(2)}`, "h4"));
+    rh.appendChild(newTextElement(`Costo: $${r.actual_cost[idx].toFixed(2)}`, "h4"));
     rh.appendChild(newLine.cloneNode());
 
     rh.appendChild(newElement("div", `compresion-${idx}`, "grafo-svg"));
@@ -175,8 +175,8 @@ function renderResponseCompresion(r: ResponseCompresion) {
 
     rh.appendChild(newLine.cloneNode());
 
-    if (r.actividadesComprimidas[idx] !== undefined) {
-      rh.appendChild(newTextElement(`Compresión: ${r.actividadesComprimidas[idx]}`));
+    if (r.compressed_activities[idx] !== undefined) {
+      rh.appendChild(newTextElement(`Compresión: ${r.compressed_activities[idx]}`));
       rh.appendChild(newElement("hr"));
     }
 
