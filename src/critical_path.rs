@@ -318,4 +318,33 @@ mod tests {
         assert_eq!(solution.total_duration, real_duration);
         assert_eq!(solution.critical_path, real_critical_path);
     }
+
+    #[test]
+    fn solve_5() {
+        let graph = vec![
+            Edge::new("a", "-", 3.),
+            Edge::new("b", "a", 2.),
+            Edge::new("c", "-", 5.),
+            Edge::new("d", "b", 2.),
+            Edge::new("d", "c", 2.),
+            Edge::new("e", "a", 4.),
+            Edge::new("f", "b", 6.),
+            Edge::new("f", "c", 6.),
+            Edge::new("g", "e", 5.),
+            Edge::new("g", "d", 5.),
+        ];
+
+        let real_duration = 12.0;
+        let mut real_critical_path = ["c", "d", "g", "a", "e", "-", "b", "Fin"];
+        real_critical_path.sort();
+
+        let mut solution = solve(graph);
+        solution.critical_path.sort();
+
+        assert_eq!(solution.total_duration, real_duration);
+        assert_eq!(solution.critical_path, real_critical_path);
+    }
+
+    // TODO add more tests
+    // https://www.plandemejora.com/ruta-critica-ejercicios-resueltos/
 }
