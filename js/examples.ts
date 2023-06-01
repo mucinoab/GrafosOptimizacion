@@ -37,7 +37,19 @@ function fillTableExample(method: string, ejemplo: any) {
 }
 
 function ejemploFlujo() {
-  const ejemplo = { "graph": [{ "source": "Bilbao", "target": "S1", "weight": 4 }, { "source": "Bilbao", "target": "S2", "weight": 1 }, { "source": "Barcelona", "target": "S1", "weight": 2 }, { "source": "Barcelona", "target": "S2", "weight": 3 }, { "source": "Sevilla", "target": "S1", "weight": 2 }, { "source": "Sevilla", "target": "S2", "weight": 2 }, { "source": "Sevilla", "target": "S3", "weight": 3 }, { "source": "Valencia", "target": "S2", "weight": 2 }, { "source": "Zaragoza", "target": "S2", "weight": 3 }, { "source": "Zaragoza", "target": "S3", "weight": 1 }, { "source": "Origen", "target": "Bilbao", "weight": 7 }, { "source": "Origen", "target": "Barcelona", "weight": 5 }, { "source": "Origen", "target": "Sevilla", "weight": 7 }, { "source": "Origen", "target": "Zaragoza", "weight": 6 }, { "source": "Origen", "target": "Valencia", "weight": 2 }, { "source": "S1", "target": "Madrid", "weight": 8 }, { "source": "S2", "target": "Madrid", "weight": 8 }, { "source": "S3", "target": "Madrid", "weight": 8 }], "source": "Origen", "target": "Madrid", "directed": true };
+  const ejemplo = {
+    source: "Origen",
+    target: "Madrid",
+    directed: true,
+    graph: [
+      { source: "Bilbao", target: "S1", weight: 4 }, { source: "Bilbao", target: "S2", weight: 1 }, { source: "Barcelona", target: "S1", weight: 2 },
+      { source: "Barcelona", target: "S2", weight: 3 }, { source: "Sevilla", target: "S1", weight: 2 }, { source: "Sevilla", target: "S2", weight: 2 },
+      { source: "Sevilla", target: "S3", weight: 3 }, { source: "Valencia", target: "S2", weight: 2 }, { source: "Zaragoza", target: "S2", weight: 3 },
+      { source: "Zaragoza", target: "S3", weight: 1 }, { source: "Origen", target: "Bilbao", weight: 7 }, { source: "Origen", target: "Barcelona", weight: 5 },
+      { source: "Origen", target: "Sevilla", weight: 7 }, { source: "Origen", target: "Zaragoza", weight: 6 }, { source: "Origen", target: "Valencia", weight: 2 },
+      { source: "S1", target: "Madrid", weight: 8 }, { source: "S2", target: "Madrid", weight: 8 }, { source: "S3", target: "Madrid", weight: 8 }
+    ]
+  };
   (<HTMLInputElement>document.getElementById("origen")).value = ejemplo.source;
   (<HTMLInputElement>document.getElementById("destino")).value = ejemplo.target;
   fillTableExample("FlujoMaximo", ejemplo.graph);
@@ -114,15 +126,34 @@ function ejemploCompresion() {
 }
 
 function ejemploDijkstra() {
-  const ejemplo = { "origen": "O", "destino": "T", "grafo": [{ "origen": "O", "destino": "A", "peso": 4 }, { "origen": "O", "destino": "B", "peso": 3 }, { "origen": "O", "destino": "C", "peso": 6 }, { "origen": "A", "destino": "D", "peso": 3 }, { "origen": "A", "destino": "C", "peso": 5 }, { "origen": "B", "destino": "C", "peso": 4 }, { "origen": "B", "destino": "E", "peso": 6 }, { "origen": "C", "destino": "D", "peso": 2 }, { "origen": "C", "destino": "F", "peso": 2 }, { "origen": "C", "destino": "E", "peso": 5 }, { "origen": "D", "destino": "G", "peso": 4 }, { "origen": "D", "destino": "F", "peso": 2 }, { "origen": "E", "destino": "F", "peso": 1 }, { "origen": "F", "destino": "G", "peso": 2 }, { "origen": "F", "destino": "H", "peso": 5 }, { "origen": "E", "destino": "H", "peso": 2 }, { "origen": "E", "destino": "I", "peso": 5 }, { "origen": "I", "destino": "H", "peso": 3 }, { "origen": "G", "destino": "H", "peso": 2 }, { "origen": "G", "destino": "T", "peso": 7 }, { "origen": "H", "destino": "T", "peso": 8 }, { "origen": "I", "destino": "T", "peso": 4 }] };
-  (<HTMLInputElement>document.getElementById("OrigenDijkstra")).value = ejemplo.origen;
-  (<HTMLInputElement>document.getElementById("DestinoDijkstra")).value = ejemplo.destino;
-  fillTableExample("Dijkstra", ejemplo.grafo);
+  const ejemplo = {
+    source: "O",
+    target: "T",
+    graph: [
+      { source: "O", target: "A", weight: 4 }, { source: "O", target: "B", weight: 3 }, { source: "O", target: "C", weight: 6 },
+      { source: "A", target: "D", weight: 3 }, { source: "A", target: "C", weight: 5 }, { source: "B", target: "C", weight: 4 },
+      { source: "B", target: "E", weight: 6 }, { source: "C", target: "D", weight: 2 }, { source: "C", target: "F", weight: 2 },
+      { source: "C", target: "E", weight: 5 }, { source: "D", target: "G", weight: 4 }, { source: "D", target: "F", weight: 2 },
+      { source: "E", target: "F", weight: 1 }, { source: "F", target: "G", weight: 2 }, { source: "F", target: "H", weight: 5 },
+      { source: "E", target: "H", weight: 2 }, { source: "E", target: "I", weight: 5 }, { source: "I", target: "H", weight: 3 },
+      { source: "G", target: "H", weight: 2 }, { source: "G", target: "T", weight: 7 }, { source: "H", target: "T", weight: 8 },
+      { source: "I", target: "T", weight: 4 }
+    ]
+  };
+  (<HTMLInputElement>document.getElementById("OrigenDijkstra")).value = ejemplo.source;
+  (<HTMLInputElement>document.getElementById("DestinoDijkstra")).value = ejemplo.target;
+  fillTableExample("Dijkstra", ejemplo.graph);
   postData('dijkstra', ejemplo).then(data => renderResponseDijkstra(data));
 }
 
 function ejemploKruskal() {
-  const ejemplo = [{ "source": "C", "target": "B", "weight": 4 }, { "source": "A", "target": "C", "weight": 3 }, { "source": "A", "target": "B", "weight": 6 }, { "source": "B", "target": "D", "weight": 2 }, { "source": "C", "target": "D", "weight": 3 }, { "source": "S", "target": "A", "weight": 7 }, { "source": "B", "target": "T", "weight": 5 }, { "source": "D", "target": "T", "weight": 2 }, { "source": "S", "target": "C", "weight": 8 }];
+  const ejemplo = [
+    { source: "C", target: "B", weight: 4 }, { source: "A", target: "C", weight: 3 },
+    { source: "A", target: "B", weight: 6 }, { source: "B", target: "D", weight: 2 },
+    { source: "C", target: "D", weight: 3 }, { source: "S", target: "A", weight: 7 },
+    { source: "B", target: "T", weight: 5 }, { source: "D", target: "T", weight: 2 },
+    { source: "S", target: "C", weight: 8 }
+  ];
   fillTableExample("Kruskal", ejemplo);
   Kruskal();
 }
